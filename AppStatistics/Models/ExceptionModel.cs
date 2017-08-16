@@ -83,6 +83,9 @@ namespace AppStatistics.Models {
 			}
 
 			return new {
+				Message = exception.Message,
+				StackTrace = exception.StackTrace,
+				HResult = exception.HResult,
 				TimeStamp = timeStamp.ToString(),
 				Exceptions = exceptions.ToArray(),
 			};
