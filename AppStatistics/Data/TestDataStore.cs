@@ -15,7 +15,7 @@ namespace AppStatistics.Data {
 					List<ExceptionModel> excList2 = new List<ExceptionModel>();
 					for (int i = 0; i < 20; i++) {
 						excList1.Add(new ExceptionModel() {
-							exception = new ExceptionModel.ExceptionInfo(new Exception("Test Exception 2")),
+							exception = new ExceptionModel.ExceptionInfo(new Exception("Test Exception 1")),
 							timeStamp = DateTime.Now.AddDays(-1 * i),
 						});
 					}
