@@ -1,47 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace AppStatisticsCommon.Models.Reporting.Exceptions {
 	public class ExceptionModel : ModelBase {
-		public class ExceptionInfo : Exception {
-			private string _stackTrace;
-			private string _source;
-			private int _hresult;
+		public string message;
+		public string stackTrace;
+		public int hresult;
 
-			public ExceptionInfo(Exception src) : base(src.Message, src.InnerException) {
-				_stackTrace = src.StackTrace;
-				_source = src.Source;
-				_hresult = src.HResult;
-			}
+		public List<ExceptionModel> innerExceptions;
 
-			public ExceptionInfo(string msg, string stck, string src, int hresult, Exception inner) : base(msg, inner) {
-				_stackTrace = stck;
-				_source = src;
-				_hresult = hresult;
-			}
-
-			public override string StackTrace => _stackTrace;
-			public override string Source => _source;
+		public ExceptionModel() {
+			innerExceptions = new List<ExceptionModel>();
 		}
 
-		public ExceptionInfo exception;
+		public ExceptionModel(Exception src, ApplicationModel app) {
+			innerExceptions = new List<ExceptionModel>();
+			message = src.Message;
+			stackTrace = src.StackTrace;
+			hresult = src.HResult;
+
+			List<ExceptionModel> inner = new List<ExceptionModel>();
+			Exception current = src.InnerException;
+			while (current != null) {
+				inner.Add(new ExceptionModel(current, app));
+				current = current.InnerException;
+			}
+
+			innerExceptions = inner;
+			application = app;
+		}
+
+		public ApplicationModel application;
 		public DateTime timeStamp;
 
 		public override object toRaw() {
-			//I am way too lazy to do this properly
-			string exceptionData = Newtonsoft.Json.JsonConvert.SerializeObject(exception);
 			string timestampData = Newtonsoft.Json.JsonConvert.SerializeObject(timeStamp);
 			return new {
-				ExceptionJson = exceptionData,
-				TimeStampJson = timestampData,
+				Message = message,
+				StackTrace = stackTrace,
+				HResult = hresult,
+				InnerExceptions = innerExceptions,
+				Application = application.toRaw(),
 			};
 		}
 
 		public override void fromRaw(dynamic data) {
-			exception = Newtonsoft.Json.JsonConvert.DeserializeObject<ExceptionInfo>(data.ExceptionJson);
-			timeStamp = Newtonsoft.Json.JsonConvert.DeserializeObject<ExceptionInfo>(data.TimeStampJson);
+			message = data.Message;
+			stackTrace = data.StackTrace;
+			hresult = data.HResult;
+			innerExceptions = ((JArray)data.InnerExceptions).ToObject<List<ExceptionModel>>();
+
+			application = new ApplicationModel("");
+			application.fromRaw(data.Application);
 		}
 	}
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Cors;
+using AppStatisticsCommon.Models.Reporting.Exceptions;
 
 namespace AppStatisticsCore.Controllers.API.Reporting {
 	[Produces("application/json")]
@@ -17,24 +18,23 @@ namespace AppStatisticsCore.Controllers.API.Reporting {
 		}
 
 		// GET: api/Exceptions/5
-		[HttpGet("{id}", Name = "GetException")]
-		public string Get(int id) {
-			return "value";
+		[HttpGet(Name = "GetException")]
+		public string Get([FromQuery]string appid, [FromQuery]string exceptionid) {
+			return "";
 		}
 
 		// POST: api/Exceptions
 		[HttpPost]
-		public void Post([FromBody]string value) {
-		}
+		public void Post([FromBody]dynamic data) {
+			ExceptionModel exception = new ExceptionModel();
+			exception.fromRaw(data);
 
-		// PUT: api/Exceptions/5
-		[HttpPut("{id}")]
-		public void Put(int id, [FromBody]string value) {
+			Config.store.addException(exception);
 		}
 
 		// DELETE: api/ApiWithActions/5
-		[HttpDelete("{id}")]
-		public void Delete(int id) {
+		[HttpDelete]
+		public void Delete([FromQuery]string exceptionid) {
 		}
 	}
 }

@@ -13,6 +13,8 @@ namespace AppStatisticsCore.Data {
 
 
 		public JsonDataStore() {
+			if (Directory.Exists(rootPath()) == false)
+				Directory.CreateDirectory(rootPath());
 			loadApplications();
 		}
 
@@ -30,13 +32,23 @@ namespace AppStatisticsCore.Data {
 			saveApplications();
 		}
 
-		public void addException(ApplicationModel app, ExceptionModel exception) {
+		public void addException(ExceptionModel exception) {
+			var app = getApplication(exception.application.guid);
+			exception.application = app;
+
 			string dir = getApplicationDataPath(app);
 			string fname = getExceptionSetFileName(DateTime.Now);
 			string fpath = Path.Combine(dir, fname);
 
 			var excSet = loadExceptionSetFile(fpath);
+			if (excSet == null)
+				excSet = new List<ExceptionModel>();
+
 			excSet.Add(exception);
+
+			if (Directory.Exists(dir) == false)
+				Directory.CreateDirectory(dir);
+
 			saveExceptionSetFile(fpath, excSet);
 		}
 
@@ -131,21 +143,21 @@ namespace AppStatisticsCore.Data {
 		}
 
 		private void saveApplications() {
-			File.Delete(applicationsDataFile);
-			File.WriteAllText(applicationsDataFile, Newtonsoft.Json.JsonConvert.SerializeObject(applications));
+			File.Delete(rootPath() + applicationsDataFile);
+			File.WriteAllText(rootPath() + applicationsDataFile, Newtonsoft.Json.JsonConvert.SerializeObject(applications));
 		}
 
 		private void loadApplications() {
-			if (File.Exists(applicationsDataFile)) {
+			if (File.Exists(rootPath() + applicationsDataFile)) {
 				applications = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ApplicationModel>>(
-					File.ReadAllText(applicationsDataFile));
+					File.ReadAllText(rootPath() + applicationsDataFile));
 			} else {
 				applications = new List<ApplicationModel>();
 			}
 		}
 
 		public string rootPath() {
-			return Directory.GetCurrentDirectory() + "Content\\";
+			return Directory.GetCurrentDirectory() + "\\Content\\";
 		}
 
 		public string getApplicationDataPath(ApplicationModel app) {

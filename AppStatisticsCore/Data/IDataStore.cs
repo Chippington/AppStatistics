@@ -43,7 +43,7 @@ namespace AppStatisticsCore.Data {
 		/// </summary>
 		/// <param name="app"></param>
 		/// <param name="exception"></param>
-		void addException(ApplicationModel app, ExceptionModel exception);
+		void addException(ExceptionModel exception);
 
 		/// <summary>
 		/// Returns the exception associated with the given key.

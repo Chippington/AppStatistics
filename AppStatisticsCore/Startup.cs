@@ -22,7 +22,8 @@ namespace AppStatisticsCore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+			services.AddCors(options => options.AddPolicy("AllowCors", builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
+			services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,7 +40,7 @@ namespace AppStatisticsCore
             }
 
             app.UseStaticFiles();
-
+			app.UseCors("AllowCors");
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
