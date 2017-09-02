@@ -5,6 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Content\**" />
+    <Content Remove="Content\**" />
+    <EmbeddedResource Remove="Content\**" />
+    <None Remove="Content\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
   </ItemGroup>
 
