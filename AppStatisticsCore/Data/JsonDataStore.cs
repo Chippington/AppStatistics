@@ -50,6 +50,20 @@ namespace AppStatisticsCore.Data {
 				Directory.CreateDirectory(dir);
 
 			saveExceptionSetFile(fpath, excSet);
+
+			fname = getExceptionSetFileName();
+			fpath = Path.Combine(dir, fname);
+
+			excSet = loadExceptionSetFile(fpath);
+			if (excSet == null)
+				excSet = new List<ExceptionModel>();
+
+			excSet.Add(exception);
+
+			if (Directory.Exists(dir) == false)
+				Directory.CreateDirectory(dir);
+
+			saveExceptionSetFile(fpath, excSet);
 		}
 
 		public ApplicationModel getApplication(string key) {
@@ -80,7 +94,9 @@ namespace AppStatisticsCore.Data {
 
 		public IEnumerable<ExceptionModel> getExceptions(ApplicationModel app) {
 			var path = Path.Combine(getApplicationDataPath(app), getExceptionSetFileName());
-			return loadExceptionSet(path);
+
+			var excSet = loadExceptionSet(path);
+			return excSet == null ? new List<ExceptionModel>() : excSet;
 		}
 
 		public NotificationModel getNotification(string key) {

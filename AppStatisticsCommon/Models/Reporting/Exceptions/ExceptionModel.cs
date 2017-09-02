@@ -38,8 +38,8 @@ namespace AppStatisticsCommon.Models.Reporting.Exceptions {
 		public DateTime timeStamp;
 
 		public override object toRaw() {
-			string timestampData = Newtonsoft.Json.JsonConvert.SerializeObject(timeStamp);
 			return new {
+				TimeStamp = timeStamp,
 				Message = message,
 				StackTrace = stackTrace,
 				HResult = hresult,
@@ -49,6 +49,7 @@ namespace AppStatisticsCommon.Models.Reporting.Exceptions {
 		}
 
 		public override void fromRaw(dynamic data) {
+			timeStamp = data.TimeStamp;
 			message = data.Message;
 			stackTrace = data.StackTrace;
 			hresult = data.HResult;

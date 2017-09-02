@@ -357,14 +357,14 @@ blockquote small {
 }
 
 #content {
-    margin-left: 233px;
+    margin-left: 45px;
     min-height: 500px;
     position: relative;
 }
 
 /* Sidebar */
 #sidebar {
-    width: 233px;
+    width: 0px;
     float: left;
     background: rgba(0,0,0,0.3);
     height: 100%;

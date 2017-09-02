@@ -6,32 +6,35 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using AppStatisticsCore.Models;
 
-namespace AppStatisticsCore.Controllers
-{
-    public class HomeController : Controller
-    {
-        public IActionResult Index()
-        {
-            return View();
-        }
+namespace AppStatisticsCore.Controllers {
+	public class HomeController : Controller {
+		public IActionResult Index() {
+			List<ApplicationViewModel> model = new List<ApplicationViewModel>();
+			var applications = Config.store.getApplications();
+			foreach(var app in applications) {
+				model.Add(new ApplicationViewModel() {
+					source = app,
+					latestExceptions = Config.store.getExceptions(app).OrderBy(e => e.timeStamp).Take(10).ToList()
+				});
+			}
 
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
+			return View(model);
+		}
 
-            return View();
-        }
+		public IActionResult About() {
+			ViewData["Message"] = "Your application description page.";
 
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
+			return View();
+		}
 
-            return View();
-        }
+		public IActionResult Contact() {
+			ViewData["Message"] = "Your contact page.";
 
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-    }
+			return View();
+		}
+
+		public IActionResult Error() {
+			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+		}
+	}
 }

@@ -25,6 +25,8 @@ namespace AppStatisticsCommon.Logging {
 				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
 				var exc = new ExceptionModel(exception, application);
+				exc.timeStamp = DateTime.Now;
+
 				var data = Newtonsoft.Json.JsonConvert.SerializeObject(exc.toRaw());
 				StringContent stringContent = new StringContent(data, Encoding.UTF8, "application/json");
 
