@@ -7,6 +7,8 @@ using System.IO;
 namespace AppStatisticsCommon.Models.Reporting {
 	public class ApplicationModel : ModelBase {
 		public string applicationName;
+		public string description;
+		public DateTime creationDate;
 
 		public ApplicationModel(string name) {
 			applicationName = name;
@@ -15,12 +17,16 @@ namespace AppStatisticsCommon.Models.Reporting {
 		public override object toRaw() {
 			return new {
 				Name = applicationName,
+				Description = description,
+				CreationDate = creationDate,
 				GUID = guid,
 			};
 		}
 
 		public override void fromRaw(dynamic data) {
 			applicationName = data.Name;
+			description = data.Description;
+			creationDate = data.CreationDate;
 			guid = data.GUID;
 		}
 	}

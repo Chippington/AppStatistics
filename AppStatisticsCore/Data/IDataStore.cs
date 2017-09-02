@@ -27,6 +27,13 @@ namespace AppStatisticsCore.Data {
 		void addApplication(ApplicationModel app);
 
 		/// <summary>
+		/// Update the currently stored application model with this one
+		/// </summary>
+		/// <param name="app"></param>
+		void updateApplication(ApplicationModel app);
+
+
+		/// <summary>
 		/// Removes an application from the data store.
 		/// </summary>
 		/// <param name="app"></param>

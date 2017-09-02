@@ -191,7 +191,6 @@ _pkginfo.txt
 !*.[Cc]ache/
 
 # Others
-Content/
 ClientBin/
 ~$*
 *~
@@ -287,3 +286,7 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
+
+#Custom
+Content/
+.Content/

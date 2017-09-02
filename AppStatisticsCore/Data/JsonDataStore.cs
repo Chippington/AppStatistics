@@ -202,5 +202,13 @@ namespace AppStatisticsCore.Data {
 
 			File.WriteAllText(path, Newtonsoft.Json.JsonConvert.SerializeObject(set));
 		}
+
+		public void updateApplication(ApplicationModel app) {
+			var existing = getApplication(app.guid);
+			if (existing != null)
+				removeApplication(existing);
+
+			addApplication(app);
+		}
 	}
 }

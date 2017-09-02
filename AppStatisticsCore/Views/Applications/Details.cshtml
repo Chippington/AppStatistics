@@ -1,0 +1,81 @@
+﻿@model AppStatisticsCore.Models.ApplicationViewModel
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<form method="post" asp-controller="Applications" asp-action="UpdateApplication">
+    <input type="text" style="display:none" name="appid" value="@Model.source.guid" />
+    <input type="submit" value="Submit Changes" />
+    <div class="block-area">
+        <div class="row">
+            <div class="col-med-8">
+                <div class="tile">
+                    <div class="tile-title">Application Details</div>
+                    <div class="p-10">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <h3>Overview</h3>
+                                <table style="width:100%">
+                                    <thead>
+                                        <tr><td style="width:100px"></td><td></td></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><h5 style="padding-left:5px; padding-bottom:7px">App Name:</h5></td>
+                                            <td><input type="text" value="@Model.source.applicationName" class="form-control m-b-10" name="appname"></td>
+                                        </tr>
+                                        <tr>
+                                            <td><h5 style="padding-left:5px; padding-bottom:7px">Description:</h5></td>
+                                            <td><input type="text" value="@Model.source.description" class="form-control m-b-10" name="appdesc"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-xs-6" style="text-align:right">
+                                <h6>Created: @Model.source.creationDate.ToString()</h6>
+                                <h6>Guid: @Model.source.guid</h6>
+                            </div>
+                        </div>
+                        <br /><br />
+                        @if (Model.latestExceptions.Count > 0) {
+                            <h3>Exceptions</h3>
+                        }
+                        
+                        <div class="row" style="padding-left:10px; padding-right:10px">
+                            @{  foreach (var exc in Model.latestExceptions) {
+                                    <div class="tile">
+                                        <div class="tile-title">@Html.ActionLink(exc.guid, "Details", "Exceptions", new { excid = exc.guid })</div>
+                                        <div class="p-10">
+                                            Time Stamp: @exc.timeStamp<br />
+                                            <br />
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered table-hover tile">
+                                                    <thead><tr><td colspan="2"><b>Exception Details</b></td></tr></thead>
+                                                    <tbody>
+                                                        
+                                                        <tr>
+                                                            <td width="100px">Message</td>
+                                                            <td>@exc.message</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Stack Trace</td>
+                                                            <td>
+                                                                @exc.stackTrace
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
