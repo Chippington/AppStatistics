@@ -8,11 +8,18 @@
         <div class="row">
             <div class="col-med-8">
                 <div class="tile">
-                    <div class="tile-title">Application Details</div>
+                    <div class="tile-title">
+                        <table style="width:100%">
+                            <tbody>
+                                <tr>
+                                    <td>Exception Details - @Model.source.guid</td>
+                                    <td align="right">Created: @Model.source.timeStamp.ToString()</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                     <div class="p-10">
-                        <div class="row" style="padding-left:10px; padding-right:10px">
-                            Time Stamp: @Model.source.timeStamp<br />
-                            <br />
+                        <div class="row" style="padding-left:10px; padding-right:10px; padding-top:8px">
                             <div class="table-responsive">
                                 <table class="table table-bordered table-hover tile">
                                     <thead><tr><td colspan="2"><b>Application Details - @Html.ActionLink(Model.source.application.guid, "Details", "Applications", new { appid = Model.source.application.guid })</b></td></tr></thead>
@@ -78,8 +85,24 @@
                                 </table>
                             </div>
 
-                            <br /><br />
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover tile">
+                                    <thead><tr><td colspan="2"><b>Exception Metadata</b></td></tr></thead>
+                                    <tbody>
+                                        <tr><td width="200px"><b>Key</b></td><td><b>Value</b></td></tr>
+                                        @{ foreach (var key in Model.source.metadata.Keys) {
+                                                var value = Model.source.metadata[key];
+                                                <tr>
+                                                    <td>@key</td>
+                                                    <td>@value</td>
+                                                </tr>
+                                            }}
+                                    </tbody>
+                                </table>
+                            </div>
+
                             @{  if (Model.source.innerExceptions.Count > 0) {
+                                    <br />
                                     <h5>Inner Exceptions:</h5>}
                                 var innerExceptions = Model.source.innerExceptions;
                                 var ct = 0;
@@ -137,6 +160,7 @@
                                     </div>
                                     }
                             }
+
                         </div>
                     </div>
                 </div>

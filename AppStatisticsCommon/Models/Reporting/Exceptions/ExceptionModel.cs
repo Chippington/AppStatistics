@@ -40,7 +40,7 @@ namespace AppStatisticsCommon.Models.Reporting.Exceptions {
 
 		public override object toRaw() {
 			return new {
-				MetaData = metadata,
+				MetaData = Newtonsoft.Json.JsonConvert.SerializeObject(metadata),
 				TimeStamp = timeStamp,
 				Message = message,
 				StackTrace = stackTrace,
@@ -51,7 +51,7 @@ namespace AppStatisticsCommon.Models.Reporting.Exceptions {
 		}
 
 		public override void fromRaw(dynamic data) {
-			metadata = data.MetaData;
+			metadata = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>((string)data.MetaData);
 			timeStamp = data.TimeStamp;
 			message = data.Message;
 			stackTrace = data.StackTrace;
