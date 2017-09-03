@@ -34,11 +34,13 @@ namespace AppStatisticsCommon.Models.Reporting.Exceptions {
 			application = app;
 		}
 
+		public Dictionary<string, string> metadata;
 		public ApplicationModel application;
 		public DateTime timeStamp;
 
 		public override object toRaw() {
 			return new {
+				MetaData = metadata,
 				TimeStamp = timeStamp,
 				Message = message,
 				StackTrace = stackTrace,
@@ -49,6 +51,7 @@ namespace AppStatisticsCommon.Models.Reporting.Exceptions {
 		}
 
 		public override void fromRaw(dynamic data) {
+			metadata = data.MetaData;
 			timeStamp = data.TimeStamp;
 			message = data.Message;
 			stackTrace = data.StackTrace;

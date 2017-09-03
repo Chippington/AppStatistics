@@ -19,13 +19,18 @@ namespace AppStatisticsCommon.Logging {
 		}
 
 		public static async Task<HttpStatusCode> LogException(Exception exception) {
-			using(var httpClient = new HttpClient()) {
+			return await LogException(exception, new Dictionary<string, string>());
+		}
+
+		public static async Task<HttpStatusCode> LogException(Exception exception, Dictionary<string, string> metadata) {
+			using (var httpClient = new HttpClient()) {
 				httpClient.BaseAddress = new Uri(baseURI);
 				httpClient.DefaultRequestHeaders.Accept.Clear();
 				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
 				var exc = new ExceptionModel(exception, application);
 				exc.timeStamp = DateTime.Now;
+				exc.metadata = metadata;
 
 				var data = Newtonsoft.Json.JsonConvert.SerializeObject(exc.toRaw());
 				StringContent stringContent = new StringContent(data, Encoding.UTF8, "application/json");
