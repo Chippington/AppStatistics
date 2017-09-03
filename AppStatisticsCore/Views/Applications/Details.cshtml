@@ -3,19 +3,54 @@
     ViewData["Title"] = "Details";
 }
 
-<h2>Details</h2>
-
 <form method="post" asp-controller="Applications" asp-action="UpdateApplication">
+    <script type="text/javascript">
+        String.prototype.replaceAll = function (search, replacement) {
+            var target = this;
+            return target.replace(new RegExp(search, 'g'), replacement);
+        };
+
+        $(document).ready(function () {
+            $("#txtDescription").bind("input propertychange", function () {
+                var text = $("#txtDescription").val();
+                $("#appdesc").val(text.replace(/\n\r?/g, '{[NL]}'));
+            });
+
+            var text = "@Model.source.description";
+            while (text.indexOf("{[NL]}") !== -1) {
+                text = text.replace("{[NL]}", "\r\n");
+            }
+
+            $("#txtDescription").val(text);
+            $("#appdesc").val(text);
+
+            var text = document.getElementById('txtDescription');
+            function resize() {
+                text.style.height = 'auto';
+                text.style.height = text.scrollHeight + 'px';
+            }
+
+            resize();
+        });
+    </script>
     <input type="text" style="display:none" name="appid" value="@Model.source.guid" />
-    <input type="submit" value="Submit Changes" />
     <div class="block-area">
         <div class="row">
             <div class="col-med-8">
                 <div class="tile">
-                    <div class="tile-title">Application Details</div>
+                    <div class="tile-title">
+                        <table width="100%">
+                            <tbody>
+                                <tr>
+                                    <td>Application Details</td>
+                                    <td align="right">Created: @Model.source.creationDate.ToString()</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                     <div class="p-10">
-                        <div class="row">
-                            <div class="col-xs-6">
+                        <div class="row" style="padding-left:10px; padding-right:10px">
+                            <div class="col-med-8">
                                 <h3>Overview</h3>
                                 <table style="width:100%">
                                     <thead>
@@ -23,19 +58,27 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td><h5 style="padding-left:5px; padding-bottom:7px">App Name:</h5></td>
+                                            <td valign="top"><h5 style="padding-left:5px; padding-bottom:7px">App Name:</h5></td>
                                             <td><input type="text" value="@Model.source.applicationName" class="form-control m-b-10" name="appname"></td>
                                         </tr>
                                         <tr>
-                                            <td><h5 style="padding-left:5px; padding-bottom:7px">Description:</h5></td>
-                                            <td><input type="text" value="@Model.source.description" class="form-control m-b-10" name="appdesc"></td>
+                                            <td valign="top"><h5 style="padding-left:5px; padding-bottom:7px">App GUID:</h5></td>
+                                            <td><input type="text" value="@Model.source.guid" class="form-control m-b-10" name="appguid"></td>
+                                        </tr>
+                                        <tr>
+                                            <td valign="top"><h5 style="padding-left:5px; padding-bottom:7px">Description:</h5></td>
+                                            <td style="padding-bottom:10px">
+                                                <input type="text" id="appdesc" name="appdesc" style="display:none"/>
+                                                <textarea id="txtDescription" type="text" class="form-control auto-size input-sm" style="overflow: hidden; word-wrap: break-word; resize: none; height: 50px;"></textarea>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <input type="submit" value="Apply Changes" class="btn btn-alt" style="width:100%"/>
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
-                            </div>
-                            <div class="col-xs-6" style="text-align:right">
-                                <h6>Created: @Model.source.creationDate.ToString()</h6>
-                                <h6>Guid: @Model.source.guid</h6>
                             </div>
                         </div>
                         <br /><br />
@@ -46,7 +89,7 @@
                         <div class="row" style="padding-left:10px; padding-right:10px">
                             @{  foreach (var exc in Model.latestExceptions) {
                                     <div class="tile">
-                                        <div class="tile-title">@Html.ActionLink(exc.guid, "Details", "Exceptions", new { excid = exc.guid })</div>
+                                        <div>@Html.ActionLink(exc.guid, "Details", "Exceptions", new { appid = Model.source.guid, excid = exc.guid }, new { @class = "btn btn-sm", style = "width:100%; text-align:left" })</div>
                                         <div class="p-10">
                                             Time Stamp: @exc.timeStamp<br />
                                             <br />
@@ -62,7 +105,37 @@
                                                         <tr>
                                                             <td>Stack Trace</td>
                                                             <td>
-                                                                @exc.stackTrace
+                                                                @{  //Some black magic fuckery goin on here
+                                                                    var str = exc.stackTrace;
+                                                                    if (str == null) {
+                                                                        str = "";
+                                                                    }
+                                                                    str = str.Trim();
+                                                                    var output = true;
+                                                                    for (var i = 0; i < str.Length; i++) {
+                                                                        if (i < str.Length - 3 && str.Substring(i, 3) == "at ") {
+                                                                            if (i > 1) {
+                                                                                <br />
+}
+
+                                                                            <b style="color:lightblue">at&nbsp;</b>i += 3;
+                                                                            output = true;
+                                                                        }
+
+                                                                        if (i > 1 && i < str.Length - 3 && str.Substring(i, 3) == " in") {
+                                                                            <b style="color:orange">&nbsp;in</b>i += 3;
+                                                                            output = true;
+                                                                        }
+
+                                                                        if (i > 1 && i < str.Length - 5 && str.Substring(i, 5) == ":line") {
+                                                                            <b style="color:lime">:line</b>i += 5;
+                                                                            output = true;
+                                                                        }
+
+                                                                        if (output == true) {
+                                                                            @str[i] }
+                                                                    }
+                                                                }
                                                             </td>
                                                         </tr>
                                                     </tbody>

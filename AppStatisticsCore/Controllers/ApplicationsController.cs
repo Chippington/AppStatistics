@@ -26,7 +26,10 @@ namespace AppStatisticsCore.Controllers {
 			var model = new ApplicationViewModel();
 			model.source = app;
 			model.latestExceptions = Config.store.getExceptions(app).OrderBy(e => e.timeStamp).Take(25).ToList();
-			
+
+			if (model.source.description == null)
+				model.source.description = "";
+
 			return View(model);
 		}
 

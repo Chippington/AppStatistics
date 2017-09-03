@@ -160,7 +160,21 @@ namespace AppStatisticsCore.Data {
 
 		private void saveApplications() {
 			File.Delete(rootPath() + applicationsDataFile);
-			File.WriteAllText(rootPath() + applicationsDataFile, Newtonsoft.Json.JsonConvert.SerializeObject(applications));
+
+			var startTick = Environment.TickCount;
+			bool exitFlag = false;
+			Exception last = null;
+			while(Environment.TickCount - startTick < 10000 && exitFlag == false) {
+				try {
+					File.WriteAllText(rootPath() + applicationsDataFile, Newtonsoft.Json.JsonConvert.SerializeObject(applications));
+					exitFlag = true;
+				} catch(Exception exc) {
+					last = exc;
+				}
+			}
+
+			if(exitFlag == false)
+				throw last;
 		}
 
 		private void loadApplications() {
@@ -209,6 +223,7 @@ namespace AppStatisticsCore.Data {
 				removeApplication(existing);
 
 			addApplication(app);
+			saveApplications();
 		}
 	}
 }
