@@ -14,7 +14,7 @@ namespace AppStatisticsCore.Controllers {
 			foreach (var app in applications) {
 				model.Add(new ApplicationViewModel() {
 					source = app,
-					latestExceptions = Config.store.getExceptions(app).OrderBy(e => e.timeStamp).Take(5).ToList()
+					latestExceptions = Config.store.getExceptions(app).OrderBy(e => e.timeStamp).Reverse().Take(5).ToList()
 				});
 			}
 
@@ -25,7 +25,7 @@ namespace AppStatisticsCore.Controllers {
 			var app = Config.store.getApplication(appid);
 			var model = new ApplicationViewModel();
 			model.source = app;
-			model.latestExceptions = Config.store.getExceptions(app).OrderBy(e => e.timeStamp).Take(25).ToList();
+			model.latestExceptions = Config.store.getExceptions(app).OrderBy(e => e.timeStamp).Reverse().Take(25).ToList();
 
 			if (model.source.description == null)
 				model.source.description = "";

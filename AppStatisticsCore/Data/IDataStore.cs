@@ -66,7 +66,7 @@ namespace AppStatisticsCore.Data {
 		/// <param name="endDate"></param>
 		/// <returns></returns>
 		IEnumerable<ReportModel> getReports(DateTime startDate, DateTime endDate);
-		
+
 		/// <summary>
 		/// Returns a report for a specific application using the given timeframe.
 		/// </summary>

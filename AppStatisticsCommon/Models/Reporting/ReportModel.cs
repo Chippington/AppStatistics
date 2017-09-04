@@ -5,8 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace AppStatisticsCommon.Models.Reporting {
-    public class ReportModel : ModelBase
-    {
+	public class ReportModel : ModelBase {
 		public ApplicationModel application;
 		public DateTime startTime;
 		public DateTime endTime;
@@ -31,7 +30,7 @@ namespace AppStatisticsCommon.Models.Reporting {
 
 			exceptions = new List<ExceptionModel>();
 			dynamic[] rawExceptionList = data.Exceptions;
-			foreach(var d in rawExceptionList) {
+			foreach (var d in rawExceptionList) {
 				ExceptionModel exception = new ExceptionModel();
 				exception.fromRaw(d);
 				exceptions.Add(exception);

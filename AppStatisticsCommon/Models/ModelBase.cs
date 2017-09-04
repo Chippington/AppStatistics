@@ -4,10 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AppStatisticsCommon.Models
-{
-    public class ModelBase
-    {
+namespace AppStatisticsCommon.Models {
+	public class ModelBase {
 		private string _guid;
 		public string guid {
 			get {

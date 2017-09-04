@@ -8,14 +8,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace AppStatisticsCore
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            BuildWebHost2(args).Run();
-        }
+namespace AppStatisticsCore {
+	public class Program {
+		public static void Main(string[] args) {
+			BuildWebHost2(args).Run();
+		}
 
 		public static IWebHost BuildWebHost(string[] args) =>
 			WebHost.CreateDefaultBuilder(args)

@@ -11,10 +11,10 @@ namespace AppStatisticsCore.Controllers {
 		public IActionResult Index() {
 			List<ApplicationViewModel> model = new List<ApplicationViewModel>();
 			var applications = Config.store.getApplications();
-			foreach(var app in applications) {
+			foreach (var app in applications) {
 				model.Add(new ApplicationViewModel() {
 					source = app,
-					latestExceptions = Config.store.getExceptions(app).OrderBy(e => e.timeStamp).Take(10).ToList()
+					latestExceptions = Config.store.getExceptions(app).OrderBy(e => e.timeStamp).Reverse().Take(10).ToList()
 				});
 			}
 

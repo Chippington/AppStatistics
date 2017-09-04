@@ -1,11 +1,8 @@
 ﻿using System;
 
-namespace AppStatisticsTest
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
+namespace AppStatisticsTest {
+	class Program {
+		static void Main(string[] args) {
 			System.Threading.Thread.Sleep(5000);
 			AppStatisticsCommon.Logging.Logger.Configure("http://localhost:8964", new AppStatisticsCommon.Models.Reporting.ApplicationModel("Test Application") {
 				guid = "testapp",
@@ -17,7 +14,7 @@ namespace AppStatisticsTest
 				AppStatisticsCommon.Logging.Logger.LogException(exc).Wait();
 			}
 
-            Console.WriteLine("Hello World!");
+			Console.WriteLine("Hello World!");
 			Console.ReadLine();
 		}
 
@@ -28,5 +25,5 @@ namespace AppStatisticsTest
 		public static void f3() => f2();
 		public static void f4() => f3();
 		public static void f5() => f4();
-    }
+	}
 }

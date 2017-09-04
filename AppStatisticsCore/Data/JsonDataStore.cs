@@ -164,16 +164,16 @@ namespace AppStatisticsCore.Data {
 			var startTick = Environment.TickCount;
 			bool exitFlag = false;
 			Exception last = null;
-			while(Environment.TickCount - startTick < 10000 && exitFlag == false) {
+			while (Environment.TickCount - startTick < 10000 && exitFlag == false) {
 				try {
 					File.WriteAllText(rootPath() + applicationsDataFile, Newtonsoft.Json.JsonConvert.SerializeObject(applications));
 					exitFlag = true;
-				} catch(Exception exc) {
+				} catch (Exception exc) {
 					last = exc;
 				}
 			}
 
-			if(exitFlag == false)
+			if (exitFlag == false)
 				throw last;
 		}
 

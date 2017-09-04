@@ -12,7 +12,7 @@ namespace AppStatisticsCommon.Logging {
 	public static class Logger {
 		private static ApplicationModel application;
 		private static string baseURI;
-		
+
 		public static void Configure(string baseURI, ApplicationModel application) {
 			Logger.application = application;
 			Logger.baseURI = baseURI;
