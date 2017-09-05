@@ -6,7 +6,7 @@ namespace AppStatisticsTest {
 			System.Threading.Thread.Sleep(5000);
 			AppStatisticsCommon.Logging.Log.Configure(new AppStatisticsCommon.Logging.Log.LogOptions() {
 				baseURI = "http://localhost/",
-				application = new AppStatisticsCommon.Models.Reporting.ApplicationModel() {
+				application = new AppStatisticsCommon.Models.Reporting.ApplicationDataModel() {
 					guid = "0f0ee0cd-15c8-4f7b-b0b7-bb8794b3735a",
 				},
 			});

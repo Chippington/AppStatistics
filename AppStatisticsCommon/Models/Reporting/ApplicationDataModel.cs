@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using System.IO;
 
 namespace AppStatisticsCommon.Models.Reporting {
-	public class ApplicationModel : ModelBase {
+	public class ApplicationDataModel : ModelBase {
 		public string applicationName;
 		public string description;
 		public DateTime creationDate;
 
-		public ApplicationModel() {
+		public ApplicationDataModel() {
 		}
 
 		public override object toRaw() {

@@ -26,7 +26,7 @@ namespace AppStatisticsCore.Controllers.API.Reporting {
 		// POST: api/Exceptions
 		[HttpPost]
 		public void Post([FromBody]dynamic data) {
-			ExceptionModel exception = new ExceptionModel();
+			ExceptionDataModel exception = new ExceptionDataModel();
 			exception.fromRaw(data);
 
 			Config.store.addException(exception);

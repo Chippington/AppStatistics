@@ -7,7 +7,7 @@ namespace AppStatisticsCommon.Models.Reporting {
 		public Dictionary<string, int> pageHits { get; set; }
 		public Dictionary<string, int> sessionHits { get; set; }
 		public Dictionary<string, int> activity { get; set; }
-		public ApplicationModel application { get; set; }
+		public ApplicationDataModel application { get; set; }
 
 		public TrafficDataModel() { }
 		internal TrafficDataModel(int segments, List<string> trafficData) {
@@ -54,7 +54,7 @@ namespace AppStatisticsCommon.Models.Reporting {
 			pageHits = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, int>>((string)data.PageHits);
 			sessionHits = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, int>>((string)data.PageHits);
 			activity = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, int>>((string)data.PageHits);
-			application = new ApplicationModel();
+			application = new ApplicationDataModel();
 			application.fromRaw(data.Application);
 		}
 	}

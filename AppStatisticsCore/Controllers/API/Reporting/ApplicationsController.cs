@@ -28,7 +28,7 @@ namespace AppStatisticsCore.Controllers.API.Reporting {
 		[HttpPost]
 		public void Post([FromBody]dynamic data) {
 			string name = data.name;
-			var m = new ApplicationModel();
+			var m = new ApplicationDataModel();
 			m.applicationName = name;
 			Config.store.addApplication(m);
 		}

@@ -5,11 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace AppStatisticsCommon.Models.Reporting {
-	public class ReportModel : ModelBase {
-		public ApplicationModel application;
+	public class ReportDataModel : ModelBase {
+		public ApplicationDataModel application;
 		public DateTime startTime;
 		public DateTime endTime;
-		public List<ExceptionModel> exceptions;
+		public List<ExceptionDataModel> exceptions;
 
 		public override dynamic toRaw() {
 			return new {
@@ -22,16 +22,16 @@ namespace AppStatisticsCommon.Models.Reporting {
 		}
 
 		public override void fromRaw(dynamic data) {
-			application = new ApplicationModel();
+			application = new ApplicationDataModel();
 			application.fromRaw(data.Application);
 
 			startTime = data.StartTime;
 			endTime = data.EndTime;
 
-			exceptions = new List<ExceptionModel>();
+			exceptions = new List<ExceptionDataModel>();
 			dynamic[] rawExceptionList = data.Exceptions;
 			foreach (var d in rawExceptionList) {
-				ExceptionModel exception = new ExceptionModel();
+				ExceptionDataModel exception = new ExceptionDataModel();
 				exception.fromRaw(d);
 				exceptions.Add(exception);
 			}

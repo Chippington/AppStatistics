@@ -48,7 +48,7 @@ namespace AppStatisticsCore.Controllers {
 
 		[HttpPost]
 		public IActionResult CreateApplication(string name, string guid, string desc) {
-			var newApp = new ApplicationModel();
+			var newApp = new ApplicationDataModel();
 			newApp.applicationName = name;
 			newApp.description = desc;
 			newApp.creationDate = DateTime.Now;

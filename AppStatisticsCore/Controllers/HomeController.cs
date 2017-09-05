@@ -14,7 +14,20 @@ namespace AppStatisticsCore.Controllers {
 			foreach (var app in applications) {
 				model.Add(new ApplicationViewModel() {
 					source = app,
-					latestExceptions = Config.store.getExceptions(app).OrderBy(e => e.timeStamp).Reverse().Take(10).ToList()
+					latestExceptions = Config.store.getExceptions(app).OrderBy(e => e.timeStamp).Reverse().Take(5).ToList(),
+					traffic = new AppStatisticsCommon.Models.Reporting.TrafficDataModel() {
+						activity = new Dictionary<string, int>() {
+							{ "000", 1 },
+							{ "001", 2 },
+							{ "002", 3 },
+							{ "003", 4 },
+							{ "004", 4 },
+							{ "005", 4 },
+							{ "006", 3 },
+							{ "007", 2 },
+							{ "008", 1 },
+						},
+					}
 				});
 			}
 

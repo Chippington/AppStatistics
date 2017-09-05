@@ -11,53 +11,53 @@ namespace AppStatisticsCore.Data {
 		/// Returns a collection of all application models.
 		/// </summary>
 		/// <returns></returns>
-		IEnumerable<ApplicationModel> getApplications();
+		IEnumerable<ApplicationDataModel> getApplications();
 
 		/// <summary>
 		/// Return the application model associated with the given key.
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		ApplicationModel getApplication(string key);
+		ApplicationDataModel getApplication(string key);
 
 		/// <summary>
 		/// Adds an application to the data store.
 		/// </summary>
 		/// <param name="app"></param>
-		void addApplication(ApplicationModel app);
+		void addApplication(ApplicationDataModel app);
 
 		/// <summary>
 		/// Update the currently stored application model with this one
 		/// </summary>
 		/// <param name="app"></param>
-		void updateApplication(ApplicationModel app);
+		void updateApplication(ApplicationDataModel app);
 
 
 		/// <summary>
 		/// Removes an application from the data store.
 		/// </summary>
 		/// <param name="app"></param>
-		void removeApplication(ApplicationModel app);
+		void removeApplication(ApplicationDataModel app);
 
 		/// <summary>
 		/// Returns a collection of all exceptions.
 		/// </summary>
 		/// <returns></returns>
-		IEnumerable<ExceptionModel> getExceptions(ApplicationModel app);
+		IEnumerable<ExceptionDataModel> getExceptions(ApplicationDataModel app);
 
 		/// <summary>
 		/// Adds an exception to the data store.
 		/// </summary>
 		/// <param name="app"></param>
 		/// <param name="exception"></param>
-		void addException(ExceptionModel exception);
+		void addException(ExceptionDataModel exception);
 
 		/// <summary>
 		/// Returns the exception associated with the given key.
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		ExceptionModel getException(ApplicationModel app, string key);
+		ExceptionDataModel getException(ApplicationDataModel app, string key);
 
 		/// <summary>
 		/// Returns a collection of reports for all applications using the given timeframe.
@@ -65,7 +65,7 @@ namespace AppStatisticsCore.Data {
 		/// <param name="startDate"></param>
 		/// <param name="endDate"></param>
 		/// <returns></returns>
-		IEnumerable<ReportModel> getReports(DateTime startDate, DateTime endDate);
+		IEnumerable<ReportDataModel> getReports(DateTime startDate, DateTime endDate);
 
 		/// <summary>
 		/// Returns a report for a specific application using the given timeframe.
@@ -74,26 +74,26 @@ namespace AppStatisticsCore.Data {
 		/// <param name="startDate"></param>
 		/// <param name="endDate"></param>
 		/// <returns></returns>
-		ReportModel getReport(ApplicationModel app, DateTime startDate, DateTime endDate);
+		ReportDataModel getReport(ApplicationDataModel app, DateTime startDate, DateTime endDate);
 
 		/// <summary>
 		/// Returns a collection of all notification models.
 		/// </summary>
 		/// <returns></returns>
-		IEnumerable<NotificationModel> getNotifications();
+		IEnumerable<NotificationDataModel> getNotifications();
 
 		/// <summary>
 		/// Returns a list of notification models associated with a specific application.
 		/// </summary>
 		/// <param name="app"></param>
 		/// <returns></returns>
-		IEnumerable<NotificationModel> getNotifications(ApplicationModel app);
+		IEnumerable<NotificationDataModel> getNotifications(ApplicationDataModel app);
 
 		/// <summary>
 		/// Returns a notification model associated with the given key.
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		NotificationModel getNotification(string key);
+		NotificationDataModel getNotification(string key);
 	}
 }

@@ -91,7 +91,7 @@
                                     @{ 
                                         var innerExceptions = Model.source.innerExceptions;
                                         foreach (var exc in innerExceptions) {
-                                            @Html.Partial("_ExceptionCard", exc)
+                                            @Html.Partial("_ExceptionCard", new AppStatisticsCore.Models.ExceptionViewModel() { source = exc })
                                         }
                                     }
                                 </div>

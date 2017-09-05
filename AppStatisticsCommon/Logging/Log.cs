@@ -16,7 +16,7 @@ using System.Linq;
 namespace AppStatisticsCommon.Logging {
 	public static class Log {
 		public class LogOptions {
-			public ApplicationModel application;
+			public ApplicationDataModel application;
 			public string baseURI;
 		}
 
@@ -58,7 +58,7 @@ namespace AppStatisticsCommon.Logging {
 				httpClient.DefaultRequestHeaders.Accept.Clear();
 				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-				var exc = new ExceptionModel(exception, options.application);
+				var exc = new ExceptionDataModel(exception, options.application);
 				exc.timeStamp = DateTime.Now;
 				exc.metadata = metadata;
 

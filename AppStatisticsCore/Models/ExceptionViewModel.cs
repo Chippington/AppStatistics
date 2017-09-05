@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace AppStatisticsCore.Models {
 	public class ExceptionViewModel {
-		public ExceptionModel source;
+		public ExceptionDataModel source;
 	}
 }

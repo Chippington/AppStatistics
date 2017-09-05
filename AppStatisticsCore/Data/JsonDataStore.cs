@@ -8,7 +8,7 @@ using AppStatisticsCommon.Models.Reporting.Exceptions;
 
 namespace AppStatisticsCore.Data {
 	public class JsonDataStore : IDataStore {
-		private List<ApplicationModel> applications;
+		private List<ApplicationDataModel> applications;
 		private static string applicationsDataFile = "applications.dat";
 
 
@@ -18,13 +18,13 @@ namespace AppStatisticsCore.Data {
 			loadApplications();
 		}
 
-		public void addApplication(ApplicationModel app) {
+		public void addApplication(ApplicationDataModel app) {
 			applications.Add(app);
 			saveApplications();
 		}
 
-		public void removeApplication(ApplicationModel app) {
-			ApplicationModel match = getApplication(app.guid);
+		public void removeApplication(ApplicationDataModel app) {
+			ApplicationDataModel match = getApplication(app.guid);
 			if (match == null)
 				return;
 
@@ -32,7 +32,7 @@ namespace AppStatisticsCore.Data {
 			saveApplications();
 		}
 
-		public void addException(ExceptionModel exception) {
+		public void addException(ExceptionDataModel exception) {
 			var app = getApplication(exception.application.guid);
 			exception.application = app;
 
@@ -42,7 +42,7 @@ namespace AppStatisticsCore.Data {
 
 			var excSet = loadExceptionSetFile(fpath);
 			if (excSet == null)
-				excSet = new List<ExceptionModel>();
+				excSet = new List<ExceptionDataModel>();
 
 			excSet.Add(exception);
 
@@ -56,7 +56,7 @@ namespace AppStatisticsCore.Data {
 
 			excSet = loadExceptionSetFile(fpath);
 			if (excSet == null)
-				excSet = new List<ExceptionModel>();
+				excSet = new List<ExceptionDataModel>();
 
 			excSet.Add(exception);
 
@@ -66,7 +66,7 @@ namespace AppStatisticsCore.Data {
 			saveExceptionSetFile(fpath, excSet);
 		}
 
-		public ApplicationModel getApplication(string key) {
+		public ApplicationDataModel getApplication(string key) {
 			foreach (var app in applications)
 				if (app.guid == key)
 					return app;
@@ -74,11 +74,11 @@ namespace AppStatisticsCore.Data {
 			return null;
 		}
 
-		public IEnumerable<ApplicationModel> getApplications() {
-			return new List<ApplicationModel>(applications);
+		public IEnumerable<ApplicationDataModel> getApplications() {
+			return new List<ApplicationDataModel>(applications);
 		}
 
-		public ExceptionModel getException(ApplicationModel app, string key) {
+		public ExceptionDataModel getException(ApplicationDataModel app, string key) {
 			var path = Path.Combine(getApplicationDataPath(app), getExceptionSetFileName());
 			var set = loadExceptionSet(path);
 
@@ -92,30 +92,30 @@ namespace AppStatisticsCore.Data {
 			return null;
 		}
 
-		public IEnumerable<ExceptionModel> getExceptions(ApplicationModel app) {
+		public IEnumerable<ExceptionDataModel> getExceptions(ApplicationDataModel app) {
 			var path = Path.Combine(getApplicationDataPath(app), getExceptionSetFileName());
 
 			var excSet = loadExceptionSet(path);
-			return excSet == null ? new List<ExceptionModel>() : excSet;
+			return excSet == null ? new List<ExceptionDataModel>() : excSet;
 		}
 
-		public NotificationModel getNotification(string key) {
+		public NotificationDataModel getNotification(string key) {
 			throw new NotImplementedException();
 		}
 
-		public IEnumerable<NotificationModel> getNotifications() {
+		public IEnumerable<NotificationDataModel> getNotifications() {
 			throw new NotImplementedException();
 		}
 
-		public IEnumerable<NotificationModel> getNotifications(ApplicationModel app) {
+		public IEnumerable<NotificationDataModel> getNotifications(ApplicationDataModel app) {
 			throw new NotImplementedException();
 		}
 
-		public ReportModel getReport(ApplicationModel app, DateTime startDate, DateTime endDate) {
+		public ReportDataModel getReport(ApplicationDataModel app, DateTime startDate, DateTime endDate) {
 			if (startDate > endDate)
 				return null;
 
-			ReportModel report = new ReportModel();
+			ReportDataModel report = new ReportDataModel();
 			report.startTime = startDate;
 			report.endTime = endDate;
 			report.application = app;
@@ -135,23 +135,23 @@ namespace AppStatisticsCore.Data {
 			return report;
 		}
 
-		public IEnumerable<ReportModel> getReports(DateTime startDate, DateTime endDate) {
-			List<ReportModel> reports = new List<ReportModel>();
+		public IEnumerable<ReportDataModel> getReports(DateTime startDate, DateTime endDate) {
+			List<ReportDataModel> reports = new List<ReportDataModel>();
 			foreach (var app in applications)
 				reports.Add(getReport(app, startDate, endDate));
 
 			return reports;
 		}
 
-		private List<ExceptionModel> loadExceptionSetFile(string path) {
+		private List<ExceptionDataModel> loadExceptionSetFile(string path) {
 			if (File.Exists(path) == false)
 				return null;
 
-			return Newtonsoft.Json.JsonConvert.DeserializeObject<List<ExceptionModel>>(
+			return Newtonsoft.Json.JsonConvert.DeserializeObject<List<ExceptionDataModel>>(
 				File.ReadAllText(path));
 		}
 
-		private void saveExceptionSetFile(string path, List<ExceptionModel> exc) {
+		private void saveExceptionSetFile(string path, List<ExceptionDataModel> exc) {
 			if (File.Exists(path))
 				File.Delete(path);
 
@@ -179,10 +179,10 @@ namespace AppStatisticsCore.Data {
 
 		private void loadApplications() {
 			if (File.Exists(rootPath() + applicationsDataFile)) {
-				applications = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ApplicationModel>>(
+				applications = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ApplicationDataModel>>(
 					File.ReadAllText(rootPath() + applicationsDataFile));
 			} else {
-				applications = new List<ApplicationModel>();
+				applications = new List<ApplicationDataModel>();
 			}
 		}
 
@@ -190,7 +190,7 @@ namespace AppStatisticsCore.Data {
 			return Directory.GetCurrentDirectory() + "\\Content\\";
 		}
 
-		public string getApplicationDataPath(ApplicationModel app) {
+		public string getApplicationDataPath(ApplicationDataModel app) {
 			return rootPath() + $"applications\\{app.guid}\\";
 		}
 
@@ -202,22 +202,22 @@ namespace AppStatisticsCore.Data {
 			return $"excset-all.dat";
 		}
 
-		public List<ExceptionModel> loadExceptionSet(string path) {
+		public List<ExceptionDataModel> loadExceptionSet(string path) {
 			if (File.Exists(path) == false)
 				return null;
 
-			return Newtonsoft.Json.JsonConvert.DeserializeObject<List<ExceptionModel>>(
+			return Newtonsoft.Json.JsonConvert.DeserializeObject<List<ExceptionDataModel>>(
 				File.ReadAllText(path));
 		}
 
-		public void saveExceptionSet(string path, List<ExceptionModel> set) {
+		public void saveExceptionSet(string path, List<ExceptionDataModel> set) {
 			if (File.Exists(path))
 				File.Delete(path);
 
 			File.WriteAllText(path, Newtonsoft.Json.JsonConvert.SerializeObject(set));
 		}
 
-		public void updateApplication(ApplicationModel app) {
+		public void updateApplication(ApplicationDataModel app) {
 			if (applications.Contains(app) == false)
 				throw new Exception("This should not have happened.");
 

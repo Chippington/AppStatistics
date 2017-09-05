@@ -7,7 +7,12 @@ using System.Threading.Tasks;
 
 namespace AppStatisticsCore.Models {
 	public class ApplicationViewModel {
-		public ApplicationModel source;
-		public List<ExceptionModel> latestExceptions;
+		public ApplicationDataModel source;
+		public TrafficDataModel traffic;
+		public List<ExceptionDataModel> latestExceptions;
+
+		public ApplicationViewModel() {
+			latestExceptions = new List<ExceptionDataModel>();
+		}
 	}
 }

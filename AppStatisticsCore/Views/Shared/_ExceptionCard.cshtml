@@ -1,30 +1,40 @@
-﻿@model AppStatisticsCommon.Models.Reporting.Exceptions.ExceptionModel
-
+﻿@model AppStatisticsCore.Models.ExceptionViewModel
+@{ 
+    var uri = "";
+    if (Config.store.getException(Model.source.application, Model.source.guid) != null) {
+        uri = Url.Action("Details", "Exceptions", new { appid = Model.source.application.guid, excid = Model.source.guid });
+    }
+}
 <div class="tile">
-    
-    <div class="tile-title">
-        <table style="width:100%">
-            <tbody>
-                <tr>
-                    @{
-                        if (Config.store.getException(Model.application, Model.guid) != null) {
-                            <td><div>@Html.ActionLink(Model.guid, "Details", "Exceptions", 
-                                new { appid = Model.application.guid, excid = Model.guid }, 
-                                new { @class = "btn btn-sm", style = "width:100%; text-align:left" })
-                            </div></td>
-                            <td align="right">Created: @Model.timeStamp.ToString()</td>
-                        } else {
-                            <td>
-                                Exception Details
-                            </td>
-                        }
-                    }
-                </tr>
-            </tbody>
-        </table>
+    <div>
+        @if(uri != "") {
+            <a style="width:100%" class="btn btn-sm" href="@uri">
+                <table style="width:100%">
+                    <tr>
+                        <td style="text-align:left">
+                            <div>@Model.source.guid</div>
+                        </td>
+                        <td align="right">Created: @Model.source.timeStamp.ToString()</td>
+                    </tr>
+                </table>
+            </a>
+
+        } else {
+            <div class="tile-title">
+                <table style="width:100%">
+                    <tr>
+                        <td>
+                            Exception Details
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+        }
+        
     </div>
     <div class="p-10">
-        Time Stamp: @Model.timeStamp<br />
+        Time Stamp: @Model.source.timeStamp<br />
         <br />
         <div class="table-responsive">
             <table class="table table-bordered table-hover tile">
@@ -33,12 +43,12 @@
 
                     <tr>
                         <td width="100px">Message</td>
-                        <td>@Model.message</td>
+                        <td>@Model.source.message</td>
                     </tr>
                     <tr>
                         <td>Stack Trace</td>
                         <td>
-                            @Html.Partial("_StackTrace", Model)
+                            @Html.Partial("_StackTrace", Model.source)
                         </td>
                     </tr>
                 </tbody>
