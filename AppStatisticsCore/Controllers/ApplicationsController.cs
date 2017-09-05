@@ -48,7 +48,8 @@ namespace AppStatisticsCore.Controllers {
 
 		[HttpPost]
 		public IActionResult CreateApplication(string name, string guid, string desc) {
-			var newApp = new ApplicationModel(name);
+			var newApp = new ApplicationModel();
+			newApp.applicationName = name;
 			newApp.description = desc;
 			newApp.creationDate = DateTime.Now;
 			if (guid != null && guid.Trim() != string.Empty)

@@ -1,0 +1,48 @@
+﻿@model AppStatisticsCommon.Models.Reporting.Exceptions.ExceptionModel
+
+<div class="tile">
+    
+    <div class="tile-title">
+        <table style="width:100%">
+            <tbody>
+                <tr>
+                    @{
+                        if (Config.store.getException(Model.application, Model.guid) != null) {
+                            <td><div>@Html.ActionLink(Model.guid, "Details", "Exceptions", 
+                                new { appid = Model.application.guid, excid = Model.guid }, 
+                                new { @class = "btn btn-sm", style = "width:100%; text-align:left" })
+                            </div></td>
+                            <td align="right">Created: @Model.timeStamp.ToString()</td>
+                        } else {
+                            <td>
+                                Exception Details
+                            </td>
+                        }
+                    }
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="p-10">
+        Time Stamp: @Model.timeStamp<br />
+        <br />
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover tile">
+                <thead><tr><td colspan="2"><b>Exception Details</b></td></tr></thead>
+                <tbody>
+
+                    <tr>
+                        <td width="100px">Message</td>
+                        <td>@Model.message</td>
+                    </tr>
+                    <tr>
+                        <td>Stack Trace</td>
+                        <td>
+                            @Html.Partial("_StackTrace", Model)
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

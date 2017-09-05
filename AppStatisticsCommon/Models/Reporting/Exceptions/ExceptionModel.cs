@@ -58,7 +58,7 @@ namespace AppStatisticsCommon.Models.Reporting.Exceptions {
 			hresult = data.HResult;
 			innerExceptions = ((JArray)data.InnerExceptions).ToObject<List<ExceptionModel>>();
 
-			application = new ApplicationModel("");
+			application = new ApplicationModel();
 			application.fromRaw(data.Application);
 		}
 	}

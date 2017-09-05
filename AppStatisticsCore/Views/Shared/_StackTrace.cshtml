@@ -1,0 +1,33 @@
+﻿@model AppStatisticsCommon.Models.Reporting.Exceptions.ExceptionModel
+@{  //Some black magic fuckery goin on here
+    var str = Model.stackTrace;
+    if (str == null) {
+        str = "";
+    }
+    str = str.Trim();
+    var output = true;
+    for (var i = 0; i < str.Length; i++) {
+        if (i < str.Length - 3 && str.Substring(i, 3) == "at ") {
+            if (i > 1) {
+                <br />
+            }
+
+            <b style="color:lightblue">at&nbsp;</b>i += 3;
+            output = true;
+        }
+
+        if (i > 1 && i < str.Length - 3 && str.Substring(i, 3) == " in") {
+            <b style="color:orange">&nbsp;in</b>i += 3;
+            output = true;
+        }
+
+        if (i > 1 && i < str.Length - 5 && str.Substring(i, 5) == ":line") {
+            <b style="color:lime">:line</b>i += 5;
+            output = true;
+        }
+
+        if (output == true) {
+            @str[i] 
+        }
+    }
+}

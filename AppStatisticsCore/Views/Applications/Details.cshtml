@@ -88,61 +88,7 @@
                         
                         <div class="row" style="padding-left:10px; padding-right:10px">
                             @{  foreach (var exc in Model.latestExceptions) {
-                                    <div class="tile">
-                                        <div>@Html.ActionLink(exc.guid, "Details", "Exceptions", new { appid = Model.source.guid, excid = exc.guid }, new { @class = "btn btn-sm", style = "width:100%; text-align:left" })</div>
-                                        <div class="p-10">
-                                            Time Stamp: @exc.timeStamp<br />
-                                            <br />
-                                            <div class="table-responsive">
-                                                <table class="table table-bordered table-hover tile">
-                                                    <thead><tr><td colspan="2"><b>Exception Details</b></td></tr></thead>
-                                                    <tbody>
-                                                        
-                                                        <tr>
-                                                            <td width="100px">Message</td>
-                                                            <td>@exc.message</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Stack Trace</td>
-                                                            <td>
-                                                                @{  //Some black magic fuckery goin on here
-                                                                    var str = exc.stackTrace;
-                                                                    if (str == null) {
-                                                                        str = "";
-                                                                    }
-                                                                    str = str.Trim();
-                                                                    var output = true;
-                                                                    for (var i = 0; i < str.Length; i++) {
-                                                                        if (i < str.Length - 3 && str.Substring(i, 3) == "at ") {
-                                                                            if (i > 1) {
-                                                                                <br />
-}
-
-                                                                            <b style="color:lightblue">at&nbsp;</b>i += 3;
-                                                                            output = true;
-                                                                        }
-
-                                                                        if (i > 1 && i < str.Length - 3 && str.Substring(i, 3) == " in") {
-                                                                            <b style="color:orange">&nbsp;in</b>i += 3;
-                                                                            output = true;
-                                                                        }
-
-                                                                        if (i > 1 && i < str.Length - 5 && str.Substring(i, 5) == ":line") {
-                                                                            <b style="color:lime">:line</b>i += 5;
-                                                                            output = true;
-                                                                        }
-
-                                                                        if (output == true) {
-                                                                            @str[i] }
-                                                                    }
-                                                                }
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    @Html.Partial("_ExceptionCard", exc)
                                 }
                             }
                         </div>

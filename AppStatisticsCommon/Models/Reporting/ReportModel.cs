@@ -22,7 +22,7 @@ namespace AppStatisticsCommon.Models.Reporting {
 		}
 
 		public override void fromRaw(dynamic data) {
-			application = new ApplicationModel("");
+			application = new ApplicationModel();
 			application.fromRaw(data.Application);
 
 			startTime = data.StartTime;

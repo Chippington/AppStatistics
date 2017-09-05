@@ -10,8 +10,7 @@ namespace AppStatisticsCommon.Models.Reporting {
 		public string description;
 		public DateTime creationDate;
 
-		public ApplicationModel(string name) {
-			applicationName = name;
+		public ApplicationModel() {
 		}
 
 		public override object toRaw() {

@@ -51,34 +51,7 @@
                                         <tr>
                                             <td>Stack Trace</td>
                                             <td> 
-                                                @{  //Some black magic fuckery goin on here
-                                                    var str = Model.source.stackTrace.Trim();
-                                                    bool output = true;
-                                                    for (var i = 0; i < str.Length; i++) {
-                                                        if (i < str.Length - 3 && str.Substring(i, 3) == "at ") {
-                                                            if(i > 1) {
-                                                                <br />
-                                                            }
-
-                                                            <b style="color:lightblue">at&nbsp;</b>i += 3;
-                                                            output = true;
-                                                        }
-
-                                                        if (i > 1 && i < str.Length - 3 && str.Substring(i, 3) == " in") {
-                                                            <b style="color:orange">&nbsp;in</b>i += 3;
-                                                            output = true;
-                                                        }
-
-                                                        if (i > 1 && i < str.Length - 5 && str.Substring(i, 5) == ":line") {
-                                                            <b style="color:lime">:line</b>i += 5;
-                                                            output = true;
-                                                        }
-
-                                                        if (output == true) {
-                                                            @str[i]
-                                                        }
-                                                    }
-                                                }
+                                                @Html.Partial("_StackTrace", Model.source)
                                             </td>
                                         </tr>
                                     </tbody>
@@ -100,71 +73,33 @@
                                     </tbody>
                                 </table>
                             </div>
-
-                            @{  if (Model.source.innerExceptions.Count > 0) {
-                                    <br />
-                                    <h5>Inner Exceptions:</h5>}
-                                var innerExceptions = Model.source.innerExceptions;
-                                var ct = 0;
-                                foreach (var exc in innerExceptions) {
-                                    ct++;
-                                    <div class="tile">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered table-hover tile">
-                                                <thead><tr><td colspan="2"><b>Inner Exception Details (@ct)</b></td></tr></thead>
-                                                <tbody>
-
-                                                    <tr>
-                                                        <td width="100px">Message</td>
-                                                        <td>@exc.message</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Stack Trace</td>
-                                                        <td>
-                                                            @{  //Some black magic fuckery goin on here
-                                                                str = exc.stackTrace;
-                                                                if (str == null) {
-                                                                    str = "";
-                                                                }
-                                                                str = str.Trim();
-                                                                output = true;
-                                                                for (var i = 0; i < str.Length; i++) {
-                                                                    if (i < str.Length - 3 && str.Substring(i, 3) == "at ") {
-                                                                        if (i > 1) {
-                                                                            <br />
-}
-
-                                                                        <b style="color:lightblue">at&nbsp;</b>i += 3;
-                                                                        output = true;
-                                                                    }
-
-                                                                    if (i > 1 && i < str.Length - 3 && str.Substring(i, 3) == " in") {
-                                                                        <b style="color:orange">&nbsp;in</b>i += 3;
-                                                                        output = true;
-                                                                    }
-
-                                                                    if (i > 1 && i < str.Length - 5 && str.Substring(i, 5) == ":line") {
-                                                                        <b style="color:lime">:line</b>i += 5;
-                                                                        output = true;
-                                                                    }
-
-                                                                    if (output == true) {
-                                                                        @str[i] }
-                                                                }
-                                                            }
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    }
-                            }
-
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    @{
+        if (Model.source.innerExceptions.Count > 0) {
+            <div class="block-area">
+                <div class="row">
+                    <div class="col-med-8">
+                        <div class="tile">
+                            <div class="tile-title">Inner Exceptions</div>
+                            <div class="p-10">
+                                <div class="row" style="padding-left:10px; padding-right:10px; padding-top:8px">
+                                    @{ 
+                                        var innerExceptions = Model.source.innerExceptions;
+                                        foreach (var exc in innerExceptions) {
+                                            @Html.Partial("_ExceptionCard", exc)
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
 </div>
