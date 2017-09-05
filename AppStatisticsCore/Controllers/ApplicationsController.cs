@@ -23,6 +23,9 @@ namespace AppStatisticsCore.Controllers {
 
 		public IActionResult Details(string appid) {
 			var app = Config.store.getApplication(appid);
+			if (app == null)
+				return RedirectToAction("Index");
+
 			var model = new ApplicationViewModel();
 			model.source = app;
 			model.latestExceptions = Config.store.getExceptions(app).OrderBy(e => e.timeStamp).Reverse().Take(25).ToList();
@@ -33,13 +36,14 @@ namespace AppStatisticsCore.Controllers {
 			return View(model);
 		}
 
-		public IActionResult UpdateApplication(string appid, string appname, string appdesc) {
+		public IActionResult UpdateApplication(string appid, string appname, string appdesc, string appguid) {
 			var app = Config.store.getApplication(appid);
 			app.applicationName = appname;
 			app.description = appdesc;
+			app.guid = appguid;
 			Config.store.updateApplication(app);
 
-			return RedirectToAction("Details", new { appid });
+			return RedirectToAction("Details", new { appid = appguid });
 		}
 
 		[HttpPost]

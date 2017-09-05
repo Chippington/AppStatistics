@@ -218,11 +218,9 @@ namespace AppStatisticsCore.Data {
 		}
 
 		public void updateApplication(ApplicationModel app) {
-			var existing = getApplication(app.guid);
-			if (existing != null)
-				removeApplication(existing);
+			if (applications.Contains(app) == false)
+				throw new Exception("This should not have happened.");
 
-			addApplication(app);
 			saveApplications();
 		}
 	}
