@@ -29,58 +29,50 @@
     })();
 </script>
 
-<div class="block-area">
-    <div class="row">
-        <div class="col-med-8">
-            <div class="tile">
-                <div>
-                    @Html.ActionLink(Model.source.applicationName, "Details", "Applications", 
-                            new { appid = Model.source.guid }, 
-                            new { @class = "btn btn-sm", style = "width:100%; text-align:left" })
-                </div>
-                <div class="p-10">
-                    @if(Model.traffic != null) {
-                        <div>
-                            <div class="col-md-4 col-md-8">
-                                <div class="tile quick-stats">
-                                    <div id="stats-activity" class="pull-left"></div>
-                                    <div class="data">
-                                        <h2 data-value="98">0</h2>
-                                        <small>Tickets Today</small>
-                                    </div>
-                                </div>
-                            </div>
+
+<div class="tile">
+    @Html.ActionLink(Model.source.applicationName, "Details", "Applications", 
+            new { appid = Model.source.guid }, 
+            new { @class = "tile-title", style = "width:100%; text-align:left" })
+    <div class="p-10">
+        @if(Model.traffic != null) {
+            <div>
+                <div class="col-md-4 col-md-8">
+                    <div class="tile quick-stats">
+                        <div id="stats-activity" class="pull-left"></div>
+                        <div class="data">
+                            <h2 data-value="98">0</h2>
+                            <small>Tickets Today</small>
                         </div>
-                    }
-
-                    <div class="table-responsive">
-                        <h4>Latest Exceptions:</h4>
-                        <table class="table table-bordered table-hover tile">
-                            <thead>
-                                <tr>
-                                    <td style="width:100px"></td>
-                                    <td style="width:150px">Time Stamp</td>
-                                    <td>Exception Message</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var exc in Model.latestExceptions) {
-                                    <tr>
-                                        <td style="text-align:center">
-                                            @Html.ActionLink("View Details", "Details", "Exceptions", 
-                                                    new { appid = Model.source.guid, excid = exc.guid }, 
-                                                    new { @class = "btn btn-sm btn-alt"})
-                                        </td>
-
-                                        <td><div style="padding-top:7px">@exc.timeStamp</div></td>
-                                        <td><div style="padding-top:7px">@exc.message</div></td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>
-        </div>
+        }
+        <h4>Latest Exceptions:</h4>
     </div>
+    <div class="table-responsive">
+            <table class="table table-bordered table-hover tile">
+                <thead>
+                    <tr>
+                        <td style="width:100px"></td>
+                        <td style="width:150px">Time Stamp</td>
+                        <td>Exception Message</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var exc in Model.latestExceptions) {
+                        <tr>
+                            <td style="text-align:center">
+                                @Html.ActionLink("View Details", "Details", "Exceptions", 
+                                        new { appid = Model.source.guid, excid = exc.guid }, 
+                                        new { @class = "btn btn-sm btn-alt"})
+                            </td>
+
+                            <td><div style="padding-top:7px">@exc.timeStamp</div></td>
+                            <td><div style="padding-top:7px">@exc.message</div></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
 </div>

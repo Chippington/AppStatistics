@@ -17,7 +17,7 @@ namespace AppStatisticsCommon.Models.Reporting.Exceptions {
 			innerExceptions = new List<ExceptionDataModel>();
 		}
 
-		public ExceptionDataModel(Exception src, ApplicationDataModel app) {
+		public ExceptionDataModel(Exception src, string appid) {
 			innerExceptions = new List<ExceptionDataModel>();
 			message = src.Message;
 			stackTrace = src.StackTrace;
@@ -26,16 +26,16 @@ namespace AppStatisticsCommon.Models.Reporting.Exceptions {
 			List<ExceptionDataModel> inner = new List<ExceptionDataModel>();
 			Exception current = src.InnerException;
 			while (current != null) {
-				inner.Add(new ExceptionDataModel(current, app));
+				inner.Add(new ExceptionDataModel(current, appid));
 				current = current.InnerException;
 			}
 
 			innerExceptions = inner;
-			application = app;
+			applicationID = appid;
 		}
 
 		public Dictionary<string, string> metadata;
-		public ApplicationDataModel application;
+		public string applicationID;
 		public DateTime timeStamp;
 
 		public override object toRaw() {
@@ -46,7 +46,7 @@ namespace AppStatisticsCommon.Models.Reporting.Exceptions {
 				StackTrace = stackTrace,
 				HResult = hresult,
 				InnerExceptions = innerExceptions,
-				Application = application.toRaw(),
+				ApplicationID = applicationID,
 			};
 		}
 
@@ -57,9 +57,7 @@ namespace AppStatisticsCommon.Models.Reporting.Exceptions {
 			stackTrace = data.StackTrace;
 			hresult = data.HResult;
 			innerExceptions = ((JArray)data.InnerExceptions).ToObject<List<ExceptionDataModel>>();
-
-			application = new ApplicationDataModel();
-			application.fromRaw(data.Application);
+			applicationID = data.applicationID;
 		}
 	}
 }

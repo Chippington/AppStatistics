@@ -10,8 +10,8 @@ namespace AppStatisticsCore.Controllers {
 		public IActionResult Details(string appid, string excid) {
 			var app = Config.store.getApplication(appid);
 			var exc = Config.store.getException(app, excid);
-
 			return View(new ExceptionViewModel() {
+				application = app,
 				source = exc,
 			});
 		}

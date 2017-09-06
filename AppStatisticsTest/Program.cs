@@ -4,12 +4,12 @@ namespace AppStatisticsTest {
 	class Program {
 		static void Main(string[] args) {
 			System.Threading.Thread.Sleep(5000);
-			AppStatisticsCommon.Logging.Log.Configure(new AppStatisticsCommon.Logging.Log.LogOptions() {
-				baseURI = "http://localhost/",
-				application = new AppStatisticsCommon.Models.Reporting.ApplicationDataModel() {
-					guid = "0f0ee0cd-15c8-4f7b-b0b7-bb8794b3735a",
-				},
-			});
+			//AppStatisticsCommon.Logging.Log.Configure(new AppStatisticsCommon.Logging.LogOptions() {
+			//	baseURI = "http://localhost/",
+			//	application = new AppStatisticsCommon.Models.Reporting.ApplicationDataModel() {
+			//		guid = "0f0ee0cd-15c8-4f7b-b0b7-bb8794b3735a",
+			//	},
+			//});
 
 			try {
 				f5();

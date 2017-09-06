@@ -14,5 +14,17 @@ namespace AppStatisticsCore.Models {
 		public ApplicationViewModel() {
 			latestExceptions = new List<ExceptionDataModel>();
 		}
+
+		public ApplicationViewModel(ApplicationDataModel source) {
+			this.source = source;
+
+			latestExceptions = new List<ExceptionDataModel>();
+		}
+
+		public ApplicationViewModel(ApplicationDataModel source, int excCount) {
+			this.source = source;
+
+			latestExceptions = Config.store.getExceptions(source).OrderBy(e => e.timeStamp).Reverse().Take(5).ToList();
+		}
 	}
 }

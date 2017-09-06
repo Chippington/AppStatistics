@@ -4,102 +4,48 @@
 }
 <div>
     <input type="text" style="display:none" name="appid" value="@Model.source.guid" />
-    <div class="block-area">
-        <div class="row">
-            <div class="col-med-8">
-                <div class="tile">
-                    <div class="tile-title">
-                        <table style="width:100%">
-                            <tbody>
-                                <tr>
-                                    <td>Exception Details - @Model.source.guid</td>
-                                    <td align="right">Created: @Model.source.timeStamp.ToString()</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="p-10">
-                        <div class="row" style="padding-left:10px; padding-right:10px; padding-top:8px">
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-hover tile">
-                                    <thead><tr><td colspan="2"><b>Application Details - @Html.ActionLink(Model.source.application.guid, "Details", "Applications", new { appid = Model.source.application.guid })</b></td></tr></thead>
-                                    <tbody>
+    <div>
+        @Html.Partial("_ApplicationCard", new AppStatisticsCore.Models.ApplicationViewModel(Model.application, 5)) 
+    </div>
 
-                                        <tr>
-                                            <td width="100px">Name</td>
-                                            <td>@Model.source.application.applicationName</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Description</td>
-                                            <td>
-                                                @Model.source.application.description
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+    <div>
+        @Html.Partial("_ExceptionCard", Model) 
+    </div>
 
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-hover tile">
-                                    <thead><tr><td colspan="2"><b>Exception Details</b></td></tr></thead>
-                                    <tbody>
+    <div>
 
-                                        <tr>
-                                            <td width="100px">Message</td>
-                                            <td>@Model.source.message</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Stack Trace</td>
-                                            <td> 
-                                                @Html.Partial("_StackTrace", Model.source)
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+    </div>
 
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-hover tile">
-                                    <thead><tr><td colspan="2"><b>Exception Metadata</b></td></tr></thead>
-                                    <tbody>
-                                        <tr><td width="200px"><b>Key</b></td><td><b>Value</b></td></tr>
-                                        @{ foreach (var key in Model.source.metadata.Keys) {
-                                                var value = Model.source.metadata[key];
-                                                <tr>
-                                                    <td>@key</td>
-                                                    <td>@value</td>
-                                                </tr>
-                                            }}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="tile">
+        <div class="tile-title">
+            Exception Metadata
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover tile">
+                <tbody>
+                    <tr><td width="200px"><b>Key</b></td><td><b>Value</b></td></tr>
+                    @{ foreach (var key in Model.source.metadata.Keys) {
+                            var value = Model.source.metadata[key];
+                            <tr>
+                                <td>@key</td>
+                                <td>@value</td>
+                            </tr>
+                        }}
+                </tbody>
+            </table>
         </div>
     </div>
+    
     @{
         if (Model.source.innerExceptions.Count > 0) {
-            <div class="block-area">
-                <div class="row">
-                    <div class="col-med-8">
-                        <div class="tile">
-                            <div class="tile-title">Inner Exceptions</div>
-                            <div class="p-10">
-                                <div class="row" style="padding-left:10px; padding-right:10px; padding-top:8px">
-                                    @{ 
-                                        var innerExceptions = Model.source.innerExceptions;
-                                        foreach (var exc in innerExceptions) {
-                                            @Html.Partial("_ExceptionCard", new AppStatisticsCore.Models.ExceptionViewModel() { source = exc })
-                                        }
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+                    var innerExceptions = Model.source.innerExceptions;
+                    var curIndex = 0;
+                    foreach (var exc in innerExceptions) {
+                        exc.guid = "Inner Exception " + (++curIndex).ToString();
+                        @Html.Partial("_ExceptionCard", new AppStatisticsCore.Models.ExceptionViewModel() { source = exc, application = Model.application })
+                    }
+
         }
     }
 </div>

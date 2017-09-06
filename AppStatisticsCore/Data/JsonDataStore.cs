@@ -33,8 +33,7 @@ namespace AppStatisticsCore.Data {
 		}
 
 		public void addException(ExceptionDataModel exception) {
-			var app = getApplication(exception.application.guid);
-			exception.application = app;
+			var app = getApplication(exception.applicationID);
 
 			string dir = getApplicationDataPath(app);
 			string fname = getExceptionSetFileName(DateTime.Now);

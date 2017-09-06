@@ -13,32 +13,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using System.Linq;
 
+
 namespace AppStatisticsCommon.Logging {
 	public static class Log {
-		public class LogOptions {
-			public ApplicationDataModel application;
-			public string baseURI;
-		}
-
-		private static LogOptions _options;
-		private static LogOptions options {
-			get {
-				if (_options == null) {
-					loadOptions();
-				}
-
-				return _options;
-			}
-
-			set {
-				_options = value;
-			}
-		}
-
-		public static void Configure(LogOptions options) {
-			Log.options = options;
-			saveOptions();
-		}
+		internal static LogOptions options;
 
 		public static void StartupConfigureServices(IServiceCollection services) {
 			services.AddCors(options => options.AddPolicy("AllowCors", builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
@@ -58,7 +36,7 @@ namespace AppStatisticsCommon.Logging {
 				httpClient.DefaultRequestHeaders.Accept.Clear();
 				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-				var exc = new ExceptionDataModel(exception, options.application);
+				var exc = new ExceptionDataModel(exception, options.applicationID);
 				exc.timeStamp = DateTime.Now;
 				exc.metadata = metadata;
 
@@ -80,7 +58,7 @@ namespace AppStatisticsCommon.Logging {
 
 				File.AppendAllText(dir + fname, $"{DateTime.Now.ToString("hh:mm:ss")}|{sessionID}|{page}");
 			} catch (Exception exc) {
-				if (options.application != null)
+				if (options.applicationID != null)
 					await LogException(exc, new Dictionary<string, string>() {
 						{ "Session ID", sessionID },
 						{ "Page", page },
@@ -98,7 +76,7 @@ namespace AppStatisticsCommon.Logging {
 				var data = Newtonsoft.Json.JsonConvert.SerializeObject(options);
 				File.WriteAllText(dir + fname, data);
 			} catch (Exception exc) {
-				if (options.application != null)
+				if (options.applicationID != null)
 					LogException(exc, new Dictionary<string, string>() {
 						{ "File name", dir + fname },
 					}).Wait();
@@ -113,9 +91,9 @@ namespace AppStatisticsCommon.Logging {
 				if (File.Exists(fname) == false) return;
 
 				var data = File.ReadAllText(dir + fname);
-				options = Newtonsoft.Json.JsonConvert.DeserializeObject<LogOptions>(data);
+				//options = Newtonsoft.Json.JsonConvert.DeserializeObject<LogOptions>(data);
 			} catch (Exception exc) {
-				if (options.application != null)
+				if (options.applicationID != null)
 					LogException(exc, new Dictionary<string, string>() {
 						{ "File name", dir + fname },
 					}).Wait();

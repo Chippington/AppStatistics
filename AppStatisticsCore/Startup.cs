@@ -7,12 +7,18 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Server.IISIntegration;
+using AppStatisticsCommon.Logging;
 using System.IO;
 
 namespace AppStatisticsCore {
 	public class Startup {
 		public Startup(IConfiguration configuration) {
 			Configuration = configuration;
+			if (Config.store.getApplication("root") == null)
+				Config.store.addApplication(new AppStatisticsCommon.Models.Reporting.ApplicationDataModel() {
+					applicationName = "Application Statistics",
+					guid = "root",
+				});
 		}
 
 		public IConfiguration Configuration { get; }
@@ -29,7 +35,10 @@ namespace AppStatisticsCore {
 				app.UseDeveloperExceptionPage();
 				app.UseBrowserLink();
 			} else {
-				app.UseExceptionHandler("/Home/Error");
+				app.UseExceptionLogging((b) => {
+					b.useCustomErrorHandlingPath("/Home/Error");
+					b.useIndirectTracing("root", "./");
+				});
 			}
 
 			app.UseStaticFiles();
