@@ -14,17 +14,9 @@ using Microsoft.AspNetCore.Hosting;
 using System.Linq;
 
 
-namespace AppStatisticsCommon.Logging {
-	public static class Log {
-		internal static LogOptions options;
-
-		public static void StartupConfigureServices(IServiceCollection services) {
-			services.AddCors(options => options.AddPolicy("AllowCors", builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
-		}
-
-		public static void StartupConfigureApplication(IApplicationBuilder app, IHostingEnvironment env) {
-			app.UseCors("AllowCors");
-		}
+namespace AppStatisticsCommon.Reporting.Exceptions {
+	public static class ExceptionLog {
+		internal static ExceptionLogOptions options;
 
 		public static async Task<HttpStatusCode> LogException(Exception exception) {
 			return await LogException(exception, new Dictionary<string, string>());
@@ -32,11 +24,11 @@ namespace AppStatisticsCommon.Logging {
 
 		public static async Task<HttpStatusCode> LogException(Exception exception, Dictionary<string, string> metadata) {
 			using (var httpClient = new HttpClient()) {
-				httpClient.BaseAddress = new Uri(options.baseURI);
+				httpClient.BaseAddress = new Uri(ReportingConfig.baseURI);
 				httpClient.DefaultRequestHeaders.Accept.Clear();
 				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-				var exc = new ExceptionDataModel(exception, options.applicationID);
+				var exc = new ExceptionDataModel(exception, ReportingConfig.applicationID);
 				exc.timeStamp = DateTime.Now;
 				exc.metadata = metadata;
 
@@ -45,24 +37,6 @@ namespace AppStatisticsCommon.Logging {
 
 				HttpResponseMessage response = await httpClient.PostAsync("reporting/api/Exceptions", stringContent);
 				return response.StatusCode;
-			}
-		}
-
-		public static async Task LogTrafficHit(string sessionID, string page) {
-			try {
-				string dir = getContentPath();
-				string fname = getTrafficFileName(DateTime.Now);
-
-				sessionID = sessionID.Replace("|", "");
-				page = page.Replace("|", "");
-
-				File.AppendAllText(dir + fname, $"{DateTime.Now.ToString("hh:mm:ss")}|{sessionID}|{page}");
-			} catch (Exception exc) {
-				if (options.applicationID != null)
-					await LogException(exc, new Dictionary<string, string>() {
-						{ "Session ID", sessionID },
-						{ "Page", page },
-					});
 			}
 		}
 
@@ -76,7 +50,7 @@ namespace AppStatisticsCommon.Logging {
 				var data = Newtonsoft.Json.JsonConvert.SerializeObject(options);
 				File.WriteAllText(dir + fname, data);
 			} catch (Exception exc) {
-				if (options.applicationID != null)
+				if (ReportingConfig.applicationID != null)
 					LogException(exc, new Dictionary<string, string>() {
 						{ "File name", dir + fname },
 					}).Wait();
@@ -93,22 +67,11 @@ namespace AppStatisticsCommon.Logging {
 				var data = File.ReadAllText(dir + fname);
 				//options = Newtonsoft.Json.JsonConvert.DeserializeObject<LogOptions>(data);
 			} catch (Exception exc) {
-				if (options.applicationID != null)
+				if (ReportingConfig.applicationID != null)
 					LogException(exc, new Dictionary<string, string>() {
 						{ "File name", dir + fname },
 					}).Wait();
 			}
-		}
-
-		internal static List<string> getTrafficData(DateTime date) {
-			string dir = getContentPath();
-			string fname = getTrafficFileName(DateTime.Now);
-
-			if(File.Exists(fname)) {
-				return File.ReadAllLines(fname).ToList();
-			}
-
-			return new List<string>();
 		}
 
 		private static string getContentPath() {

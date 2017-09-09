@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AppStatisticsCommon.Models.Reporting {
-	public class TrafficDataModel : ModelBase {
+namespace AppStatisticsCommon.Models.Reporting.Traffic {
+	public class TrafficReportDataModel : ModelBase {
 		public Dictionary<string, int> pageHits { get; set; }
 		public Dictionary<string, int> sessionHits { get; set; }
 		public Dictionary<string, int> activity { get; set; }
-		public ApplicationDataModel application { get; set; }
+		public string applicationID { get; set; }
 
-		public TrafficDataModel() { }
-		internal TrafficDataModel(int segments, List<string> trafficData) {
+		public TrafficReportDataModel() { }
+		internal TrafficReportDataModel(int segments, List<string> trafficData) {
 			float sectionLength = (60f * 60f * 24f) / segments;
 			activity = new Dictionary<string, int>();
 			foreach(var str in trafficData) {
@@ -46,7 +46,7 @@ namespace AppStatisticsCommon.Models.Reporting {
 				PageHits = Newtonsoft.Json.JsonConvert.SerializeObject(pageHits),
 				SessionHits = Newtonsoft.Json.JsonConvert.SerializeObject(sessionHits),
 				Activity = Newtonsoft.Json.JsonConvert.SerializeObject(activity),
-				Application = application.toRaw(),
+				ApplicationID = applicationID,
 			};
 		}
 
@@ -54,8 +54,7 @@ namespace AppStatisticsCommon.Models.Reporting {
 			pageHits = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, int>>((string)data.PageHits);
 			sessionHits = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, int>>((string)data.PageHits);
 			activity = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, int>>((string)data.PageHits);
-			application = new ApplicationDataModel();
-			application.fromRaw(data.Application);
+			applicationID = (string)data.ApplicationID;
 		}
 	}
 }

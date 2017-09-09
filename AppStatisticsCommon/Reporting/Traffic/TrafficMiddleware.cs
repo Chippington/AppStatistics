@@ -7,36 +7,41 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Diagnostics;
 
-namespace AppStatisticsCommon.Logging
+namespace AppStatisticsCommon.Reporting.Traffic
 {
-    public class LoggingMiddleware
+    class TrafficMiddleware
     {
 		private RequestDelegate _next;
 		private ILogger _logger;
-		private Func<object, Task> _clearCacheHeadersDelegate;
-		private DiagnosticSource _diagnosticSource;
 
-		public LoggingMiddleware(RequestDelegate next, ILoggerFactory loggerFactory) {
+		public TrafficMiddleware(RequestDelegate next, ILoggerFactory loggerFactory) {
 			_next = next;
-			_logger = loggerFactory.CreateLogger<LoggingMiddleware>();
+			_logger = loggerFactory.CreateLogger<TrafficMiddleware>();
 		}
 
 		public async Task Invoke(HttpContext context) {
 			try {
-				var handlerFeature = context.Features.Get<IExceptionHandlerFeature>();
-				if(handlerFeature != null) {
-					Log.LogException(handlerFeature.Error, getMetaData(context)).Start();
-				}
+				var path = context.Request.Path.ToString();
+				var method = context.Request.Method;
+				var sessionid = context.Session.Id;
+				var ipaddress = context.Connection.RemoteIpAddress.ToString();
+				var port = context.Connection.RemotePort.ToString();
+
+				TrafficLog.Trace(path, method, sessionid, $"{ipaddress}:{port}");
 
 				await _next(context);
 			} catch (Exception ex) {
-				throw ex;
+				try {
+					await Exceptions.ExceptionLog.LogException(ex);
+				} catch {
+					throw ex;
+				}
 			}
 		}
 
 		private Dictionary<string, string> getMetaData(HttpContext ctx) {
 			Dictionary<string, string> ret = new Dictionary<string, string>();
-			if(ctx.User != null) {
+			if (ctx.User != null) {
 				if (ctx.User.Identity != null) {
 					ret.Add("User Identity Name", ctx.User.Identity.Name ?? "Null");
 					ret.Add("User Identity Auth Type", ctx.User.Identity.AuthenticationType.ToString());
@@ -53,11 +58,11 @@ namespace AppStatisticsCommon.Logging
 				ret.Add("User Claims", claimStr);
 			}
 
-			if(ctx.Session != null) {
+			if (ctx.Session != null) {
 				ret.Add("Session ID", ctx.Session.Id);
 			}
 
-			if(ctx.Request != null) {
+			if (ctx.Request != null) {
 				StringBuilder sb = new StringBuilder();
 				foreach (var h in ctx.Request.Headers.Keys)
 					sb.AppendLine($"{h}: {ctx.Request.Headers[h]}");

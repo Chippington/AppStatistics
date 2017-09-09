@@ -6,29 +6,28 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Cors;
 
-namespace AppStatisticsCore.Controllers.API.Reporting {
+namespace AppStatisticsCore.Controllers.API {
 	[Produces("application/json")]
 	[EnableCors("AllowCors"), Route("api/[controller]")]
-	public class ReportsController : Controller {
-		// GET: api/Reports
+	public class NotificationsController : Controller {
+		// GET: api/Notifications
 		[HttpGet]
 		public IEnumerable<string> Get() {
 			return new string[] { "value1", "value2" };
 		}
 
-		// GET: api/Reports/5
-		[HttpGet("{id}", Name = "GetReport")]
+		// GET: api/Notifications/5
+		[HttpGet("{id}", Name = "GetNotification")]
 		public string Get(int id) {
 			return "value";
 		}
 
-		// POST: api/Reports
+		// POST: api/Notifications
 		[HttpPost]
-		public void Post([FromBody]dynamic data) {
-			string appID = data.applicationID;
+		public void Post([FromBody]string value) {
 		}
 
-		// PUT: api/Reports/5
+		// PUT: api/Notifications/5
 		[HttpPut("{id}")]
 		public void Put(int id, [FromBody]string value) {
 		}

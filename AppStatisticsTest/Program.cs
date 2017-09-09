@@ -4,7 +4,7 @@ namespace AppStatisticsTest {
 	class Program {
 		static void Main(string[] args) {
 			System.Threading.Thread.Sleep(5000);
-			//AppStatisticsCommon.Logging.Log.Configure(new AppStatisticsCommon.Logging.LogOptions() {
+			//AppStatisticsCommon.Reporting.Exceptions.Log.Configure(new AppStatisticsCommon.Reporting.Exceptions.LogOptions() {
 			//	baseURI = "http://localhost/",
 			//	application = new AppStatisticsCommon.Models.Reporting.ApplicationDataModel() {
 			//		guid = "0f0ee0cd-15c8-4f7b-b0b7-bb8794b3735a",
@@ -14,7 +14,7 @@ namespace AppStatisticsTest {
 			try {
 				f5();
 			} catch (Exception exc) {
-				AppStatisticsCommon.Logging.Log.LogException(exc, new System.Collections.Generic.Dictionary<string, string>() {
+				AppStatisticsCommon.Reporting.Exceptions.ExceptionLog.LogException(exc, new System.Collections.Generic.Dictionary<string, string>() {
 					{ "Test key 1", "Test value 1"},
 					{ "Test key 2", "Test value 2"},
 					{ "Test key 3", "Test value 3"},

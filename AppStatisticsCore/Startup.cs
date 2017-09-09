@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Server.IISIntegration;
-using AppStatisticsCommon.Logging;
+using AppStatisticsCommon.Reporting.Exceptions;
 using System.IO;
 
 namespace AppStatisticsCore {
@@ -35,9 +35,8 @@ namespace AppStatisticsCore {
 				app.UseDeveloperExceptionPage();
 				app.UseBrowserLink();
 			} else {
-				app.UseExceptionLogging((b) => {
-					b.useCustomErrorHandlingPath("/Home/Error");
-					b.useIndirectTracing("root", "./");
+				app.UseExceptionReporting((b) => {
+					b.UseCustomErrorHandlingPath("/Home/Error");
 				});
 			}
 

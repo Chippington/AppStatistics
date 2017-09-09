@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using AppStatisticsCore.Models;
+using AppStatisticsCommon.Models.Reporting.Traffic;
 
 namespace AppStatisticsCore.Controllers {
 	public class HomeController : Controller {
@@ -15,7 +16,7 @@ namespace AppStatisticsCore.Controllers {
 				model.Add(new ApplicationViewModel() {
 					source = app,
 					latestExceptions = Config.store.getExceptions(app).OrderBy(e => e.timeStamp).Reverse().Take(5).ToList(),
-					traffic = new AppStatisticsCommon.Models.Reporting.TrafficDataModel() {
+					traffic = new TrafficReportDataModel() {
 						activity = new Dictionary<string, int>() {
 							{ "000", 1 },
 							{ "001", 2 },

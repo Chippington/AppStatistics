@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Cors;
 using AppStatisticsCommon.Models.Reporting;
 
-namespace AppStatisticsCore.Controllers.API.Reporting {
+namespace AppStatisticsCore.Controllers.API {
 	[Produces("application/json")]
 	[EnableCors("AllowCors"), Route("api/[controller]")]
 	public class ApplicationsController : Controller {
