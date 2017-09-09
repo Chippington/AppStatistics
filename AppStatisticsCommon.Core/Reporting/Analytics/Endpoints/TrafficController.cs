@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Cors;
 using AppStatisticsCommon.Models.Reporting;
 using AppStatisticsCommon.Models.Reporting.Analytics;
 using AppStatisticsCommon.Core.Reporting.Exceptions;
+using AppStatisticsCommon.Reporting.Analytics;
 
 namespace AppStatisticsCommon.Core.Reporting.Analytics.Endpoints {
 	[Produces("application/json")]
