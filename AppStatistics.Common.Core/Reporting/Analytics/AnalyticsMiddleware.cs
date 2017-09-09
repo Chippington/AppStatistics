@@ -25,7 +25,7 @@ namespace AppStatistics.Common.Core.Reporting.Analytics {
 				var path = context.Request.Path.ToString();
 				var method = context.Request.Method;
 				var sessionid = context.Session.Id;
-				var ipaddress = context.Connection.RemoteIpAddress.ToString();
+				var ipaddress = context.Connection.RemoteIpAddress.MapToIPv4().ToString();
 				var port = context.Connection.RemotePort.ToString();
 
 				TraceLog.Trace(path, method, sessionid, $"{ipaddress}:{port}");

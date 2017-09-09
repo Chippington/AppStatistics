@@ -33,36 +33,51 @@ namespace AppStatistics.Core.Data {
 		}
 
 		public void addException(ExceptionDataModel exception) {
-			var app = getApplication(exception.applicationID);
+			try {
+				if (exception.timeStamp == null)
+					exception.timeStamp = DateTime.Now;
 
-			string dir = getApplicationDataPath(app);
-			string fname = getExceptionSetFileName(DateTime.Now);
-			string fpath = Path.Combine(dir, fname);
+				var app = getApplication(exception.applicationID);
 
-			var excSet = loadExceptionSetFile(fpath);
-			if (excSet == null)
-				excSet = new List<ExceptionDataModel>();
+				string dir = getApplicationDataPath(app);
+				string fname = getExceptionSetFileName(DateTime.Now);
+				string fpath = Path.Combine(dir, fname);
 
-			excSet.Add(exception);
+				var excSet = loadExceptionSetFile(fpath);
+				if (excSet == null)
+					excSet = new List<ExceptionDataModel>();
 
-			if (Directory.Exists(dir) == false)
-				Directory.CreateDirectory(dir);
+				excSet.Add(exception);
 
-			saveExceptionSetFile(fpath, excSet);
+				if (Directory.Exists(dir) == false)
+					Directory.CreateDirectory(dir);
 
-			fname = getExceptionSetFileName();
-			fpath = Path.Combine(dir, fname);
+				saveExceptionSetFile(fpath, excSet);
 
-			excSet = loadExceptionSetFile(fpath);
-			if (excSet == null)
-				excSet = new List<ExceptionDataModel>();
+				fname = getExceptionSetFileName();
+				fpath = Path.Combine(dir, fname);
 
-			excSet.Add(exception);
+				excSet = loadExceptionSetFile(fpath);
+				if (excSet == null)
+					excSet = new List<ExceptionDataModel>();
 
-			if (Directory.Exists(dir) == false)
-				Directory.CreateDirectory(dir);
+				excSet.Add(exception);
 
-			saveExceptionSetFile(fpath, excSet);
+				if (Directory.Exists(dir) == false)
+					Directory.CreateDirectory(dir);
+
+				saveExceptionSetFile(fpath, excSet);
+			} catch (Exception exc) {
+				var id = exception.applicationID == null ? "" : exception.applicationID;
+				Config.store.addException(new ExceptionDataModel(exc, "root") {
+					metadata = new Dictionary<string, string>() {
+						{ "Application ID: ", id }
+					},
+					timeStamp = DateTime.Now
+				});
+
+				throw exc;
+			}
 		}
 
 		public ApplicationDataModel getApplication(string key) {
@@ -190,6 +205,12 @@ namespace AppStatistics.Core.Data {
 		}
 
 		public string getApplicationDataPath(ApplicationDataModel app) {
+			if (app == null)
+				throw new ArgumentNullException("app");
+
+			if (app.guid == null)
+				throw new ArgumentNullException("app.guid");
+
 			return rootPath() + $"applications\\{app.guid}\\";
 		}
 

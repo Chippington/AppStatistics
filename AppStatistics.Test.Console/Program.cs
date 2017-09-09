@@ -5,9 +5,9 @@ namespace AppStatisticsTest {
 	class Program {
 		static void Main(string[] args) {
 			System.Threading.Thread.Sleep(5000);
-			//AppStatisticsCommon.Reporting.Exceptions.Log.Configure(new AppStatisticsCommon.Reporting.Exceptions.LogOptions() {
+			//AppStatistics.Common.Reporting.Exceptions.Log.Configure(new AppStatistics.Common.Reporting.Exceptions.LogOptions() {
 			//	baseURI = "http://localhost/",
-			//	application = new AppStatisticsCommon.Models.Reporting.ApplicationDataModel() {
+			//	application = new AppStatistics.Common.Models.Reporting.ApplicationDataModel() {
 			//		guid = "0f0ee0cd-15c8-4f7b-b0b7-bb8794b3735a",
 			//	},
 			//});

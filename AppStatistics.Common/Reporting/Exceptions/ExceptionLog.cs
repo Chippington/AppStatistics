@@ -23,14 +23,15 @@ namespace AppStatistics.Common.Reporting.Exceptions {
 				httpClient.DefaultRequestHeaders.Accept.Clear();
 				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-				var exc = new ExceptionDataModel(exception, ReportingConfig.applicationID);
+				var appid = ReportingConfig.applicationID;
+				var exc = new ExceptionDataModel(exception, appid);
 				exc.timeStamp = DateTime.Now;
 				exc.metadata = metadata;
 
 				var data = Newtonsoft.Json.JsonConvert.SerializeObject(exc.toRaw());
 				StringContent stringContent = new StringContent(data, Encoding.UTF8, "application/json");
 
-				HttpResponseMessage response = await httpClient.PostAsync("reporting/api/Exceptions", stringContent);
+				HttpResponseMessage response = await httpClient.PostAsync("api/Exceptions", stringContent);
 				return response.StatusCode;
 			}
 		}

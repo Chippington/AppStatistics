@@ -1,11 +1,11 @@
-﻿@model AppStatisticsCore.Models.ExceptionViewModel
+﻿@model AppStatistics.Core.Models.ExceptionViewModel
 @{
     ViewData["Title"] = "Details";
 }
 <div>
     <input type="text" style="display:none" name="appid" value="@Model.source.guid" />
     <div>
-        @Html.Partial("_ApplicationCard", new AppStatisticsCore.Models.ApplicationViewModel(Model.application, 5)) 
+        @Html.Partial("_ApplicationCard", new AppStatistics.Core.Models.ApplicationViewModel(Model.application, 5)) 
     </div>
 
     <div>
@@ -43,7 +43,7 @@
                     var curIndex = 0;
                     foreach (var exc in innerExceptions) {
                         exc.guid = "Inner Exception " + (++curIndex).ToString();
-                        @Html.Partial("_ExceptionCard", new AppStatisticsCore.Models.ExceptionViewModel() { source = exc, application = Model.application })
+                        @Html.Partial("_ExceptionCard", new AppStatistics.Core.Models.ExceptionViewModel() { source = exc, application = Model.application })
                     }
 
         }

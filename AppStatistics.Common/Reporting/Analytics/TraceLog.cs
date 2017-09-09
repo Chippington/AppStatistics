@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections;
+using System.Threading.Tasks;
 
 namespace AppStatistics.Common.Reporting.Analytics {
 	public class TraceSet<T> : IEnumerable<T> where T : TraceDataModel {
@@ -168,7 +169,18 @@ namespace AppStatistics.Common.Reporting.Analytics {
 				Directory.CreateDirectory(contentPath);
 
 			string data = (string)m.toRaw();
-			File.AppendAllText(filePath, data + Environment.NewLine);
+
+			Task.Run(() => {
+				bool success = false;
+				while (success == false) {
+					try {
+						File.AppendAllText(filePath, data + Environment.NewLine);
+						success = true;
+					} catch {
+						Task.Delay(100);
+					}
+				}
+			});
 		}
 
 		internal static TraceSet<TraceDataModel> GetTraceLog(DateTime date) {

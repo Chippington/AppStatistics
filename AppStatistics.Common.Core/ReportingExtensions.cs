@@ -14,7 +14,7 @@ using AppStatistics.Common.Reporting.Analytics;
 using AppStatistics.Common.Reporting;
 
 namespace Microsoft.AspNetCore.Builder {
-	public static class ExceptionLoggingExtensions {
+	public static class ReportingExtensions {
 		public static IApplicationBuilder UseExceptionReporting(this IApplicationBuilder app, Action<LogOptionsBuilder> builder) {
 			var optionsBuilder = new LogOptionsBuilder();
 			builder.Invoke(optionsBuilder);
@@ -25,15 +25,15 @@ namespace Microsoft.AspNetCore.Builder {
 				ExceptionHandlingPath = optionsBuilder.options.handlerPath,
 			});
 
-			return app.UseMiddleware<ExceptionLogMiddleware>(optionsBuilder);
+			return app.UseMiddleware<ExceptionLogMiddleware>();
 		}
 
-		public static IApplicationBuilder UseTrafficReporting(this IApplicationBuilder app, Action<TrafficOptionsBuilder> builder) {
-			var optionsBuilder = new TrafficOptionsBuilder();
+		public static IApplicationBuilder UseAnalyticsReporting(this IApplicationBuilder app, Action<AnalyticsOptionsBuilder> builder) {
+			var optionsBuilder = new AnalyticsOptionsBuilder();
 			builder.Invoke(optionsBuilder);
 
 			AnalyticsMiddleware.options = optionsBuilder.options;
-			return app.UseMiddleware<AnalyticsMiddleware>(optionsBuilder);
+			return app.UseMiddleware<AnalyticsMiddleware>();
 		}
 
 		public static IApplicationBuilder UseReportingServices(this IApplicationBuilder app, Action<ReportingOptionsBuilder> builder) {
@@ -43,7 +43,22 @@ namespace Microsoft.AspNetCore.Builder {
 			ReportingConfig.baseURI = optionsBuilder.options.baseURI;
 			ReportingConfig.applicationID = optionsBuilder.options.applicationID;
 			ReportingConfig.contentFolderPath = optionsBuilder.options.contentFolderPath;
+			app.UseSession();
 			return app;
+		}
+	}
+}
+
+namespace Microsoft.Extensions.DependencyInjection {
+	public static class ReportingExtensions {
+
+		public static IServiceCollection AddReportingServices(this IServiceCollection services) {
+			services.AddDistributedMemoryCache();
+			services.AddSession(options => {
+				options.IdleTimeout = TimeSpan.FromSeconds(10);
+				options.Cookie.HttpOnly = true;
+			});
+			return services;
 		}
 	}
 }

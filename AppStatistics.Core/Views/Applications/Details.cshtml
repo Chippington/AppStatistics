@@ -1,4 +1,4 @@
-﻿@model AppStatisticsCore.Models.ApplicationViewModel
+﻿@model AppStatistics.Core.Models.ApplicationViewModel
 @{
     ViewData["Title"] = "Details";
 }
@@ -88,7 +88,7 @@
                         
                         <div class="row" style="padding-left:10px; padding-right:10px">
                             @{  foreach (var exc in Model.latestExceptions) {
-                                    @Html.Partial("_ExceptionCard", new AppStatisticsCore.Models.ExceptionViewModel() { source = exc, application = Model.source })
+                                    @Html.Partial("_ExceptionCard", new AppStatistics.Core.Models.ExceptionViewModel() { source = exc, application = Model.source })
                                 }
                             }
                         </div>

@@ -20,6 +20,18 @@ namespace AppStatistics.Core {
 					applicationName = "Application Statistics",
 					guid = "root",
 				});
+
+			if (Config.store.getApplication("testapp") == null)
+				Config.store.addApplication(new ApplicationDataModel() {
+					applicationName = "Application Statistics",
+					guid = "testapp",
+				});
+
+			if (Config.store.getApplication("testwebapp") == null)
+				Config.store.addApplication(new ApplicationDataModel() {
+					applicationName = "Application Statistics",
+					guid = "testwebapp",
+				});
 		}
 
 		public IConfiguration Configuration { get; }
@@ -28,6 +40,7 @@ namespace AppStatistics.Core {
 		public void ConfigureServices(IServiceCollection services) {
 			services.AddCors(options => options.AddPolicy("AllowCors", builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
 			services.AddMvc();
+			services.AddReportingServices();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

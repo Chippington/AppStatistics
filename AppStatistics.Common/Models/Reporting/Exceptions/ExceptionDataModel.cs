@@ -11,13 +11,19 @@ namespace AppStatistics.Common.Models.Reporting.Exceptions {
 		public string stackTrace;
 		public int hresult;
 
+		public Dictionary<string, string> metadata;
+		public string applicationID;
+		public DateTime timeStamp;
+
 		public List<ExceptionDataModel> innerExceptions;
 
 		public ExceptionDataModel() {
 			innerExceptions = new List<ExceptionDataModel>();
+			metadata = new Dictionary<string, string>();
 		}
 
 		public ExceptionDataModel(Exception src, string appid) {
+			metadata = new Dictionary<string, string>();
 			innerExceptions = new List<ExceptionDataModel>();
 			message = src.Message;
 			stackTrace = src.StackTrace;
@@ -34,9 +40,6 @@ namespace AppStatistics.Common.Models.Reporting.Exceptions {
 			applicationID = appid;
 		}
 
-		public Dictionary<string, string> metadata;
-		public string applicationID;
-		public DateTime timeStamp;
 
 		public override object toRaw() {
 			return new {
@@ -57,7 +60,13 @@ namespace AppStatistics.Common.Models.Reporting.Exceptions {
 			stackTrace = data.StackTrace;
 			hresult = data.HResult;
 			innerExceptions = ((JArray)data.InnerExceptions).ToObject<List<ExceptionDataModel>>();
-			applicationID = data.applicationID;
+			applicationID = data.ApplicationID;
+
+			if (metadata == null)
+				metadata = new Dictionary<string, string>();
+
+			if (innerExceptions == null)
+				innerExceptions = new List<ExceptionDataModel>();
 		}
 	}
 }

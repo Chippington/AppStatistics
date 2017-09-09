@@ -26,10 +26,19 @@ namespace AppStatistics.Core.Controllers.API {
 		// POST: api/Exceptions
 		[HttpPost]
 		public void Post([FromBody]dynamic data) {
-			ExceptionDataModel exception = new ExceptionDataModel();
-			exception.fromRaw(data);
+			try {
+				ExceptionDataModel exception = new ExceptionDataModel();
+				exception.fromRaw(data);
 
-			Config.store.addException(exception);
+				Config.store.addException(exception);
+			} catch(Exception exc) {
+				Config.store.addException(new ExceptionDataModel(exc, "root") {
+					timeStamp = DateTime.Now,
+					metadata = new Dictionary<string, string>() {
+						{ "raw", Newtonsoft.Json.JsonConvert.SerializeObject(data) }
+					}
+				});
+			}
 		}
 
 		// DELETE: api/ApiWithActions/5
