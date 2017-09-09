@@ -4,20 +4,19 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Cors;
 using AppStatisticsCommon.Models.Reporting;
-using AppStatisticsCommon.Models.Reporting.Traffic;
+using AppStatisticsCommon.Models.Reporting.Analytics;
 using AppStatisticsCommon.Reporting.Exceptions;
 
-namespace AppStatisticsCommon.Reporting.Traffic.Endpoints {
+namespace AppStatisticsCommon.Reporting.Analytics.Endpoints {
 	[Produces("application/json")]
 	[EnableCors("AllowCors"), Route("api/[controller]")]
 	public class TrafficController : Controller {
 		[HttpGet]
 		public object GetActivityByDate([FromQuery]int segments, [FromQuery]string dateTime) {
-			DateTime date;
 			TrafficReportDataModel model = new TrafficReportDataModel();
-			if (DateTime.TryParse(dateTime, out date)) {
-
-			}
+			DateTime date;
+			if(DateTime.TryParse(dateTime, out date))
+				return TrafficLog.GetReport(segments, date);
 
 			return model.toRaw();
 		}
@@ -26,9 +25,8 @@ namespace AppStatisticsCommon.Reporting.Traffic.Endpoints {
 		public object GetActivityByRange([FromQuery]int segments, [FromQuery]string startTime, [FromQuery]string endTime) {
 			TrafficReportDataModel model = new TrafficReportDataModel();
 			DateTime startDateTime, endDateTime;
-			if (DateTime.TryParse(startTime, out startDateTime) && DateTime.TryParse(endTime, out endDateTime)) {
-
-			}
+			if (DateTime.TryParse(startTime, out startDateTime) && DateTime.TryParse(endTime, out endDateTime))
+				return TrafficLog.GetReport(segments, startDateTime, endDateTime);
 
 			return model.toRaw();
 		}
@@ -36,8 +34,10 @@ namespace AppStatisticsCommon.Reporting.Traffic.Endpoints {
 		[HttpGet]
 		public object GetActivityRelative([FromQuery]int segments, [FromQuery]int minutes) {
 			TrafficReportDataModel model = new TrafficReportDataModel();
+			DateTime startDateTime = DateTime.Now.AddMinutes(-1 * minutes);
+			DateTime endDateTime = DateTime.Now;
 
-			return model.toRaw();
+			return TrafficLog.GetReport(segments, startDateTime, endDateTime);
 		}
 	}
 }

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using AppStatisticsCommon.Reporting.Exceptions;
-using AppStatisticsCommon.Reporting.Traffic;
+using AppStatisticsCommon.Reporting.Analytics;
 using AppStatisticsCommon.Reporting;
 
 namespace Microsoft.AspNetCore.Builder {
@@ -30,7 +30,7 @@ namespace Microsoft.AspNetCore.Builder {
 
 			TrafficLog.options = optionsBuilder.options;
 
-			return app.UseMiddleware<TrafficMiddleware>(optionsBuilder);
+			return app.UseMiddleware<AnalyticsMiddleware>(optionsBuilder);
 		}
 
 		public static IApplicationBuilder UseReportingServices(this IApplicationBuilder app, string baseURI, string appID) {

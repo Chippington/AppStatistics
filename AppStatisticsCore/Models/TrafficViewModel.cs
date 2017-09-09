@@ -1,5 +1,5 @@
 ﻿using AppStatisticsCommon.Models.Reporting;
-using AppStatisticsCommon.Models.Reporting.Traffic;
+using AppStatisticsCommon.Models.Reporting.Analytics;
 using System;
 using System.Collections.Generic;
 using System.Linq;

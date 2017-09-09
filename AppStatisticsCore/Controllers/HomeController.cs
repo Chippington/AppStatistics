@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using AppStatisticsCore.Models;
-using AppStatisticsCommon.Models.Reporting.Traffic;
+using AppStatisticsCommon.Models.Reporting.Analytics;
 
 namespace AppStatisticsCore.Controllers {
 	public class HomeController : Controller {

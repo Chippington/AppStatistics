@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AppStatisticsCommon.Models.Reporting.Traffic {
+namespace AppStatisticsCommon.Models.Reporting.Analytics {
 	public class TraceDataModel : ModelBase {
 		public string path;
 		public string method;

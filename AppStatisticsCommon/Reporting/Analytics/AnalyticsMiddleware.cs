@@ -7,16 +7,16 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Diagnostics;
 
-namespace AppStatisticsCommon.Reporting.Traffic
+namespace AppStatisticsCommon.Reporting.Analytics
 {
-    class TrafficMiddleware
+    class AnalyticsMiddleware
     {
 		private RequestDelegate _next;
 		private ILogger _logger;
 
-		public TrafficMiddleware(RequestDelegate next, ILoggerFactory loggerFactory) {
+		public AnalyticsMiddleware(RequestDelegate next, ILoggerFactory loggerFactory) {
 			_next = next;
-			_logger = loggerFactory.CreateLogger<TrafficMiddleware>();
+			_logger = loggerFactory.CreateLogger<AnalyticsMiddleware>();
 		}
 
 		public async Task Invoke(HttpContext context) {
@@ -27,7 +27,7 @@ namespace AppStatisticsCommon.Reporting.Traffic
 				var ipaddress = context.Connection.RemoteIpAddress.ToString();
 				var port = context.Connection.RemotePort.ToString();
 
-				TrafficLog.Trace(path, method, sessionid, $"{ipaddress}:{port}");
+				TraceLog.Trace(path, method, sessionid, $"{ipaddress}:{port}");
 
 				await _next(context);
 			} catch (Exception ex) {

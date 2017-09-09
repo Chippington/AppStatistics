@@ -1,12 +1,12 @@
-﻿using AppStatisticsCommon.Models.Reporting.Traffic;
-using System;
+﻿using AppStatisticsCommon.Models.Reporting.Analytics;
 using System.Collections.Generic;
+using System;
 using System.IO;
 using System.Text;
 using System.Collections;
 
-namespace AppStatisticsCommon.Reporting.Traffic {
-	internal class TraceLog<T> : IEnumerable<T> where T : TraceDataModel {
+namespace AppStatisticsCommon.Reporting.Analytics {
+	internal class TraceSet<T> : IEnumerable<T> where T : TraceDataModel {
 		internal class Enumerator : IEnumerator<TraceDataModel> {
 			internal TraceDataModel current;
 			internal StreamReader reader;
@@ -44,13 +44,13 @@ namespace AppStatisticsCommon.Reporting.Traffic {
 			object IEnumerator.Current => current;
 
 			public void Dispose() {
-				if(stream != null)
+				if (stream != null)
 					stream.Dispose();
 
-				if(reader != null)
+				if (reader != null)
 					reader.Dispose();
 
-				if(string.IsNullOrEmpty(filePaths[fileIndex]) == false) {
+				if (string.IsNullOrEmpty(filePaths[fileIndex]) == false) {
 					if (File.Exists(filePaths[fileIndex]))
 						File.Delete(filePaths[fileIndex]);
 				}
@@ -61,7 +61,7 @@ namespace AppStatisticsCommon.Reporting.Traffic {
 
 			public bool MoveNext() {
 				current = null;
-				if (string.IsNullOrEmpty(contentFolder) || 
+				if (string.IsNullOrEmpty(contentFolder) ||
 					string.IsNullOrEmpty(filePaths[fileIndex]))
 					return false;
 
@@ -85,7 +85,7 @@ namespace AppStatisticsCommon.Reporting.Traffic {
 				current.fromRaw(data);
 
 				DateTime timeStamp;
-				if(string.IsNullOrEmpty(current.timestamp) == false && 
+				if (string.IsNullOrEmpty(current.timestamp) == false &&
 					DateTime.TryParse(current.timestamp, out timeStamp)) {
 
 					if (timeStamp <= startTime)
@@ -127,14 +127,14 @@ namespace AppStatisticsCommon.Reporting.Traffic {
 		public DateTime startTime;
 		public DateTime endTime;
 
-		public TraceLog(string contentFolder, List<string> dataFiles, DateTime dateTime) {
+		public TraceSet(string contentFolder, List<string> dataFiles, DateTime dateTime) {
 			this.startTime = dateTime.Date;
 			this.endTime = dateTime.Date.AddDays(1);
 			this.filePaths = dataFiles;
 			this.contentFolder = contentFolder;
 		}
 
-		public TraceLog(string contentFolder, List<string> dataFiles, DateTime startTime, DateTime endTime) {
+		public TraceSet(string contentFolder, List<string> dataFiles, DateTime startTime, DateTime endTime) {
 			this.startTime = startTime;
 			this.endTime = endTime;
 			this.filePaths = dataFiles;
@@ -142,7 +142,7 @@ namespace AppStatisticsCommon.Reporting.Traffic {
 		}
 
 		public IEnumerator<T> GetEnumerator() {
-			return (IEnumerator<T>) new Enumerator(contentFolder, filePaths, startTime, endTime);
+			return (IEnumerator<T>)new Enumerator(contentFolder, filePaths, startTime, endTime);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() {
@@ -150,9 +150,9 @@ namespace AppStatisticsCommon.Reporting.Traffic {
 		}
 	}
 
+	public static class TraceLog {
+		static AnalyticsOptions options => TrafficLog.options;
 
-	public static class TrafficLog {
-		public static TrafficOptions options;
 		public static void Trace(string path, string method, string sessionID, string ipaddress) {
 			string datetime = DateTime.Now.ToString();
 
@@ -173,35 +173,35 @@ namespace AppStatisticsCommon.Reporting.Traffic {
 			File.AppendAllText(filePath, data + Environment.NewLine);
 		}
 
-		internal static TraceLog<TraceDataModel> GetTraceLog(DateTime date) {
+		internal static TraceSet<TraceDataModel> GetTraceLog(DateTime date) {
 			date = date.Date;
 			string contentPath = options.contentFolderPath;
 			string filePath = contentPath + getTraceLogFileName(date);
 
 			if (File.Exists(filePath) == false)
-				return new TraceLog<TraceDataModel>(null, null, DateTime.Now);
+				return new TraceSet<TraceDataModel>(null, null, DateTime.Now);
 
-			return new TraceLog<TraceDataModel>(contentPath, new List<string>() {
+			return new TraceSet<TraceDataModel>(contentPath, new List<string>() {
 				filePath
 			}, DateTime.Now);
 		}
 
-		internal static TraceLog<TraceDataModel> GetTraceLog(DateTime startTime, DateTime endTime) {
+		internal static TraceSet<TraceDataModel> GetTraceLog(DateTime startTime, DateTime endTime) {
 			List<string> files = new List<string>();
 			string contentPath = options.contentFolderPath;
 
 			DateTime temp = startTime;
-			while(temp < endTime) {
+			while (temp < endTime) {
 				string filePath = contentPath + getTraceLogFileName(temp);
 
-				if(File.Exists(filePath))
+				if (File.Exists(filePath))
 					files.Add(filePath);
 			}
 
 			if (files.Count == 0)
-				return new TraceLog<TraceDataModel>(null, null, DateTime.Now);
+				return new TraceSet<TraceDataModel>(null, null, DateTime.Now);
 
-			return new TraceLog<TraceDataModel>(contentPath, files, DateTime.Now);
+			return new TraceSet<TraceDataModel>(contentPath, files, DateTime.Now);
 		}
 
 		private static string getTraceLogFileName(DateTime date) {
