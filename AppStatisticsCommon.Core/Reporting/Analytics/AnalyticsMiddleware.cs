@@ -6,11 +6,12 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Diagnostics;
+using AppStatisticsCommon.Reporting.Analytics;
+using AppStatisticsCommon.Reporting.Exceptions;
 
-namespace AppStatisticsCommon.Reporting.Analytics
-{
-    class AnalyticsMiddleware
-    {
+namespace AppStatisticsCommon.Core.Reporting.Analytics {
+	class AnalyticsMiddleware {
+		internal static AnalyticsOptions options;
 		private RequestDelegate _next;
 		private ILogger _logger;
 
@@ -32,7 +33,7 @@ namespace AppStatisticsCommon.Reporting.Analytics
 				await _next(context);
 			} catch (Exception ex) {
 				try {
-					await Exceptions.ExceptionLog.LogException(ex);
+					await ExceptionLog.LogException(ex);
 				} catch {
 					throw ex;
 				}

@@ -21,14 +21,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AppStatisticsCommon\AppStatisticsCommon.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Data\" />
     <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\js\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AppStatisticsCommon.Core\AppStatisticsCommon.Core.csproj" />
+    <ProjectReference Include="..\AppStatisticsCommon\AppStatisticsCommon.csproj" />
   </ItemGroup>
 
 </Project>

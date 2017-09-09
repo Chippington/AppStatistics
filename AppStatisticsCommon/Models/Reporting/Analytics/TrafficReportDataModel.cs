@@ -12,7 +12,7 @@ namespace AppStatisticsCommon.Models.Reporting.Analytics {
 
 		public TrafficReportDataModel() { }
 
-		internal TrafficReportDataModel(int segments, TraceSet<TraceDataModel> traceLog) {
+		public TrafficReportDataModel(int segments, TraceSet<TraceDataModel> traceLog) {
 			float sectionLength = (float)(traceLog.endTime - traceLog.startTime).TotalSeconds / segments;
 			foreach(var trace in traceLog) {
 				recordEntry(trace, sectionLength);

@@ -6,9 +6,11 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Diagnostics;
+using AppStatisticsCommon.Reporting.Exceptions;
 
-namespace AppStatisticsCommon.Reporting.Exceptions {
+namespace AppStatisticsCommon.Core.Reporting.Exceptions {
 	public class ExceptionLogMiddleware {
+		internal static ExceptionLogOptions options;
 		private RequestDelegate _next;
 		private ILogger _logger;
 

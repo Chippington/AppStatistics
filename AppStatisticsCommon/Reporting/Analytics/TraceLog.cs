@@ -6,8 +6,8 @@ using System.Text;
 using System.Collections;
 
 namespace AppStatisticsCommon.Reporting.Analytics {
-	internal class TraceSet<T> : IEnumerable<T> where T : TraceDataModel {
-		internal class Enumerator : IEnumerator<TraceDataModel> {
+	public class TraceSet<T> : IEnumerable<T> where T : TraceDataModel {
+		public class Enumerator : IEnumerator<TraceDataModel> {
 			internal TraceDataModel current;
 			internal StreamReader reader;
 			internal DateTime startTime;
@@ -151,8 +151,6 @@ namespace AppStatisticsCommon.Reporting.Analytics {
 	}
 
 	public static class TraceLog {
-		static AnalyticsOptions options => TrafficLog.options;
-
 		public static void Trace(string path, string method, string sessionID, string ipaddress) {
 			string datetime = DateTime.Now.ToString();
 
@@ -163,7 +161,7 @@ namespace AppStatisticsCommon.Reporting.Analytics {
 			m.ipaddress = ipaddress;
 			m.timestamp = datetime;
 
-			string contentPath = options.contentFolderPath;
+			string contentPath = ReportingConfig.contentFolderPath;
 			string filePath = contentPath + getTraceLogFileName(DateTime.Now);
 
 			if (Directory.Exists(contentPath) == false)
@@ -175,7 +173,7 @@ namespace AppStatisticsCommon.Reporting.Analytics {
 
 		internal static TraceSet<TraceDataModel> GetTraceLog(DateTime date) {
 			date = date.Date;
-			string contentPath = options.contentFolderPath;
+			string contentPath = ReportingConfig.contentFolderPath;
 			string filePath = contentPath + getTraceLogFileName(date);
 
 			if (File.Exists(filePath) == false)
@@ -188,7 +186,7 @@ namespace AppStatisticsCommon.Reporting.Analytics {
 
 		internal static TraceSet<TraceDataModel> GetTraceLog(DateTime startTime, DateTime endTime) {
 			List<string> files = new List<string>();
-			string contentPath = options.contentFolderPath;
+			string contentPath = ReportingConfig.contentFolderPath;
 
 			DateTime temp = startTime;
 			while (temp < endTime) {

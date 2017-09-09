@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace AppStatisticsCommon.Reporting.Analytics
+namespace AppStatisticsCommon.Core.Reporting.Analytics
 {
 	public class AnalyticsOptions {
 		public string contentFolderPath;

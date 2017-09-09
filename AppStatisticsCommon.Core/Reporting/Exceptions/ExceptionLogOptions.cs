@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace AppStatisticsCommon.Reporting.Exceptions {
+namespace AppStatisticsCommon.Core.Reporting.Exceptions {
 	public class ExceptionLogOptions {
 		public string handlerPath;
 	}

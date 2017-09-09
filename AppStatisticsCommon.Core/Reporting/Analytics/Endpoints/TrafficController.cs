@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Cors;
 using AppStatisticsCommon.Models.Reporting;
 using AppStatisticsCommon.Models.Reporting.Analytics;
-using AppStatisticsCommon.Reporting.Exceptions;
+using AppStatisticsCommon.Core.Reporting.Exceptions;
 
-namespace AppStatisticsCommon.Reporting.Analytics.Endpoints {
+namespace AppStatisticsCommon.Core.Reporting.Analytics.Endpoints {
 	[Produces("application/json")]
 	[EnableCors("AllowCors"), Route("api/[controller]")]
 	public class TrafficController : Controller {

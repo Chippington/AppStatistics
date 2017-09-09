@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using AppStatisticsCommon.Core.Reporting.Exceptions;
+using AppStatisticsCommon.Core.Reporting.Analytics;
+using AppStatisticsCommon.Core.Reporting;
 using AppStatisticsCommon.Reporting.Exceptions;
 using AppStatisticsCommon.Reporting.Analytics;
 using AppStatisticsCommon.Reporting;
@@ -16,7 +19,8 @@ namespace Microsoft.AspNetCore.Builder {
 			var optionsBuilder = new LogOptionsBuilder();
 			builder.Invoke(optionsBuilder);
 
-			ExceptionLog.options = optionsBuilder.options;
+			ExceptionLogMiddleware.options = optionsBuilder.options;
+
 			app.UseExceptionHandler(new ExceptionHandlerOptions() {
 				ExceptionHandlingPath = optionsBuilder.options.handlerPath,
 			});
@@ -28,14 +32,17 @@ namespace Microsoft.AspNetCore.Builder {
 			var optionsBuilder = new TrafficOptionsBuilder();
 			builder.Invoke(optionsBuilder);
 
-			TrafficLog.options = optionsBuilder.options;
-
+			AnalyticsMiddleware.options = optionsBuilder.options;
 			return app.UseMiddleware<AnalyticsMiddleware>(optionsBuilder);
 		}
 
-		public static IApplicationBuilder UseReportingServices(this IApplicationBuilder app, string baseURI, string appID) {
-			ReportingConfig.baseURI = baseURI;
-			ReportingConfig.applicationID = appID;
+		public static IApplicationBuilder UseReportingServices(this IApplicationBuilder app, Action<ReportingOptionsBuilder> builder) {
+			var optionsBuilder = new ReportingOptionsBuilder();
+			builder.Invoke(optionsBuilder);
+
+			ReportingConfig.baseURI = optionsBuilder.options.baseURI;
+			ReportingConfig.applicationID = optionsBuilder.options.applicationID;
+			ReportingConfig.contentFolderPath = optionsBuilder.options.contentFolderPath;
 			return app;
 		}
 	}

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace AppStatisticsCommon.Reporting {
-	internal static class ReportingConfig {
-		internal static string baseURI;
-		internal static string applicationID;
+	public static class ReportingConfig {
+		public static string baseURI;
+		public static string applicationID;
+		public static string contentFolderPath;
 	}
 }

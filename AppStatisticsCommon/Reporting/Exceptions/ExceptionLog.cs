@@ -8,16 +8,11 @@ using AppStatisticsCommon.Models.Reporting;
 using AppStatisticsCommon.Models.Reporting.Exceptions;
 using System.Threading.Tasks;
 using System.IO;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using System.Linq;
 
 
 namespace AppStatisticsCommon.Reporting.Exceptions {
 	public static class ExceptionLog {
-		internal static ExceptionLogOptions options;
-
 		public static async Task<HttpStatusCode> LogException(Exception exception) {
 			return await LogException(exception, new Dictionary<string, string>());
 		}
@@ -37,40 +32,6 @@ namespace AppStatisticsCommon.Reporting.Exceptions {
 
 				HttpResponseMessage response = await httpClient.PostAsync("reporting/api/Exceptions", stringContent);
 				return response.StatusCode;
-			}
-		}
-
-		private static void saveOptions() {
-			string dir = getContentPath();
-			string fname = getConfigFileName();
-			try {
-				if (Directory.Exists(dir) == false) Directory.CreateDirectory(dir);
-				if (File.Exists(fname)) File.Delete(fname);
-
-				var data = Newtonsoft.Json.JsonConvert.SerializeObject(options);
-				File.WriteAllText(dir + fname, data);
-			} catch (Exception exc) {
-				if (ReportingConfig.applicationID != null)
-					LogException(exc, new Dictionary<string, string>() {
-						{ "File name", dir + fname },
-					}).Wait();
-			}
-		}
-
-		private static void loadOptions() {
-			string dir = getContentPath();
-			string fname = getConfigFileName();
-			try {
-				if (Directory.Exists(dir) == false) Directory.CreateDirectory(dir);
-				if (File.Exists(fname) == false) return;
-
-				var data = File.ReadAllText(dir + fname);
-				//options = Newtonsoft.Json.JsonConvert.DeserializeObject<LogOptions>(data);
-			} catch (Exception exc) {
-				if (ReportingConfig.applicationID != null)
-					LogException(exc, new Dictionary<string, string>() {
-						{ "File name", dir + fname },
-					}).Wait();
 			}
 		}
 

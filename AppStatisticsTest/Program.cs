@@ -14,7 +14,7 @@ namespace AppStatisticsTest {
 			try {
 				f5();
 			} catch (Exception exc) {
-				AppStatisticsCommon.Reporting.Exceptions.ExceptionLog.LogException(exc, new System.Collections.Generic.Dictionary<string, string>() {
+				AppStatisticsCommon.Core.Reporting.Exceptions.ExceptionLog.LogException(exc, new System.Collections.Generic.Dictionary<string, string>() {
 					{ "Test key 1", "Test value 1"},
 					{ "Test key 2", "Test value 2"},
 					{ "Test key 3", "Test value 3"},

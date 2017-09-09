@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AppStatisticsCommon.Reporting.Analytics.Endpoints {
+namespace AppStatisticsCommon.Core.Reporting.Analytics.Endpoints {
 	public class TraceController : Controller {
 		// GET: api/Applications/5
 		[HttpGet(Name = "GetTraceData")]
