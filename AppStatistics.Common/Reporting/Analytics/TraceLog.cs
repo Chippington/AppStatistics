@@ -51,7 +51,10 @@ namespace AppStatistics.Common.Reporting.Analytics {
 				if (reader != null)
 					reader.Dispose();
 
-				if (string.IsNullOrEmpty(filePaths[fileIndex]) == false) {
+				if (fileIndex >= filePaths.Count)
+					return;
+
+				if (filePaths != null && string.IsNullOrEmpty(filePaths[fileIndex]) == false) {
 					if (File.Exists(filePaths[fileIndex]))
 						File.Delete(filePaths[fileIndex]);
 				}
@@ -62,41 +65,51 @@ namespace AppStatistics.Common.Reporting.Analytics {
 
 			public bool MoveNext() {
 				current = null;
+				if (fileIndex >= filePaths.Count)
+					return false;
+
 				if (string.IsNullOrEmpty(contentFolder) ||
 					string.IsNullOrEmpty(filePaths[fileIndex]))
 					return false;
 
 				if (reader.Peek() < 0)
+					MoveNextFile();
+
+				if (stream == null || reader == null)
 					return false;
 
 				var data = reader.ReadLine();
 				if (string.IsNullOrEmpty(data)) {
-					if (fileIndex + 1 >= filePaths.Count)
-						return false;
-
-					Dispose();
-					fileIndex++;
-
-					stream = File.OpenRead(filePaths[fileIndex]);
-					reader = new StreamReader(stream);
+					MoveNextFile();
 					return MoveNext();
 				}
 
 				current = new TraceDataModel();
 				current.fromRaw(data);
 
-				DateTime timeStamp;
-				if (string.IsNullOrEmpty(current.timestamp) == false &&
-					DateTime.TryParse(current.timestamp, out timeStamp)) {
+				DateTime timeStamp = current.timestamp;
 
-					if (timeStamp <= startTime)
-						return MoveNext();
+				if (timeStamp <= startTime)
+					return MoveNext();
 
-					if (timeStamp >= endTime)
-						return MoveNext();
-				}
+				if (timeStamp >= endTime)
+					return MoveNext();
 
 				return true;
+			}
+
+			private void MoveNextFile() {
+				Dispose();
+				fileIndex++;
+
+				if (fileIndex >= filePaths.Count)
+					return;
+
+				if (File.Exists(filePaths[fileIndex]) == false)
+					return;
+
+				stream = File.OpenRead(filePaths[fileIndex]);
+				reader = new StreamReader(stream);
 			}
 
 			public void Reset() {
@@ -153,7 +166,7 @@ namespace AppStatistics.Common.Reporting.Analytics {
 
 	public static class TraceLog {
 		public static void Trace(string path, string method, string sessionID, string ipaddress) {
-			string datetime = DateTime.Now.ToString();
+			var datetime = DateTime.Now;
 
 			TraceDataModel m = new TraceDataModel();
 			m.path = path;
@@ -183,7 +196,14 @@ namespace AppStatistics.Common.Reporting.Analytics {
 			});
 		}
 
-		internal static TraceSet<TraceDataModel> GetTraceLog(DateTime date) {
+		public static TraceReportDataModel GetReport(DateTime startTime, DateTime endTime) {
+			return new TraceReportDataModel(GetTraceLog(startTime, endTime)) {
+				startTime = startTime,
+				endTime = endTime,
+			};
+		}
+
+		public static TraceSet<TraceDataModel> GetTraceLog(DateTime date) {
 			date = date.Date;
 			string contentPath = ReportingConfig.contentFolderPath;
 			string filePath = contentPath + getTraceLogFileName(date);
@@ -196,20 +216,22 @@ namespace AppStatistics.Common.Reporting.Analytics {
 			}, DateTime.Now);
 		}
 
-		internal static TraceSet<TraceDataModel> GetTraceLog(DateTime startTime, DateTime endTime) {
+		public static TraceSet<TraceDataModel> GetTraceLog(DateTime startTime, DateTime endTime) {
 			List<string> files = new List<string>();
 			string contentPath = ReportingConfig.contentFolderPath;
 
 			DateTime temp = startTime;
-			while (temp < endTime) {
+			while (temp.Date <= endTime.Date) {
 				string filePath = contentPath + getTraceLogFileName(temp);
 
 				if (File.Exists(filePath))
 					files.Add(filePath);
+
+				temp = temp.AddDays(1);
 			}
 
 			if (files.Count == 0)
-				return new TraceSet<TraceDataModel>(null, null, DateTime.Now);
+				return new TraceSet<TraceDataModel>(contentPath, new List<string>(), DateTime.Now);
 
 			return new TraceSet<TraceDataModel>(contentPath, files, DateTime.Now);
 		}

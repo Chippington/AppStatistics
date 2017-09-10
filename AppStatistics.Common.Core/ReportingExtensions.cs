@@ -43,6 +43,7 @@ namespace Microsoft.AspNetCore.Builder {
 			ReportingConfig.baseURI = optionsBuilder.options.baseURI;
 			ReportingConfig.applicationID = optionsBuilder.options.applicationID;
 			ReportingConfig.contentFolderPath = optionsBuilder.options.contentFolderPath;
+			app.UseCors("AllowCors");
 			app.UseSession();
 			return app;
 		}
@@ -53,6 +54,7 @@ namespace Microsoft.Extensions.DependencyInjection {
 	public static class ReportingExtensions {
 
 		public static IServiceCollection AddReportingServices(this IServiceCollection services) {
+			services.AddCors(options => options.AddPolicy("AllowCors", builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
 			services.AddDistributedMemoryCache();
 			services.AddSession(options => {
 				options.IdleTimeout = TimeSpan.FromSeconds(10);

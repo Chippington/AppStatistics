@@ -65,14 +65,20 @@ namespace AppStatistics.Core {
 
 			if (Config.store.GetApplication("testapp") == null)
 				Config.store.AddApplication(new ApplicationDataModel() {
-					applicationName = "Application Statistics",
+					applicationName = "Test Application",
 					guid = "testapp",
 				});
 
 			if (Config.store.GetApplication("testwebapp") == null)
 				Config.store.AddApplication(new ApplicationDataModel() {
-					applicationName = "Application Statistics",
+					applicationName = "Test ASP.NET Core 2.0 Application",
 					guid = "testwebapp",
+				});
+
+			if (Config.store.GetApplication("testwebapp2") == null)
+				Config.store.AddApplication(new ApplicationDataModel() {
+					applicationName = "Test ASP.NET WebForms Application",
+					guid = "testwebapp2",
 				});
 		}
 	}

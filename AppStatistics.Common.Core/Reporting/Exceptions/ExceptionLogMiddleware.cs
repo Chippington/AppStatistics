@@ -24,14 +24,14 @@ namespace AppStatistics.Common.Core.Reporting.Exceptions {
 				var handlerFeature = context.Features.Get<IExceptionHandlerFeature>();
 				if (handlerFeature != null && handlerFeature.Error != null) {
 					var task = Task.Run(async () => {
-						await ExceptionLog.LogException(handlerFeature.Error, getMetaData(context));
+						await ExceptionLog.LogExceptionAsync(handlerFeature.Error, getMetaData(context));
 					});
 				}
 
 				try {
 					await _next(context);
 				} catch (Exception exc) {
-					await ExceptionLog.LogException(exc, getMetaData(context));
+					await ExceptionLog.LogExceptionAsync(exc, getMetaData(context));
 				}
 			} catch (Exception ex) {
 				throw ex;

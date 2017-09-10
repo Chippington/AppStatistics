@@ -1,5 +1,6 @@
 ﻿using AppStatistics.Common.Reporting.Exceptions;
 using System;
+using System.IO;
 
 namespace AppStatisticsTest {
 	class Program {
@@ -13,13 +14,13 @@ namespace AppStatisticsTest {
 			//});
 
 			AppStatistics.Common.Reporting.ReportingConfig.applicationID = "testapp";
-			AppStatistics.Common.Reporting.ReportingConfig.contentFolderPath = "testapp";
+			AppStatistics.Common.Reporting.ReportingConfig.contentFolderPath = Directory.GetCurrentDirectory() + "\\Content";
 			AppStatistics.Common.Reporting.ReportingConfig.baseURI = "http://localhost:14286/";
 
 			try {
 				f5();
 			} catch (Exception exc) {
-				ExceptionLog.LogException(exc, new System.Collections.Generic.Dictionary<string, string>() {
+				ExceptionLog.LogExceptionAsync(exc, new System.Collections.Generic.Dictionary<string, string>() {
 					{ "Test key 1", "Test value 1"},
 					{ "Test key 2", "Test value 2"},
 					{ "Test key 3", "Test value 3"},

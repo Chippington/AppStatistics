@@ -8,14 +8,15 @@ namespace AppStatistics.Common.Models.Reporting.Analytics {
 		public string method;
 		public string ipaddress;
 		public string sessionid;
-		public string timestamp;
+		public DateTime timestamp;
 
 		public TraceDataModel() {
-			path = method = ipaddress = sessionid = timestamp = "";
+			timestamp = DateTime.Now;
+			path = method = ipaddress = sessionid = "";
 		}
 
 		public override dynamic toRaw() {
-			return $"{path}|{method}|{ipaddress}|{sessionid}|{timestamp}";
+			return $"{path}|{method}|{ipaddress}|{sessionid}|{timestamp.ToString()}";
 		}
 
 		public override void fromRaw(dynamic data) {
@@ -25,7 +26,7 @@ namespace AppStatistics.Common.Models.Reporting.Analytics {
 			method = split[1];
 			ipaddress = split[2];
 			sessionid = split[3];
-			timestamp = split[4];
+			timestamp = DateTime.Parse(split[4]);
 		}
 	}
 }

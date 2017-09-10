@@ -17,7 +17,7 @@ namespace AppStatistics.Common.Core.Reporting.Analytics.Endpoints {
 			TrafficReportDataModel model = new TrafficReportDataModel();
 			DateTime date;
 			if(DateTime.TryParse(dateTime, out date))
-				return TrafficLog.GetReport(segments, date);
+				model = TrafficLog.GetReport(segments, date);
 
 			return model.toRaw();
 		}
@@ -27,7 +27,7 @@ namespace AppStatistics.Common.Core.Reporting.Analytics.Endpoints {
 			TrafficReportDataModel model = new TrafficReportDataModel();
 			DateTime startDateTime, endDateTime;
 			if (DateTime.TryParse(startTime, out startDateTime) && DateTime.TryParse(endTime, out endDateTime))
-				return TrafficLog.GetReport(segments, startDateTime, endDateTime);
+				model = TrafficLog.GetReport(segments, startDateTime, endDateTime);
 
 			return model.toRaw();
 		}
