@@ -1,0 +1,88 @@
+﻿<!-- Web Forms help setup page -->
+
+<script>
+    $(document).ready(function () {
+        var vars = getUrlVars();
+        if (vars['section'] != null) {
+            $("#section" + vars['section']).goTo();
+        }
+    });
+
+    (function ($) {
+        $.fn.goTo = function () {
+            $('html, body').animate({
+                scrollTop: $(this).offset().top + 'px'
+            }, 'fast');
+            return this; // for chaining...
+        }
+    })(jQuery);
+
+    function getUrlVars() {
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for (var i = 0; i < hashes.length; i++) {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    }
+</script>
+
+<div>
+    <div class="tile">
+        <div class="tile-title">Table of Contents</div>
+        
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover tile" style="width:100%; margin-bottom:0px">
+
+                        <tbody>
+                            <tr><td>&nbsp;</td></tr>
+                            <tr>
+                                <td><a style="display:block" href="?section=1">Step ONE - Including the AppStatistics.Common.WebForms library</a></td>
+                            </tr>
+                            <tr>
+                                <td><a style="display:block" href="?section=2">Step TWO - Creating the analytics .asmx webservice</a></td>
+                            </tr>
+                            <tr>
+                                <td><a style="display:block" href="?section=3">Step THREE - Configuring the web.config</a></td>
+                            </tr>
+                            <tr><td>&nbsp;</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div class="col-sm-8">
+                <div class="p-10">
+                    Test Text<br />
+                    Line two<br />
+                    etc
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tile" id="section1">
+        <div class="tile-title">Step ONE - Including the AppStatistics.Common.WebForms library</div>
+        <div class="p-10">
+            To use exception logging and analytics reporting, either the 'AppStatistics.Common' or 'AppStatistics.Common.WebForms' assemblies must be included in the project.<br />
+            <label style="color:lightcoral">Note: This may require the framework to be updated to .Net Framework 4.6+.</label><br />
+            <br />
+            If using the 'AppStatistics.Common' library for exception reporting (direct exception logging):
+            <ul>
+                <li>Configuration can be done through the 'AppStatistics.Common.Reporting.ReportingConfig' static instance</li>
+                <li>Analytics is not currently available with this option</li>
+            </ul>
+        </div>
+    </div>
+    <div class="tile" id="section2">
+        <div class="tile-title">Step TWO - Creating the analytics .asmx webservice</div>
+        <div class="p-10"></div>
+    </div>
+    <div class="tile" id="section3">
+        <div class="tile-title">Step THREE - Configuring the web.config</div>
+        <div class="p-10"></div>
+    </div>
+</div>

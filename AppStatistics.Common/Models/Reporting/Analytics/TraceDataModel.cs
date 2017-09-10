@@ -9,6 +9,7 @@ namespace AppStatistics.Common.Models.Reporting.Analytics {
 		public string ipaddress;
 		public string sessionid;
 		public DateTime timestamp;
+		public Dictionary<string, string> query;
 
 		public TraceDataModel() {
 			timestamp = DateTime.Now;

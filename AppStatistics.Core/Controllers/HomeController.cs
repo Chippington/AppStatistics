@@ -10,6 +10,7 @@ using AppStatistics.Common.Models.Reporting.Analytics;
 namespace AppStatistics.Core.Controllers {
 	public class HomeController : Controller {
 		public IActionResult Index() {
+			return RedirectToAction("WebForms", "Help");
 			List<ApplicationViewModel> model = new List<ApplicationViewModel>();
 			var applications = Config.store.GetAllApplications();
 			foreach (var app in applications) {

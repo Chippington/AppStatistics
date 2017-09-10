@@ -28,7 +28,17 @@ namespace AppStatistics.Common.Core.Reporting.Analytics {
 				var ipaddress = context.Connection.RemoteIpAddress.MapToIPv4().ToString();
 				var port = context.Connection.RemotePort.ToString();
 
-				TraceLog.Trace(path, method, sessionid, $"{ipaddress}:{port}");
+				//TraceLog.Trace(path, method, sessionid, $"{ipaddress}:{port}");
+				var query = context.Request.QueryString;
+				var queryMap = new Dictionary<string, string>();
+
+				TraceLog.Trace(new Common.Models.Reporting.Analytics.TraceDataModel() {
+					sessionid = sessionid,
+					method = method,
+					path = path,
+					ipaddress = $"{ipaddress}:{port}",
+					query = queryMap,
+				});
 			} catch (Exception ex) {
 				throw ex;
 			}

@@ -173,15 +173,9 @@ namespace AppStatistics.Common.Reporting.Analytics {
 	}
 
 	public static class TraceLog {
-		public static void Trace(string path, string method, string sessionID, string ipaddress) {
+		public static void Trace(TraceDataModel traceData) {
 			var datetime = DateTime.Now;
-
-			TraceDataModel m = new TraceDataModel();
-			m.path = path;
-			m.method = method;
-			m.sessionid = sessionID;
-			m.ipaddress = ipaddress;
-			m.timestamp = datetime;
+			traceData.timestamp = datetime;
 
 			string contentPath = ReportingConfig.contentFolderPath;
 			string filePath = contentPath + getTraceLogFileName(DateTime.Now);
@@ -189,7 +183,7 @@ namespace AppStatistics.Common.Reporting.Analytics {
 			if (Directory.Exists(contentPath) == false)
 				Directory.CreateDirectory(contentPath);
 
-			string data = (string)m.toRaw();
+			string data = (string)traceData.toRaw();
 
 			Task.Run(() => {
 				bool success = false;

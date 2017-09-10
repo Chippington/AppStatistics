@@ -9,5 +9,9 @@ namespace AppStatistics.Core.Controllers {
 		public IActionResult Index() {
 			return View();
 		}
+
+		public IActionResult WebForms() {
+			return View();
+		}
 	}
 }
