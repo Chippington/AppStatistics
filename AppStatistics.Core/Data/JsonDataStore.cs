@@ -7,6 +7,10 @@ using AppStatistics.Common.Models.Reporting;
 using AppStatistics.Common.Models.Reporting.Exceptions;
 using AppStatistics.Common.Models.Reporting.Analytics;
 using System.Collections;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net;
+using System.Text;
 
 namespace AppStatistics.Core.Data {
 	public class JsonDataStore : IDataStore {
@@ -39,8 +43,8 @@ namespace AppStatistics.Core.Data {
 					if(app.guid != id) {
 						delete(id);
 						set(app.guid, data);
+						return;
 					}
-					return;
 				}
 
 				source[id] = data;
@@ -385,6 +389,82 @@ namespace AppStatistics.Core.Data {
 
 		public Exception GetLastException() {
 			return last;
+		}
+
+		public TraceReportDataModel GetTraceReport(string appid, DateTime startDate, DateTime endDate) {
+			var app = GetApplication(appid);
+			if (app == null)
+				return null;
+
+			if (string.IsNullOrEmpty(app.analyticsEndpoint))
+				return null;
+
+			using (var httpClient = new HttpClient()) {
+				httpClient.BaseAddress = new Uri(app.analyticsEndpoint);
+				httpClient.DefaultRequestHeaders.Accept.Clear();
+				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+				HttpWebRequest req = (HttpWebRequest)WebRequest.Create(app.analyticsEndpoint + $"/GetActivity");
+				req.Method = "POST";
+				req.ContentType = "application/json";
+
+				using (var sw = new StreamWriter(req.GetRequestStream())) {
+					string json = Newtonsoft.Json.JsonConvert.SerializeObject(new { startDate, endDate });
+					sw.Write(json);
+					sw.Flush();
+				}
+
+				var response = req.GetResponse();
+				var dataStream = response.GetResponseStream();
+				var reader = new StreamReader(dataStream);
+
+				StringBuilder sb = new StringBuilder();
+				while(reader.Peek() >= 0) {
+					sb.AppendLine(reader.ReadLine());
+				}
+
+				var data = sb.ToString();
+				return Newtonsoft.Json.JsonConvert.DeserializeObject<TraceReportDataModel>(data);
+			}
+		}
+
+		public TraceReportDataModel GetSessionReport(string appid, string sessionid) {
+			var app = GetApplication(appid);
+			if (app == null)
+				return null;
+
+			if (string.IsNullOrEmpty(app.analyticsEndpoint))
+				return null;
+
+			using (var httpClient = new HttpClient()) {
+				httpClient.BaseAddress = new Uri(app.analyticsEndpoint);
+				httpClient.DefaultRequestHeaders.Accept.Clear();
+				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+				HttpWebRequest req = (HttpWebRequest)WebRequest.Create(app.analyticsEndpoint + $"/GetSession");
+				req.Method = "POST";
+				req.ContentType = "application/json";
+
+				using (var sw = new StreamWriter(req.GetRequestStream())) {
+					string json = Newtonsoft.Json.JsonConvert.SerializeObject(new { sessionID = sessionid });
+					sw.Write(json);
+					sw.Flush();
+				}
+
+				var response = req.GetResponse();
+				var dataStream = response.GetResponseStream();
+				var reader = new StreamReader(dataStream);
+
+				StringBuilder sb = new StringBuilder();
+				while (reader.Peek() >= 0) {
+					sb.AppendLine(reader.ReadLine());
+				}
+
+				var dataStr = sb.ToString();
+				dynamic data = Newtonsoft.Json.JsonConvert.DeserializeObject(dataStr);
+
+				TraceReportDataModel ret = new TraceReportDataModel();
+				ret.fromRaw(data.d);
+				return ret;
+			}
 		}
 	}
 }

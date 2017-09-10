@@ -30,5 +30,26 @@ namespace AppStatistics.Test.WebForms {
 
 			return model.toRaw();
 		}
+
+		[WebMethod]
+		[ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+		public object GetSession(string sessionID) {
+			var model = new TraceReportDataModel();
+			DateTime startDateTime, endDateTime;
+			startDateTime = DateTime.Now.AddDays(-7);
+			endDateTime = DateTime.Now;
+
+			var set = TraceLog.GetTraceLog(startDateTime, endDateTime);
+			model.startTime = startDateTime;
+			model.endTime = endDateTime;
+			model.traceMap = new Dictionary<string, List<TraceDataModel>>();
+			model.traceMap.Add(sessionID, new List<TraceDataModel>());
+			foreach (var trace in set)
+				if(trace.sessionid == sessionID)
+					model.traceMap[sessionID].Add(trace);
+
+			model.traceMap[sessionID].OrderBy((t) => t.timestamp).ToList();
+			return model.toRaw();
+		}
 	}
 }

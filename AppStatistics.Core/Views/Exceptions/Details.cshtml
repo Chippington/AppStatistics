@@ -33,7 +33,12 @@
                             var value = Model.source.metadata[key];
                             <tr>
                                 <td>@key</td>
-                                <td>@Html.Raw(value.Replace(Environment.NewLine, "<br />").Replace("\r\n", "<br />"))</td>
+
+                                @if(key.ToLower() != "session id" && string.IsNullOrEmpty(Model.sessionActionURI)) {
+                                    <td>@Html.Raw(value.Replace(Environment.NewLine, "<br />").Replace("\r\n", "<br />"))</td>
+                                } else {
+                                    <td><a href="@Model.sessionActionURI">@value</a></td>
+                                }
                             </tr>
                         }}
                 </tbody>

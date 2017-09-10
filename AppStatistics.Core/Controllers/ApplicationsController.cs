@@ -38,8 +38,9 @@ namespace AppStatistics.Core.Controllers {
 			return View(model);
 		}
 
-		public IActionResult UpdateApplication(string appid, string appname, string appdesc, string appguid) {
+		public IActionResult UpdateApplication(string appid, string appname, string appdesc, string appguid, string analyticsendpoint) {
 			var app = Config.store.GetApplication(appid);
+			app.analyticsEndpoint = analyticsendpoint;
 			app.applicationName = appname;
 			app.description = appdesc;
 			app.guid = appguid;

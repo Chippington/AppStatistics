@@ -8,6 +8,7 @@ namespace AppStatistics.Common.Models.Reporting {
 	public class ApplicationDataModel : ModelBase {
 		public string applicationName;
 		public string description;
+		public string analyticsEndpoint;
 		public DateTime creationDate;
 
 		public ApplicationDataModel() {
@@ -18,6 +19,7 @@ namespace AppStatistics.Common.Models.Reporting {
 				Name = applicationName,
 				Description = description,
 				CreationDate = creationDate,
+				AnalyticsEndpoint = analyticsEndpoint,
 				GUID = guid,
 			};
 		}
@@ -26,6 +28,7 @@ namespace AppStatistics.Common.Models.Reporting {
 			applicationName = data.Name;
 			description = data.Description;
 			creationDate = data.CreationDate;
+			analyticsEndpoint = data.AnalyticsEndpoint;
 			guid = data.GUID;
 		}
 	}

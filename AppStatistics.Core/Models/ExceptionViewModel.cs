@@ -9,5 +9,6 @@ namespace AppStatistics.Core.Models {
 	public class ExceptionViewModel {
 		public ApplicationDataModel application;
 		public ExceptionDataModel source;
+		public string sessionActionURI;
 	}
 }

@@ -16,7 +16,7 @@ namespace AppStatistics.Test.WebForms {
 		void Application_Start(object sender, EventArgs e) {
 			AppStatistics.Common.Reporting.ReportingConfig.applicationID = "testwebapp2";
 			AppStatistics.Common.Reporting.ReportingConfig.contentFolderPath = HttpRuntime.AppDomainAppPath + "Content";
-			AppStatistics.Common.Reporting.ReportingConfig.baseURI = "http://localhost/reporting/";
+			AppStatistics.Common.Reporting.ReportingConfig.baseURI = "http://localhost:14286/";
 			// Code that runs on application startup
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
@@ -55,8 +55,8 @@ namespace AppStatistics.Test.WebForms {
 				exc = exc.InnerException;
 
 
-			
-			ExceptionLog.LogException(exc, getMetaData(HttpContext.Current));
+			if(exc != null)
+				ExceptionLog.LogException(exc, getMetaData(HttpContext.Current));
 
 			// Clear the error from the server
 			Server.ClearError();
@@ -91,9 +91,8 @@ namespace AppStatistics.Test.WebForms {
 				}
 			}
 
-			if (ctx.Session != null) {
-				
-				ret.Add("Session ID", ctx.Session.SessionID);
+			if (ctx.Session != null && ctx.Session["analyticsid"] != null) {
+				ret.Add("Session ID", (string)ctx.Session["analyticsid"]);
 			}
 
 			if (ctx.Request != null) {

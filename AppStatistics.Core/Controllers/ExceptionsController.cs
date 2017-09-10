@@ -10,10 +10,22 @@ namespace AppStatistics.Core.Controllers {
 		public IActionResult Details(string appid, string excid) {
 			var app = Config.store.GetApplication(appid);
 			var exc = Config.store.GetException(excid);
-			return View(new ExceptionViewModel() {
-				application = app,
-				source = exc,
-			});
+
+			string sessionID = "";
+			foreach (var key in exc.metadata.Keys)
+				if (key.ToLower() == "session id")
+					sessionID = exc.metadata[key];
+
+			var model = new ExceptionViewModel();
+			model.application = app;
+			model.source = exc;
+			if(sessionID != "") {
+				var sessionReport = Config.store.GetSessionReport(appid, sessionID);
+				if(sessionReport.traceMap.ContainsKey(sessionID))
+					model.sessionActionURI = Url.Action("Details", "Session", new { appid = appid, sessionid = sessionID });
+			}
+
+			return View(model);
 		}
 	}
 }

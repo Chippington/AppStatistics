@@ -32,8 +32,16 @@ namespace AppStatistics.Common.Reporting.Analytics {
 				if (filePaths == null || filePaths.Count == 0)
 					return;
 
-				string tempFileName = getTempFileName();
-				string tempFilePath = getTempFolder() + $"";
+				if (Directory.Exists(getTempFolder()) == false)
+					Directory.CreateDirectory(getTempFolder());
+
+				for(int i = 0; i < filePaths.Count; i++) {
+					string tempFileName = getTempFileName();
+					string tempFilePath = getTempFolder() + "\\" + tempFileName;
+
+					File.Copy(filePaths[i], tempFilePath);
+					filePaths[i] = tempFilePath;
+				}
 
 				stream = File.OpenRead(filePaths[fileIndex]);
 				reader = new StreamReader(stream);
@@ -233,7 +241,7 @@ namespace AppStatistics.Common.Reporting.Analytics {
 			if (files.Count == 0)
 				return new TraceSet<TraceDataModel>(contentPath, new List<string>(), DateTime.Now);
 
-			return new TraceSet<TraceDataModel>(contentPath, files, DateTime.Now);
+			return new TraceSet<TraceDataModel>(contentPath, files, startTime, endTime);
 		}
 
 		private static string getTraceLogFileName(DateTime date) {

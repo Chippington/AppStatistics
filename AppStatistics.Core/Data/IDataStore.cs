@@ -26,6 +26,9 @@ namespace AppStatistics.Core.Data {
 		bool AddTraceData(string sessionID, TraceDataModel traceData);
 		bool DeleteTraceData(string traceID);
 
+		TraceReportDataModel GetTraceReport(string appid, DateTime startDate, DateTime endDate);
+		TraceReportDataModel GetSessionReport(string appid, string sessionid);
+
 		Exception GetLastException();
 
 		///// <summary>
