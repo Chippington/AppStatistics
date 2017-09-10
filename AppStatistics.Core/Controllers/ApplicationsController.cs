@@ -10,11 +10,12 @@ namespace AppStatistics.Core.Controllers {
 	public class ApplicationsController : Controller {
 		public IActionResult Index() {
 			List<ApplicationViewModel> model = new List<ApplicationViewModel>();
-			var applications = Config.store.getApplications();
+			var applications = Config.store.GetAllApplications();
 			foreach (var app in applications) {
 				model.Add(new ApplicationViewModel() {
 					source = app,
-					latestExceptions = Config.store.getExceptions(app).OrderBy(e => e.timeStamp).Reverse().Take(5).ToList()
+					latestExceptions = Config.store.GetExceptionsByApplication(
+						app.guid, DateTime.Now.AddDays(-7), DateTime.Now).OrderBy(e => e.timeStamp).Reverse().Take(5).ToList()
 				});
 			}
 
@@ -22,13 +23,14 @@ namespace AppStatistics.Core.Controllers {
 		}
 
 		public IActionResult Details(string appid) {
-			var app = Config.store.getApplication(appid);
+			var app = Config.store.GetApplication(appid);
 			if (app == null)
 				return RedirectToAction("Index");
 
 			var model = new ApplicationViewModel();
 			model.source = app;
-			model.latestExceptions = Config.store.getExceptions(app).OrderBy(e => e.timeStamp).Reverse().Take(25).ToList();
+			model.latestExceptions = Config.store.GetExceptionsByApplication(
+						app.guid, DateTime.Now.AddDays(-7), DateTime.Now).OrderBy(e => e.timeStamp).Reverse().Take(25).ToList();
 
 			if (model.source.description == null)
 				model.source.description = "";
@@ -37,12 +39,11 @@ namespace AppStatistics.Core.Controllers {
 		}
 
 		public IActionResult UpdateApplication(string appid, string appname, string appdesc, string appguid) {
-			var app = Config.store.getApplication(appid);
+			var app = Config.store.GetApplication(appid);
 			app.applicationName = appname;
 			app.description = appdesc;
 			app.guid = appguid;
-			Config.store.updateApplication(app);
-
+			Config.store.UpdateApplication(appid, app);
 			return RedirectToAction("Details", new { appid = appguid });
 		}
 
@@ -55,7 +56,7 @@ namespace AppStatistics.Core.Controllers {
 			if (guid != null && guid.Trim() != string.Empty)
 				newApp.guid = guid;
 
-			Config.store.addApplication(newApp);
+			Config.store.AddApplication(newApp);
 			return RedirectToAction("Index");
 		}
 	}

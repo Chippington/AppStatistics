@@ -20,12 +20,12 @@ namespace Microsoft.AspNetCore.Builder {
 			builder.Invoke(optionsBuilder);
 
 			ExceptionLogMiddleware.options = optionsBuilder.options;
-
-			app.UseExceptionHandler(new ExceptionHandlerOptions() {
-				ExceptionHandlingPath = optionsBuilder.options.handlerPath,
-			});
-
 			return app.UseMiddleware<ExceptionLogMiddleware>();
+			
+
+			//return app.UseExceptionHandler(new ExceptionHandlerOptions() {
+			//	ExceptionHandlingPath = optionsBuilder.options.handlerPath,
+			//});
 		}
 
 		public static IApplicationBuilder UseAnalyticsReporting(this IApplicationBuilder app, Action<AnalyticsOptionsBuilder> builder) {

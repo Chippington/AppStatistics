@@ -12,6 +12,10 @@ namespace AppStatisticsTest {
 			//	},
 			//});
 
+			AppStatistics.Common.Reporting.ReportingConfig.applicationID = "testapp";
+			AppStatistics.Common.Reporting.ReportingConfig.contentFolderPath = "testapp";
+			AppStatistics.Common.Reporting.ReportingConfig.baseURI = "http://localhost:14286/";
+
 			try {
 				f5();
 			} catch (Exception exc) {

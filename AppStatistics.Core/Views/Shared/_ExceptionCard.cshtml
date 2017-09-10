@@ -1,13 +1,13 @@
 ﻿@model AppStatistics.Core.Models.ExceptionViewModel
 @{
     var uri = "";
-    if (Config.store.getException(Model.application, Model.source.guid) != null) {
+    if (Config.store.GetException(Model.source.guid) != null) {
         uri = Url.Action("Details", "Exceptions", new { appid = Model.application.guid, excid = Model.source.guid });
     }
 }
 <div class="tile">
         @if (uri != "") {
-            <a href="@uri" style="width:100%; color:aqua" class="tile-title">
+            <a href="@uri" style="width:100%" class="tile-title">
                 <strong><span class="left" style="float:left">@Model.source.guid</span></strong>
                     <span class="right" style="float:right">@Model.source.timeStamp.ToString()</span>​
                     

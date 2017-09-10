@@ -14,14 +14,14 @@ namespace AppStatistics.Core.Controllers.API {
 		// GET: api/Applications
 		[HttpGet]
 		public IEnumerable<object> Get() {
-			return (from app in Config.store.getApplications()
+			return (from app in Config.store.GetAllApplications()
 					select app.toRaw());
 		}
 
 		// GET: api/Applications/5
 		[HttpGet("{id}", Name = "GetApplication")]
 		public object Get(string id) {
-			return Config.store.getApplication(id).toRaw();
+			return Config.store.GetApplication(id).toRaw();
 		}
 
 		// POST: api/Applications
@@ -30,7 +30,7 @@ namespace AppStatistics.Core.Controllers.API {
 			string name = data.name;
 			var m = new ApplicationDataModel();
 			m.applicationName = name;
-			Config.store.addApplication(m);
+			Config.store.AddApplication(m);
 		}
 
 		// PUT: api/Applications/5
@@ -41,7 +41,7 @@ namespace AppStatistics.Core.Controllers.API {
 		// DELETE: api/ApiWithActions/5
 		[HttpDelete("{id}")]
 		public void Delete(string id) {
-			Config.store.removeApplication(Config.store.getApplication(id));
+			Config.store.DeleteApplication(id);
 		}
 	}
 }

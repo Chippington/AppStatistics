@@ -5,7 +5,12 @@
 <div>
     <input type="text" style="display:none" name="appid" value="@Model.source.guid" />
     <div>
-        @Html.Partial("_ApplicationCard", new AppStatistics.Core.Models.ApplicationViewModel(Model.application, 5)) 
+        @*@Html.Partial("_ApplicationCard", new AppStatistics.Core.Models.ApplicationViewModel(Model.application, 5))*@ 
+        <div class="tile">
+            <a href="@Url.Action("Details", "Applications", new { appid = Model.source.applicationID })" class="tile-title" style="width:100%">
+                @Html.Raw("<--") @Model.application.applicationName - @Model.application.guid
+            </a>
+        </div>
     </div>
 
     <div>
@@ -28,7 +33,7 @@
                             var value = Model.source.metadata[key];
                             <tr>
                                 <td>@key</td>
-                                <td>@value</td>
+                                <td>@Html.Raw(value.Replace(Environment.NewLine, "<br />").Replace("\r\n", "<br />"))</td>
                             </tr>
                         }}
                 </tbody>

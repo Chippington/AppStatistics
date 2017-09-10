@@ -21,7 +21,7 @@ namespace AppStatistics.Test.Core.Controllers
 
 			throw new Exception("Test Exception");
 
-            return View();
+            //return View();
         }
 
         public IActionResult Contact()

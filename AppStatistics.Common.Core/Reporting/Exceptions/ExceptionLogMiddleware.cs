@@ -22,11 +22,17 @@ namespace AppStatistics.Common.Core.Reporting.Exceptions {
 		public async Task Invoke(HttpContext context) {
 			try {
 				var handlerFeature = context.Features.Get<IExceptionHandlerFeature>();
-				if (handlerFeature != null) {
-					ExceptionLog.LogException(handlerFeature.Error, getMetaData(context)).Start();
+				if (handlerFeature != null && handlerFeature.Error != null) {
+					var task = Task.Run(async () => {
+						await ExceptionLog.LogException(handlerFeature.Error, getMetaData(context));
+					});
 				}
 
-				await _next(context);
+				try {
+					await _next(context);
+				} catch (Exception exc) {
+					await ExceptionLog.LogException(exc, getMetaData(context));
+				}
 			} catch (Exception ex) {
 				throw ex;
 			}
@@ -37,7 +43,7 @@ namespace AppStatistics.Common.Core.Reporting.Exceptions {
 			if (ctx.User != null) {
 				if (ctx.User.Identity != null) {
 					ret.Add("User Identity Name", ctx.User.Identity.Name ?? "Null");
-					ret.Add("User Identity Auth Type", ctx.User.Identity.AuthenticationType.ToString());
+					ret.Add("User Identity Auth Type", ctx.User.Identity.AuthenticationType ?? "Null");
 					ret.Add("User Identity Authenticated", ctx.User.Identity.IsAuthenticated.ToString());
 				}
 
@@ -46,9 +52,10 @@ namespace AppStatistics.Common.Core.Reporting.Exceptions {
 					sb.Append(claim + ", ");
 
 				var claimStr = sb.ToString().Trim();
-				claimStr = claimStr.Substring(0, claimStr.Length - 1);
+				if(claimStr.Length > 2)
+					claimStr = claimStr.Substring(0, claimStr.Length - 1);
 
-				ret.Add("User Claims", claimStr);
+				ret.Add("User Claims", string.IsNullOrEmpty(claimStr) ? "(blank)" : claimStr);
 			}
 
 			if (ctx.Session != null) {
@@ -62,7 +69,9 @@ namespace AppStatistics.Common.Core.Reporting.Exceptions {
 
 				ret.Add("Request Method", ctx.Request.Method);
 				ret.Add("Request Headers", sb.ToString());
-				ret.Add("Request Query", ctx.Request.QueryString.ToString());
+
+				var queryString = ctx.Request.QueryString.ToString();
+				ret.Add("Request Query", string.IsNullOrEmpty(queryString) ? "(blank)" : queryString);
 			}
 
 			return ret;

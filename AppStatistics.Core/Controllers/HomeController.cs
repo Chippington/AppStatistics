@@ -11,11 +11,13 @@ namespace AppStatistics.Core.Controllers {
 	public class HomeController : Controller {
 		public IActionResult Index() {
 			List<ApplicationViewModel> model = new List<ApplicationViewModel>();
-			var applications = Config.store.getApplications();
+			var applications = Config.store.GetAllApplications();
 			foreach (var app in applications) {
 				model.Add(new ApplicationViewModel() {
 					source = app,
-					latestExceptions = Config.store.getExceptions(app).OrderBy(e => e.timeStamp).Reverse().Take(5).ToList(),
+					latestExceptions = Config.store.GetExceptionsByApplication(
+						app.guid, DateTime.Now.AddDays(-7), DateTime.Now).OrderBy(e => e.timeStamp).Reverse().Take(5).ToList(),
+
 					traffic = new TrafficReportDataModel() {
 						activity = new Dictionary<string, int>() {
 							{ "000", 1 },

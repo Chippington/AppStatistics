@@ -15,23 +15,6 @@ namespace AppStatistics.Core {
 	public class Startup {
 		public Startup(IConfiguration configuration) {
 			Configuration = configuration;
-			if (Config.store.getApplication("root") == null)
-				Config.store.addApplication(new ApplicationDataModel() {
-					applicationName = "Application Statistics",
-					guid = "root",
-				});
-
-			if (Config.store.getApplication("testapp") == null)
-				Config.store.addApplication(new ApplicationDataModel() {
-					applicationName = "Application Statistics",
-					guid = "testapp",
-				});
-
-			if (Config.store.getApplication("testwebapp") == null)
-				Config.store.addApplication(new ApplicationDataModel() {
-					applicationName = "Application Statistics",
-					guid = "testwebapp",
-				});
 		}
 
 		public IConfiguration Configuration { get; }
@@ -39,12 +22,24 @@ namespace AppStatistics.Core {
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services) {
 			services.AddCors(options => options.AddPolicy("AllowCors", builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
-			services.AddMvc();
 			services.AddReportingServices();
+			services.AddMvc();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
+			//app.UseReportingServices((b) => {
+			//	b.UseAPI("", "root");
+			//	b.UseContentFolderPath(Directory.GetCurrentDirectory() + "\\Content\\Analytics");
+			//});
+
+			//app.UseExceptionReporting((b) => {
+			//	b.UseCustomErrorHandlingPath("/Home/Error");
+			//});
+
+			//app.UseAnalyticsReporting((b) => {
+			//});
+
 			if (env.IsDevelopment()) {
 				app.UseDeveloperExceptionPage();
 				app.UseBrowserLink();
@@ -61,6 +56,24 @@ namespace AppStatistics.Core {
 					name: "default",
 					template: "{controller=Home}/{action=Index}/{id?}");
 			});
+
+			if (Config.store.GetApplication("root") == null)
+				Config.store.AddApplication(new ApplicationDataModel() {
+					applicationName = "Application Statistics",
+					guid = "root",
+				});
+
+			if (Config.store.GetApplication("testapp") == null)
+				Config.store.AddApplication(new ApplicationDataModel() {
+					applicationName = "Application Statistics",
+					guid = "testapp",
+				});
+
+			if (Config.store.GetApplication("testwebapp") == null)
+				Config.store.AddApplication(new ApplicationDataModel() {
+					applicationName = "Application Statistics",
+					guid = "testwebapp",
+				});
 		}
 	}
 }

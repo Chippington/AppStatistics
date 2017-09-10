@@ -10,7 +10,7 @@ namespace AppStatistics.Common.Models {
 		public string guid {
 			get {
 				if (_guid == null || _guid == string.Empty)
-					_guid = Guid.NewGuid().ToString();
+					_guid = newGuid();
 
 				return _guid;
 			}
@@ -26,6 +26,10 @@ namespace AppStatistics.Common.Models {
 
 		public virtual void fromRaw(dynamic data) {
 			_guid = data.GUID;
+		}
+
+		protected virtual string newGuid() {
+			return Guid.NewGuid().ToString();
 		}
 	}
 }

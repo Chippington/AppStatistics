@@ -29,15 +29,11 @@ namespace AppStatistics.Common.Core.Reporting.Analytics {
 				var port = context.Connection.RemotePort.ToString();
 
 				TraceLog.Trace(path, method, sessionid, $"{ipaddress}:{port}");
-
-				await _next(context);
 			} catch (Exception ex) {
-				try {
-					await ExceptionLog.LogException(ex);
-				} catch {
-					throw ex;
-				}
+				throw ex;
 			}
+
+			await _next(context);
 		}
 
 		private Dictionary<string, string> getMetaData(HttpContext ctx) {

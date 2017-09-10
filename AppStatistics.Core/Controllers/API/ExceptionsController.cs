@@ -30,12 +30,12 @@ namespace AppStatistics.Core.Controllers.API {
 				ExceptionDataModel exception = new ExceptionDataModel();
 				exception.fromRaw(data);
 
-				Config.store.addException(exception);
+				Config.store.AddException(exception.applicationID, exception);
 			} catch(Exception exc) {
-				Config.store.addException(new ExceptionDataModel(exc, "root") {
+				Config.store.AddException("root", new ExceptionDataModel(exc, "root") {
 					timeStamp = DateTime.Now,
 					metadata = new Dictionary<string, string>() {
-						{ "raw", Newtonsoft.Json.JsonConvert.SerializeObject(data) }
+						{ "Raw JSON", Newtonsoft.Json.JsonConvert.SerializeObject(data) }
 					}
 				});
 			}
@@ -44,6 +44,16 @@ namespace AppStatistics.Core.Controllers.API {
 		// DELETE: api/ApiWithActions/5
 		[HttpDelete]
 		public void Delete([FromQuery]string exceptionid) {
+			try {
+				Config.store.DeleteException(exceptionid);
+			} catch (Exception exc) {
+				Config.store.AddException("root", new ExceptionDataModel(exc, "root") {
+					timeStamp = DateTime.Now,
+					metadata = new Dictionary<string, string>() {
+						{ "Exception ID", exceptionid == null ? "Null" : exceptionid }
+					}
+				});
+			}
 		}
 	}
 }

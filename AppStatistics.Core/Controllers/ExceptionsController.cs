@@ -8,8 +8,8 @@ using AppStatistics.Core.Models;
 namespace AppStatistics.Core.Controllers {
 	public class ExceptionsController : Controller {
 		public IActionResult Details(string appid, string excid) {
-			var app = Config.store.getApplication(appid);
-			var exc = Config.store.getException(app, excid);
+			var app = Config.store.GetApplication(appid);
+			var exc = Config.store.GetException(excid);
 			return View(new ExceptionViewModel() {
 				application = app,
 				source = exc,

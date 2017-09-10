@@ -20,6 +20,7 @@ namespace AppStatistics.Common.Models.Reporting.Exceptions {
 		public ExceptionDataModel() {
 			innerExceptions = new List<ExceptionDataModel>();
 			metadata = new Dictionary<string, string>();
+			timeStamp = DateTime.Now;
 		}
 
 		public ExceptionDataModel(Exception src, string appid) {
@@ -28,6 +29,7 @@ namespace AppStatistics.Common.Models.Reporting.Exceptions {
 			message = src.Message;
 			stackTrace = src.StackTrace;
 			hresult = src.HResult;
+			timeStamp = DateTime.Now;
 
 			List<ExceptionDataModel> inner = new List<ExceptionDataModel>();
 			Exception current = src.InnerException;

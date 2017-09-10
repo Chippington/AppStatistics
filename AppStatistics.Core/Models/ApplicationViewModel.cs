@@ -25,7 +25,8 @@ namespace AppStatistics.Core.Models {
 		public ApplicationViewModel(ApplicationDataModel source, int excCount) {
 			this.source = source;
 
-			latestExceptions = Config.store.getExceptions(source).OrderBy(e => e.timeStamp).Reverse().Take(5).ToList();
+			latestExceptions = Config.store.GetExceptionsByApplication(
+				source.guid, DateTime.Now.AddDays(-7), DateTime.Now).OrderBy(e => e.timeStamp).Reverse().Take(5).ToList();
 		}
 	}
 }
