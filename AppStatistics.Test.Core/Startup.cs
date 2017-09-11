@@ -25,20 +25,20 @@ namespace AppStatistics.Test.Core {
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
 			//app.UseExceptionHandler("/Home/Error");
-			app.UseReportingServices((b) => {
-				b.UseAPI("http://localhost/reporting/", "testwebapp");
-				b.UseContentFolderPath(Directory.GetCurrentDirectory() + "\\Content\\Analytics");
-			});
+			//app.UseReportingServices((b) => {
+			//	b.UseAPI("http://localhost/reporting/", "testwebapp");
+			//	b.UseContentFolderPath(Directory.GetCurrentDirectory() + "\\Content\\Analytics");
+			//});
 
-			app.UseExceptionReporting((b) => {
-				b.UseCustomErrorHandlingPath("/Home/Error");
-			});
+			//app.UseExceptionReporting((b) => {
+			//	b.UseCustomErrorHandlingPath("/Home/Error");
+			//});
 
-			app.UseAnalyticsReporting((b) => {
-			});
+			//app.UseAnalyticsReporting((b) => {
+			//});
 
-			//app.UseDeveloperExceptionPage();
-			//app.UseBrowserLink();
+			app.UseDeveloperExceptionPage();
+			app.UseBrowserLink();
 			app.UseStaticFiles();
 
 			app.UseMvc(routes => {

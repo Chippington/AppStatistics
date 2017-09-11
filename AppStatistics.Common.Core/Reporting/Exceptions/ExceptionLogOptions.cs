@@ -1,10 +1,12 @@
 ﻿using AppStatistics.Common.Models.Reporting;
+using AppStatistics.Common.Models.Reporting.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace AppStatistics.Common.Core.Reporting.Exceptions {
 	public class ExceptionLogOptions {
+		public Action<ExceptionDataModel> customHandlerAction;
 		public string handlerPath;
 	}
 
@@ -16,6 +18,10 @@ namespace AppStatistics.Common.Core.Reporting.Exceptions {
 
 		public void UseCustomErrorHandlingPath(string path) {
 			options.handlerPath = path;
+		}
+
+		public void UseCustomErrorHandlerAction(Action<ExceptionDataModel> func) {
+			options.customHandlerAction = func;
 		}
 	}
 }

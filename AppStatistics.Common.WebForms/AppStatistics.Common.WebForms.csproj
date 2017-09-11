@@ -33,6 +33,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -59,13 +62,21 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AnalyticsWebService.asmx" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\AppStatistics.Common\AppStatistics.Common.csproj">
-      <Project>{8b7a8fe2-1071-490b-af49-1d99aadea197}</Project>
+      <Project>{809365d9-1949-4d28-a8b5-69a1015fe050}</Project>
       <Name>AppStatistics.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AnalyticsWebService.asmx" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="RemoveNetFxForceConflicts" BeforeTargets="BuiltProjectOutputGroupDependencies">
+    <ItemGroup>
+      <ReferencePath Remove="@(ReferencePath)" Condition="'%(FileName)' == 'netfx.force.conflicts'" />
+    </ItemGroup>
+  </Target>
 </Project>

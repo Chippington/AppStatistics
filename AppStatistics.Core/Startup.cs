@@ -28,26 +28,30 @@ namespace AppStatistics.Core {
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
-			//app.UseReportingServices((b) => {
-			//	b.UseAPI("", "root");
-			//	b.UseContentFolderPath(Directory.GetCurrentDirectory() + "\\Content\\Analytics");
-			//});
+			app.UseReportingServices((b) => {
+				b.UseAPI("/", "root");
+				b.UseContentFolderPath(Directory.GetCurrentDirectory() + "\\Content\\Analytics");
+			});
 
-			//app.UseExceptionReporting((b) => {
-			//	b.UseCustomErrorHandlingPath("/Home/Error");
-			//});
+			app.UseExceptionReporting((b) => {
+				b.UseCustomErrorHandlingPath("/Home/Error");
+				b.UseCustomErrorHandlerAction((exc) => {
+					exc.applicationID = "root";
+					Config.store.AddException("root", exc);
+				});
+			});
 
 			//app.UseAnalyticsReporting((b) => {
 			//});
 
-			if (env.IsDevelopment()) {
-				app.UseDeveloperExceptionPage();
-				app.UseBrowserLink();
-			} else {
-				app.UseExceptionReporting((b) => {
-					b.UseCustomErrorHandlingPath("/Home/Error");
-				});
-			}
+			//if (env.IsDevelopment()) {
+			//	app.UseDeveloperExceptionPage();
+			//	app.UseBrowserLink();
+			//} else {
+			//	app.UseExceptionReporting((b) => {
+			//		b.UseCustomErrorHandlingPath("/Home/Error");
+			//	});
+			//}
 
 			app.UseStaticFiles();
 			app.UseCors("AllowCors");
@@ -63,23 +67,23 @@ namespace AppStatistics.Core {
 					guid = "root",
 				});
 
-			if (Config.store.GetApplication("testapp") == null)
-				Config.store.AddApplication(new ApplicationDataModel() {
-					applicationName = "Test Application",
-					guid = "testapp",
-				});
+			//if (Config.store.GetApplication("testapp") == null)
+			//	Config.store.AddApplication(new ApplicationDataModel() {
+			//		applicationName = "Test Application",
+			//		guid = "testapp",
+			//	});
 
-			if (Config.store.GetApplication("testwebapp") == null)
-				Config.store.AddApplication(new ApplicationDataModel() {
-					applicationName = "Test ASP.NET Core 2.0 Application",
-					guid = "testwebapp",
-				});
+			//if (Config.store.GetApplication("testwebapp") == null)
+			//	Config.store.AddApplication(new ApplicationDataModel() {
+			//		applicationName = "Test ASP.NET Core 2.0 Application",
+			//		guid = "testwebapp",
+			//	});
 
-			if (Config.store.GetApplication("testwebapp2") == null)
-				Config.store.AddApplication(new ApplicationDataModel() {
-					applicationName = "Test ASP.NET WebForms Application",
-					guid = "testwebapp2",
-				});
+			//if (Config.store.GetApplication("testwebapp2") == null)
+			//	Config.store.AddApplication(new ApplicationDataModel() {
+			//		applicationName = "Test ASP.NET WebForms Application",
+			//		guid = "testwebapp2",
+			//	});
 		}
 	}
 }

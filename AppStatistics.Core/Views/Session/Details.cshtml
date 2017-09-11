@@ -1,7 +1,26 @@
-﻿
+﻿@model AppStatistics.Common.Models.Reporting.Analytics.TraceReportDataModel
 @{
     ViewData["Title"] = "Details";
+    var SessionKeyVal = Model.traceMap.FirstOrDefault();
+    var SessionID = SessionKeyVal.Key;
+    var Session = SessionKeyVal.Value;
 }
 
-<h2>Details</h2>
-
+<div class="tile">
+    <div class="tile-title">Trace Data for session @SessionID</div>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover tile">
+            <tbody>
+                @foreach(var trace in Session) {
+                    <tr>
+                        <td>@trace.timestamp</td>
+                        <td>@trace.path</td>
+                        <td>@trace.query</td>
+                        <td>@trace.sessionid</td>
+                        <td>@trace.ipaddress</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -23,15 +23,27 @@ namespace AppStatistics.Common.Core.Reporting.Exceptions {
 			try {
 				var handlerFeature = context.Features.Get<IExceptionHandlerFeature>();
 				if (handlerFeature != null && handlerFeature.Error != null) {
-					var task = Task.Run(async () => {
-						await ExceptionLog.LogExceptionAsync(handlerFeature.Error, getMetaData(context));
-					});
+					if(options.customHandlerAction != null) {
+						options.customHandlerAction.Invoke(new Models.Reporting.Exceptions.ExceptionDataModel(handlerFeature.Error, "") {
+							metadata = getMetaData(context),
+						});
+					} else {
+						var task = Task.Run(async () => {
+							await ExceptionLog.LogExceptionAsync(handlerFeature.Error, getMetaData(context));
+						});
+					}
 				}
 
 				try {
 					await _next(context);
 				} catch (Exception exc) {
-					await ExceptionLog.LogExceptionAsync(exc, getMetaData(context));
+					if (options.customHandlerAction != null) {
+						options.customHandlerAction.Invoke(new Models.Reporting.Exceptions.ExceptionDataModel(exc, "") {
+							metadata = getMetaData(context),
+						});
+					} else {
+						await ExceptionLog.LogExceptionAsync(exc, getMetaData(context));
+					}
 				}
 			} catch (Exception ex) {
 				throw ex;

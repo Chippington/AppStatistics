@@ -34,10 +34,31 @@
                             <tr>
                                 <td>@key</td>
 
-                                @if(key.ToLower() != "session id" && string.IsNullOrEmpty(Model.sessionActionURI)) {
-                                    <td>@Html.Raw(value.Replace(Environment.NewLine, "<br />").Replace("\r\n", "<br />"))</td>
-                                } else {
+                                @if (key.ToLower() == "session id" && string.IsNullOrEmpty(Model.sessionActionURI) == false) {
                                     <td><a href="@Model.sessionActionURI">@value</a></td>
+                                } else {
+                                    if(key.ToLower() == "request headers") {
+                                        var tmp = value.Split("\r\n").OrderBy((t) => {
+                                            if (t.Length <= 1)
+                                                return 0;
+
+                                            return t[0];
+                                        });
+                                        value = "";
+                                        foreach (var str in tmp) {
+                                            if(str.Trim() == "") {
+                                                continue;
+                                            }
+                                            var pos = str.IndexOf(':');
+                                            if(pos > 0) {
+                                                string str1 = str.Substring(0, pos);
+                                                string str2 = str.Substring(pos);
+                                                value += $"<span><span style='color:deepskyblue'>{str1}</span>{str2}</span></br>";
+                                            }
+                                        }
+                                    }
+
+                                    <td>@Html.Raw(value.Replace(Environment.NewLine, "<br />").Replace("\r\n", "<br />"))</td>
                                 }
                             </tr>
                         }}

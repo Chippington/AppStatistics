@@ -9,8 +9,6 @@ using System.Web.UI.WebControls;
 namespace AppStatistics.Test.WebForms {
 	public partial class _Default : Page {
 		protected void Page_Load(object sender, EventArgs e) {
-			var cfg = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration(null);
-			var test = ConfigurationManager.AppSettings["customsetting1"];
 		}
 	}
 }

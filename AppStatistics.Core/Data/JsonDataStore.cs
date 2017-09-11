@@ -267,6 +267,7 @@ namespace AppStatistics.Core.Data {
 
 		public bool AddException(string applicationID, ExceptionDataModel exceptionData) {
 			try {
+				exceptionData.applicationID = applicationID;
 				exceptions.add(applicationID, exceptionData.guid, exceptionData);
 				return true;
 			} catch (Exception exc) {
