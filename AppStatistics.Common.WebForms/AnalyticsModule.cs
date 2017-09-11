@@ -2,6 +2,7 @@
 using AppStatistics.Common.Reporting.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Text;
 using System.Web;
 
@@ -21,12 +22,13 @@ namespace AppStatistics.Common.WebForms {
 		public void Init(HttpApplication context) {
 			// Below is an example of how you can handle LogRequest event and provide 
 			// custom logging implementation for it
-			AppStatistics.Common.Reporting.ReportingConfig.applicationID = "testwebapp2";
-			AppStatistics.Common.Reporting.ReportingConfig.contentFolderPath = HttpRuntime.AppDomainAppPath + "Content";
-			AppStatistics.Common.Reporting.ReportingConfig.baseURI = "http://localhost:14286/";
+			AppStatistics.Common.Reporting.ReportingConfig.contentFolderPath = ConfigurationManager.AppSettings["contentPath"];
+			AppStatistics.Common.Reporting.ReportingConfig.applicationID = ConfigurationManager.AppSettings["applicationID"];
+			AppStatistics.Common.Reporting.ReportingConfig.baseURI = ConfigurationManager.AppSettings["baseUrl"];
 
 			context.Error += Context_Error;
 			context.AcquireRequestState += Context_AcquireRequestState;
+			var test = ConfigurationManager.AppSettings["customsetting1"];
 		}
 
 		private void Context_AcquireRequestState(dynamic sender, EventArgs e) {

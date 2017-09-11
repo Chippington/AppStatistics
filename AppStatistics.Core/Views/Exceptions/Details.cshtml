@@ -48,14 +48,12 @@
     
     @{
         if (Model.source.innerExceptions.Count > 0) {
-
-                    var innerExceptions = Model.source.innerExceptions;
-                    var curIndex = 0;
-                    foreach (var exc in innerExceptions) {
-                        exc.guid = "Inner Exception " + (++curIndex).ToString();
-                        @Html.Partial("_ExceptionCard", new AppStatistics.Core.Models.ExceptionViewModel() { source = exc, application = Model.application })
-                    }
-
+            var innerExceptions = Model.source.innerExceptions;
+            var curIndex = 0;
+            foreach (var exc in innerExceptions) {
+                exc.guid = "Inner Exception " + (++curIndex).ToString();
+                @Html.Partial("_ExceptionCard", new AppStatistics.Core.Models.ExceptionViewModel() { source = exc, application = Model.application })
+            }
         }
     }
 </div>

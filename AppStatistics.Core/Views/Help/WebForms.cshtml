@@ -6,6 +6,8 @@
         if (vars['section'] != null) {
             $("#section" + vars['section']).goTo();
         }
+
+        cb_onchange();
     });
 
     (function ($) {
@@ -17,7 +19,7 @@
         }
     })(jQuery);
 
-    function getUrlVars() {
+    var getUrlVars = function() {
         var vars = [], hash;
         var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
         for (var i = 0; i < hashes.length; i++) {
@@ -27,10 +29,24 @@
         }
         return vars;
     }
+
+    var cb_onchange = function () {
+        $("#_appid").html($("#appid").val());
+        if ($("#appid").val() == "")
+            $("#_appid").html("00000000-0000-0000-0000-000000000000");
+
+        $("#_endpoint").html($("#endpoint").val());
+        if ($("#endpoint").val() == "")
+            $("#_endpoint").html("http://hostname.com/api/");
+
+        $("#_contentpath").html($("#contentpath").val());
+        if ($("#contentpath").val() == "")
+            $("#_contentpath").html("~\\Content\\");
+    }
 </script>
 
 <div>
-    <div class="tile">
+    @*<div class="tile">
         <div class="tile-title">Table of Contents</div>
         
         <div class="row">
@@ -63,7 +79,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div><br />*@
     <div class="tile" id="section1">
         <div class="tile-title">Step ONE - Including the AppStatistics.Common.WebForms library</div>
         <div class="p-10">
@@ -76,13 +92,103 @@
                 <li>Analytics is not currently available with this option</li>
             </ul>
         </div>
-    </div>
+    </div><br />
     <div class="tile" id="section2">
         <div class="tile-title">Step TWO - Creating the analytics .asmx webservice</div>
-        <div class="p-10"></div>
-    </div>
+        <div class="p-10">
+            To use the analytics reporting service, the client applicatioin must have an endpoint that serves traffic and session data. <br />
+            <label style="color:lightgray">*This step is optional.</label><br />
+            <br />
+            A .asmx codebehind is available in the AppStatistics.Common.WebForms project. In order to use this, you must:
+            <ul>
+                <li>Create an empty .asmx file (without codebehind), preferably called "AnalyticsWebService.asmx"</li>
+                <li>
+                    Copy and paste the following code segment into the .asmx file:<br />
+                </li>
+            </ul>
+            <div class="tile">
+                <div class="tile-title">
+                    C# Source Code
+                </div>
+                <div class="p-10" style="margin: 5px, 5px, 5px, 5px">
+                    <font face="Courier New">
+                        <span>
+                            <strong><span style="background-color:khaki; color:black"><%</span></strong>@Html.Raw("@")
+                            <span style="color:deepskyblue">WebService</span>
+                            <span style="color:lightblue">Language</span>="C#"
+                            <span style="color:lightblue">CodeBehind</span>="AnalyticsWebService.asmx.cs"
+                            <span style="color:lightblue">Class</span>="AppStatistics.Test.WebForms.AnalyticsWebService"
+                            <strong><span style="background-color:khaki; color:black">%></span></strong>
+                        </span>
+                    </font>
+                </div>
+            </div>
+            <span style="color:lightgray"><strong>*Note: </strong>Take note of the endpoint path of the webservice you've just created as you'll need that later.</span>
+        </div>
+    </div><br />
     <div class="tile" id="section3">
         <div class="tile-title">Step THREE - Configuring the web.config</div>
-        <div class="p-10"></div>
+        <div class="p-10">
+            With the choice between the "Common" and "Common.WebForms" libraries for error reporting, there is the choice between automatic and manual exception logging.<br />
+            <strong>If you are going to be logging exceptions directly (through the "AppStaticstics.Common" library), skip this step.</strong>
+            <br /><br />
+            Including the AnalyticsModule<br />
+            <ul>
+                <li>
+                    To include the module, insert the following key in your web.config:
+                </li>
+            </ul>
+            <div class="tile">
+                <div class="tile-title">
+                    C# Source Code
+                </div>
+                <div class="p-10" style="margin: 5px, 5px, 5px, 5px">
+                    <font face="Courier New">
+                        @Html.Raw(ViewData["webconfig1"])
+                    </font>
+                </div>
+            </div>
+            <ul>
+                <li>
+                    To configure AppStatistics, insert the following keys:
+                </li>
+                <li>
+                    The form below can be used to modify the source code below.
+                </li>
+            </ul>
+            <div class="tile">
+                <div class="tile-title">Options Parameters</div>
+                <div class="p-10">
+                    <div class="table-responsive">
+                        <table style="width:100%">
+                            <tbody>
+                                <tr>
+                                    <td style="width:250px">AppStatistics API Endpoint:</td>
+                                    <td><input type="text" class="form-control m-b-10" id="endpoint" placeholder="http://hostname.com/api/" oninput="cb_onchange()" /></td>
+                                </tr>
+                                <tr>
+                                    <td style="width:250px">Content Folder Path:</td>
+                                    <td><input type="text" class="form-control m-b-10" id="contentpath" placeholder="~\\Content\\" oninput="cb_onchange()" /></td>
+                                </tr>
+                                <tr>
+                                    <td style="width:250px">Application ID:</td>
+                                    <td><input type="text" class="form-control m-b-10" id="appid" placeholder="00000000-0000-0000-0000-000000000000" oninput="cb_onchange()" /></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="tile">
+                <div class="tile-title">
+                    C# Source Code
+                </div>
+                <div class="p-10" style="margin: 5px, 5px, 5px, 5px">
+                    <font face="Courier New">
+                        @Html.Raw(ViewData["webconfig2"])
+                    </font>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
