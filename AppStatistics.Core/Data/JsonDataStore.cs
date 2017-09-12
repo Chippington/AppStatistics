@@ -436,6 +436,12 @@ namespace AppStatistics.Core.Data {
 			if (string.IsNullOrEmpty(app.analyticsEndpoint))
 				return null;
 
+
+			//string address = app.analyticsEndpoint + $"/GetSession?sessionID={sessionid}";
+			//using (WebClient client = new WebClient()) {
+			//	var result = client.DownloadString(address);
+			//}
+
 			using (var httpClient = new HttpClient()) {
 				httpClient.BaseAddress = new Uri(app.analyticsEndpoint);
 				httpClient.DefaultRequestHeaders.Accept.Clear();
@@ -450,6 +456,9 @@ namespace AppStatistics.Core.Data {
 					sw.Flush();
 				}
 
+				req.UseDefaultCredentials = true;
+				req.PreAuthenticate = true;
+				req.Credentials = CredentialCache.DefaultNetworkCredentials;
 				var response = req.GetResponse();
 				var dataStream = response.GetResponseStream();
 				var reader = new StreamReader(dataStream);

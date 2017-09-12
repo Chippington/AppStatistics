@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Text;
 using System.Web;
-
 namespace AppStatistics.Common.WebForms {
 	public class AnalyticsModule : IHttpModule {
 		/// <summary>
@@ -22,7 +21,9 @@ namespace AppStatistics.Common.WebForms {
 		public void Init(HttpApplication context) {
 			// Below is an example of how you can handle LogRequest event and provide 
 			// custom logging implementation for it
-			AppStatistics.Common.Reporting.ReportingConfig.contentFolderPath = HttpRuntime.AppDomainAppPath + ConfigurationManager.AppSettings["contentPath"];
+
+			var root = HttpRuntime.AppDomainAppPath;
+			AppStatistics.Common.Reporting.ReportingConfig.contentFolderPath = root.Substring(0, root.Length - 1) + ConfigurationManager.AppSettings["contentPath"];
 			AppStatistics.Common.Reporting.ReportingConfig.applicationID = ConfigurationManager.AppSettings["applicationID"];
 			AppStatistics.Common.Reporting.ReportingConfig.baseURI = ConfigurationManager.AppSettings["baseUrl"];
 

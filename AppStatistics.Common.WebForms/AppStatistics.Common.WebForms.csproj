@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AppStatistics.Common.WebForms</RootNamespace>
     <AssemblyName>AppStatisticsCommon.WebForms</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -33,6 +33,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AppStatistics.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\AppStatistics.Common\bin\Debug\net452\AppStatistics.Common.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -62,21 +66,31 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AnalyticsWebService.asmx" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AppStatistics.Common\AppStatistics.Common.csproj">
-      <Project>{809365d9-1949-4d28-a8b5-69a1015fe050}</Project>
-      <Name>AppStatistics.Common</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AnalyticsWebService.asmx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="RemoveNetFxForceConflicts" BeforeTargets="BuiltProjectOutputGroupDependencies">
     <ItemGroup>
       <ReferencePath Remove="@(ReferencePath)" Condition="'%(FileName)' == 'netfx.force.conflicts'" />
+      <ReferencePath Remove="@(ReferencePath)" Condition="'%(FileName)' == 'System.Data.Common'" />
+      <ReferencePath Remove="@(ReferencePath)" Condition="'%(FileName)' == 'System.Diagnostics.StackTrace'" />
+      <ReferencePath Remove="@(ReferencePath)" Condition="'%(FileName)' == 'System.Data.Common'" />
+      <ReferencePath Remove="@(ReferencePath)" Condition="'%(FileName)' == 'System.Diagnostics.Tracing'" />
+      <ReferencePath Remove="@(ReferencePath)" Condition="'%(FileName)' == 'System.Globalization.Extensions'" />
+      <ReferencePath Remove="@(ReferencePath)" Condition="'%(FileName)' == 'System.IO.Compression'" />
+      <ReferencePath Remove="@(ReferencePath)" Condition="'%(FileName)' == 'System.Net.Http'" />
+      <ReferencePath Remove="@(ReferencePath)" Condition="'%(FileName)' == 'System.Net.Sockets'" />
+      <ReferencePath Remove="@(ReferencePath)" Condition="'%(FileName)' == 'System.Runtime.InteropServices.RuntimeInformation'" />
+      <ReferencePath Remove="@(ReferencePath)" Condition="'%(FileName)' == 'System.Runtime.Serialization.Primitives'" />
+      <ReferencePath Remove="@(ReferencePath)" Condition="'%(FileName)' == 'System.Runtime.Serialization.Xml'" />
+      <ReferencePath Remove="@(ReferencePath)" Condition="'%(FileName)' == 'System.Security.SecureString'" />
+      <ReferencePath Remove="@(ReferencePath)" Condition="'%(FileName)' == 'System.Security.Cryptography.Algorithms'" />
+      <ReferencePath Remove="@(ReferencePath)" Condition="'%(FileName)' == 'System.Security.SecureString'" />
+      <ReferencePath Remove="@(ReferencePath)" Condition="'%(FileName)' == 'System.Threading.Overlapped'" />
+      <ReferencePath Remove="@(ReferencePath)" Condition="'%(FileName)' == 'System.ValueTuple'" />
     </ItemGroup>
   </Target>
 </Project>
