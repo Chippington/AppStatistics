@@ -445,7 +445,7 @@ namespace AppStatistics.Core.Data {
 				return null;
 
 			string fname = GetSessionFile(appid, sessionid);
-			if(File.Exists(fname)) {
+			if (File.Exists(fname)) {
 				TraceReportDataModel ret = new TraceReportDataModel();
 				var data = Newtonsoft.Json.JsonConvert.DeserializeObject(File.ReadAllText(fname));
 				ret.fromRaw(data);
@@ -453,10 +453,10 @@ namespace AppStatistics.Core.Data {
 			}
 
 			string address = app.analyticsEndpoint + $"?op=getsession&sessionID={sessionid}";
+
 			using (WebClient client = new WebClient()) {
 				client.UseDefaultCredentials = true;
 				client.Credentials = CredentialCache.DefaultNetworkCredentials;
-
 				var result = client.DownloadString(address);
 				dynamic data = Newtonsoft.Json.JsonConvert.DeserializeObject(result);
 

@@ -30,6 +30,10 @@
                 <tbody>
                     <tr><td width="200px"><b>Key</b></td><td><b>Value</b></td></tr>
                     @{ foreach (var key in Model.source.metadata.Keys) {
+                            if (key == "Cookie") {
+                                continue;
+                            }
+
                             var value = Model.source.metadata[key];
                             <tr>
                                 <td>@key</td>
