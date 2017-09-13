@@ -3,11 +3,8 @@ using AppStatistics.Common.Reporting.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.IO;
 using System.Text;
 using System.Web;
-using System.Web.Routing;
-
 namespace AppStatistics.Common.WebForms {
 	public class AnalyticsModule : IHttpModule {
 		/// <summary>
@@ -25,18 +22,14 @@ namespace AppStatistics.Common.WebForms {
 			// Below is an example of how you can handle LogRequest event and provide 
 			// custom logging implementation for it
 
-			var root = HttpRuntime.AppDomainAppPath.Substring(0, HttpRuntime.AppDomainAppPath.Length - 1);
-			AppStatistics.Common.Reporting.ReportingConfig.contentFolderPath = root + ConfigurationManager.AppSettings["contentPath"];
+			var root = HttpRuntime.AppDomainAppPath;
+			AppStatistics.Common.Reporting.ReportingConfig.contentFolderPath = root.Substring(0, root.Length - 1) + ConfigurationManager.AppSettings["contentPath"];
 			AppStatistics.Common.Reporting.ReportingConfig.applicationID = ConfigurationManager.AppSettings["applicationID"];
 			AppStatistics.Common.Reporting.ReportingConfig.baseURI = ConfigurationManager.AppSettings["baseUrl"];
 
 			context.Error += Context_Error;
 			context.AcquireRequestState += Context_AcquireRequestState;
 			var test = ConfigurationManager.AppSettings["customsetting1"];
-
-			if (File.Exists(root + "\\AnalyticsWebService.asmx") == false)
-				File.WriteAllText(root + "\\AnalyticsWebService.asmx",
-					"<%@ WebService Language=\"C#\" CodeBehind=\"AnalyticsWebService.asmx.cs\" Class=\"AnalyticsWebService\" %>");
 		}
 
 		private void Context_AcquireRequestState(dynamic sender, EventArgs e) {

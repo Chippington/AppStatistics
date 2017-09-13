@@ -40,7 +40,7 @@ public class AnalyticsWebService : System.Web.Services.WebService {
 	}
 
 	[WebMethod]
-	[ScriptMethod(ResponseFormat = ResponseFormat.Json, UseHttpGet = true)]
+	[ScriptMethod(ResponseFormat = ResponseFormat.Json)]
 	public object GetSession(string sessionID) {
 		try {
 			var model = new TraceReportDataModel();
@@ -65,10 +65,5 @@ public class AnalyticsWebService : System.Web.Services.WebService {
 
 			throw exc;
 		}
-	}
-
-	[WebMethod]
-	public string Get() {
-		return "";
 	}
 }

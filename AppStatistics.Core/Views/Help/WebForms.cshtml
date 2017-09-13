@@ -31,6 +31,7 @@
     }
 
     var cb_onchange = function () {
+        //Why did I put so much effort into this
         $("#_appid").html($("#appid").val());
         if ($("#appid").val() == "")
             $("#_appid").html("00000000-0000-0000-0000-000000000000");
@@ -39,9 +40,24 @@
         if ($("#endpoint").val() == "")
             $("#_endpoint").html("http://hostname.com/api/");
 
-        $("#_contentpath").html($("#contentpath").val());
-        if ($("#contentpath").val() == "")
-            $("#_contentpath").html("~\\Content\\");
+        var path = $("#contentpath").val().replace(new RegExp(" ", 'g'), "_");
+        while (path[path.length - 1] == '\\')
+            path = path.substring(o, path.length - 1);
+
+        if (path.length < 3 || path.substring(0, 2) != "\\\\") {
+            if (path.substring(0, 1) == "\\") {
+                path = "\\" + path;
+            } else {
+                path = "\\\\" + path;
+            }
+        }
+
+        $("#_contentpath").html(path);
+        $("#_contentpathexample").html(path);
+        if ($("#contentpath").val() == "") {
+            $("#_contentpath").html("\\\\Content");
+            $("#_contentpathexample").html("\\\\Content");
+        }
     }
 </script>
 
@@ -93,7 +109,7 @@
             </ul>
         </div>
     </div><br />
-    <div class="tile" id="section2">
+    @*<div class="tile" id="section2">
         <div class="tile-title">Step TWO - Creating the analytics .asmx webservice</div>
         <div class="p-10">
             To use the analytics reporting service, the client applicatioin must have an endpoint that serves traffic and session data. <br />
@@ -125,9 +141,9 @@
             </div>
             <span style="color:lightgray"><strong>*Note: </strong>Take note of the endpoint path of the webservice you've just created as you'll need that later.</span>
         </div>
-    </div><br />
+    </div><br />*@
     <div class="tile" id="section3">
-        <div class="tile-title">Step THREE - Configuring the web.config</div>
+        <div class="tile-title">Step TWO - Configuring the web.config</div>
         <div class="p-10">
             With the choice between the "Common" and "Common.WebForms" libraries for error reporting, there is the choice between automatic and manual exception logging.<br />
             <strong>If you are going to be logging exceptions directly (through the "AppStaticstics.Common" library), skip this step.</strong>
@@ -164,15 +180,18 @@
                             <tbody>
                                 <tr>
                                     <td style="width:250px">AppStatistics API Endpoint:</td>
-                                    <td><input type="text" class="form-control m-b-10" id="endpoint" placeholder="http://hostname.com/api/" oninput="cb_onchange()" /></td>
-                                </tr>
-                                <tr>
-                                    <td style="width:250px">Content Folder Path:</td>
-                                    <td><input type="text" class="form-control m-b-10" id="contentpath" placeholder="~\\Content\\" oninput="cb_onchange()" /></td>
+                                    <td><input type="text" class="form-control m-b-10" id="endpoint" placeholder="http://hostname.com/AnalyticsWebService.asmx/" oninput="cb_onchange()" /></td>
                                 </tr>
                                 <tr>
                                     <td style="width:250px">Application ID:</td>
                                     <td><input type="text" class="form-control m-b-10" id="appid" placeholder="00000000-0000-0000-0000-000000000000" oninput="cb_onchange()" /></td>
+                                </tr>
+                                <tr>
+                                    <td style="width:250px">Content Folder Path:</td>
+                                    <td><input type="text" class="form-control m-b-10" id="contentpath" placeholder="\\Content" oninput="cb_onchange()" /></td>
+                                </tr>
+                                <tr>
+                                    <td></td><td><span style="color:lightgray">C:\\inetpub\\wwwrooot\\application</span><strong id="_contentpathexample"></strong></td>
                                 </tr>
                             </tbody>
                         </table>
