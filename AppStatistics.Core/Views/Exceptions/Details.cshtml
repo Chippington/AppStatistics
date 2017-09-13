@@ -26,7 +26,7 @@
             Exception Metadata
         </div>
         <div class="table-responsive">
-            <table class="table table-bordered table-hover tile">
+            <table class="table table-bordered table-hover tile" style="table-layout:fixed">
                 <tbody>
                     <tr><td width="200px"><b>Key</b></td><td><b>Value</b></td></tr>
                     @{ foreach (var key in Model.source.metadata.Keys) {
@@ -35,6 +35,10 @@
                             }
 
                             var value = Model.source.metadata[key];
+                            if(key.ToLower() == "request headers" && value.Length > 500) {
+                                value = value.Substring(0, 500) + " (...)";
+                            }
+
                             <tr>
                                 <td>@key</td>
 
@@ -57,7 +61,7 @@
                                             if(pos > 0) {
                                                 string str1 = str.Substring(0, pos);
                                                 string str2 = str.Substring(pos);
-                                                value += $"<span><span style='color:deepskyblue'>{str1}</span>{str2}</span></br>";
+                                                value += $"<span style='word-wrap:break-word'><span style='color:deepskyblue'>{str1}</span>{str2}</span></br>";
                                             }
                                         }
                                     }
