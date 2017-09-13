@@ -4,16 +4,86 @@
     if (str == null) {
         str = "";
     }
+    bool inAt = false;
+    bool inComment = false;
+    bool inType = false;
+    bool inParams = false;
+    bool param = false;
     str = str.Trim();
     var output = true;
     for (var i = 0; i < str.Length; i++) {
+        if(inAt) {
+            var split = str.Substring(i, str.Length - i).Split('.');
+            if(split.Length > 0) {
+                if(split[0].Contains("<") || split[0].Contains("(")) {
+                    inAt = false;
+                    @Html.Raw("</span>")
+                }
+            }
+        }
+
+        //THERE'S GOTTA BE A BETTER WAY
+        if(str[i] == '<') {
+            inType = true;
+            @Html.Raw("&lt;<span style='color:cyan'>")
+            continue;
+        }
+
+        if (str[i] == '>') {
+            inType = false;
+            @Html.Raw("</span>")
+        }
+
+        if(str[i] == '(') {
+            inParams = true;
+            param = true;
+            @Html.Raw("(<span style='color:deepskyblue'>")
+            continue;
+        }
+
+        if (inParams) {
+            if (str[i] == ' ' && param == true) {
+                param = false;
+                @Html.Raw("</span>")
+            }
+
+            if(str[i] == ',' && param == false) {
+                i += 1;
+                param = true;
+                @Html.Raw(",&nbsp;<span style='color:deepskyblue'>")
+                continue;
+            }
+        }
+
+        if (str[i] == ')') {
+            inParams = false;
+            if (param) {
+                @Html.Raw("</span>")
+
+            }
+        }
+
         if (i < str.Length - 3 && str.Substring(i, 3) == "at ") {
             if (i > 1) {
                 <br />
             }
 
+            inAt = true;
             <b style="color:lightblue">at&nbsp;</b>i += 3;
+            @Html.Raw("<span style='color:rgb(170,170,170)'>")
             output = true;
+        }
+
+        if (i < str.Length - 3 && str.Substring(i, 3) == "---") {
+            if (inComment) {
+                inComment = false;
+                @Html.Raw("---</span><br/>")
+                i += 3;
+            } else {
+                inComment = true;
+                @Html.Raw("<br/><span style='color:yellowgreen'>")
+            }
+
         }
 
         if (i > 1 && i < str.Length - 3 && str.Substring(i, 4) == " in ") {

@@ -16,7 +16,7 @@ namespace AppStatistics.Core.Controllers
 
 		public IActionResult Details([FromQuery]string appid, [FromQuery]string sessionid) {
 			TraceReportDataModel m = new TraceReportDataModel();
-			if (string.IsNullOrEmpty(appid) == false && string.IsNullOrEmpty(sessionid)) {
+			if (string.IsNullOrEmpty(appid) == false && string.IsNullOrEmpty(sessionid) == false) {
 				var sessionReport = Config.store.GetSessionReport(appid, sessionid);
 				if (sessionReport != null && sessionReport.traceMap != null && sessionReport.traceMap.ContainsKey(sessionid)) {
 					m = sessionReport;

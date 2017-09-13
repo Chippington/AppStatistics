@@ -1,5 +1,6 @@
 ﻿@model AppStatistics.Core.Models.ApplicationViewModel
 @{ 
+    var appURI = Url.Action("Details", "Applications", new { appid = Model.source.guid });
     int totalHits = 0;
     string trafficData = "";
     if (Model.traffic != null) {
@@ -31,9 +32,11 @@
 
 
 <div class="tile">
-    @Html.ActionLink(Model.source.applicationName, "Details", "Applications", 
+    
+    <a href="@appURI" class="tile-title url" style="width:100%; text-align:left"><h4>@Model.source.applicationName</h4></a>
+    @*@Html.ActionLink(Model.source.applicationName, "Details", "Applications", 
             new { appid = Model.source.guid }, 
-            new { @class = "tile-title", style = "width:100%; text-align:left" })
+            new { @class = "tile-title url", style = "width:100%; text-align:left; font-size:18px;" })*@
     <div class="p-10">
         @if(Model.traffic != null) {
             <div>

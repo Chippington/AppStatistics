@@ -10,14 +10,23 @@
     <div class="tile-title">Trace Data for session @SessionID</div>
     <div class="table-responsive">
         <table class="table table-bordered table-hover tile">
+            <thead>
+                <tr>
+                    <td style="width:150px">Time Stamp</td>
+                    <td style="width:150px">IP Address</td>
+                    <td style="width:50px">Method</td>
+                    <td>Path</td>
+                    <td>Query</td>
+                </tr>
+            </thead>
             <tbody>
                 @foreach(var trace in Session) {
                     <tr>
                         <td>@trace.timestamp</td>
+                        <td>@trace.ipaddress</td>
+                        <td>@trace.method</td>
                         <td>@trace.path</td>
                         <td>@trace.query</td>
-                        <td>@trace.sessionid</td>
-                        <td>@trace.ipaddress</td>
                     </tr>
                 }
             </tbody>

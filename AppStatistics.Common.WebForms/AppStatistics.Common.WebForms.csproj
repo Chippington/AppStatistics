@@ -36,6 +36,9 @@
     <Reference Include="AppStatistics.Common">
       <HintPath>..\AppStatistics.Common\bin\Debug\net452\AppStatistics.Common.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -51,15 +54,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnalyticsModule.cs" />
-    <Compile Include="AnalyticsWebService.asmx.cs">
-      <DependentUpon>AnalyticsWebService.asmx</DependentUpon>
-      <SubType>Component</SubType>
+    <Compile Include="AnalyticsEndpoint.aspx.cs">
+      <DependentUpon>AnalyticsEndpoint.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="AnalyticsModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AnalyticsWebService.asmx" />
+    <Content Include="AnalyticsEndpoint.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

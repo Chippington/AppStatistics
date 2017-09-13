@@ -55,8 +55,8 @@
         $("#_contentpath").html(path);
         $("#_contentpathexample").html(path);
         if ($("#contentpath").val() == "") {
-            $("#_contentpath").html("\\\\Content");
-            $("#_contentpathexample").html("\\\\Content");
+            $("#_contentpath").html("\\\\App_Data\\\\Content");
+            $("#_contentpathexample").html("\\\\App_Data\\\\Content");
         }
     }
 </script>
@@ -180,7 +180,7 @@
                             <tbody>
                                 <tr>
                                     <td style="width:250px">AppStatistics API Endpoint:</td>
-                                    <td><input type="text" class="form-control m-b-10" id="endpoint" placeholder="http://hostname.com/AnalyticsWebService.asmx/" oninput="cb_onchange()" /></td>
+                                    <td><input type="text" class="form-control m-b-10" id="endpoint" placeholder="http://cyndev01/Reporting/" oninput="cb_onchange()" /></td>
                                 </tr>
                                 <tr>
                                     <td style="width:250px">Application ID:</td>
@@ -188,7 +188,7 @@
                                 </tr>
                                 <tr>
                                     <td style="width:250px">Content Folder Path:</td>
-                                    <td><input type="text" class="form-control m-b-10" id="contentpath" placeholder="\\Content" oninput="cb_onchange()" /></td>
+                                    <td><input type="text" class="form-control m-b-10" id="contentpath" placeholder="\\App_Data\\Content" oninput="cb_onchange()" /></td>
                                 </tr>
                                 <tr>
                                     <td></td><td><span style="color:lightgray">C:\\inetpub\\wwwrooot\\application</span><strong id="_contentpathexample"></strong></td>

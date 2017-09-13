@@ -18,19 +18,19 @@ namespace AppStatistics.Core.Controllers {
 					latestExceptions = Config.store.GetExceptionsByApplication(
 						app.guid, DateTime.Now.AddDays(-7), DateTime.Now).OrderBy(e => e.timeStamp).Reverse().Take(5).ToList(),
 
-					traffic = new TrafficReportDataModel() {
-						activity = new Dictionary<string, int>() {
-							{ "000", 1 },
-							{ "001", 2 },
-							{ "002", 3 },
-							{ "003", 4 },
-							{ "004", 4 },
-							{ "005", 4 },
-							{ "006", 3 },
-							{ "007", 2 },
-							{ "008", 1 },
-						},
-					}
+					//traffic = new TrafficReportDataModel() {
+					//	activity = new Dictionary<string, int>() {
+					//		{ "000", 1 },
+					//		{ "001", 2 },
+					//		{ "002", 3 },
+					//		{ "003", 4 },
+					//		{ "004", 4 },
+					//		{ "005", 4 },
+					//		{ "006", 3 },
+					//		{ "007", 2 },
+					//		{ "008", 1 },
+					//	},
+					//}
 				});
 			}
 

@@ -3,74 +3,38 @@
 <h2></h2>
 
 <div>
-    <div class="block-area">
-        <div class="row">
-            <div class="col-med-8">
-                <div class="tile">
-                    <div class="tile-title">Create New Application</div>
-                    <div class="p-10">
-                        <form method="post" asp-controller="Applications" asp-action="CreateApplication">
-                            <div class="form-group">
-                                <table style="width:100%">
-                                    <thead>
-                                        <tr><td></td><td></td></tr>
-                                        <tr><td></td><td></td></tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td style="width:150px">Name:</td>
-                                            <td><input type="text" name="name" class="form-control m-b-10" /></td>
-                                        </tr>
-                                        <tr>
-                                            <td style="width:150px">Description:</td>
-                                            <td><input type="text" name="desc" class="form-control m-b-10" /></td>
-                                        </tr>
-                                        <tr>
-                                            <td style="width:150px">Guid:</td>
-                                            <td><input type="text" name="guid" class="form-control m-b-10" /></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <input type="submit" value="Create Application" class="btn btn-file btn-sm" style="width:100%" />
-                            </div>
-                        </form>
-                    </div>
+    <div class="tile">
+        <div class="tile-title">Create New Application</div>
+        <div class="p-10">
+            <form method="post" asp-controller="Applications" asp-action="CreateApplication">
+                <div class="form-group">
+                    <table style="width:100%">
+                        <thead>
+                            <tr><td></td><td></td></tr>
+                            <tr><td></td><td></td></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="width:150px">Name:</td>
+                                <td><input type="text" name="name" class="form-control m-b-10" /></td>
+                            </tr>
+                            <tr>
+                                <td style="width:150px">Description:</td>
+                                <td><input type="text" name="desc" class="form-control m-b-10" /></td>
+                            </tr>
+                            <tr>
+                                <td style="width:150px">Guid:</td>
+                                <td><input type="text" name="guid" class="form-control m-b-10" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <input type="submit" value="Create Application" class="btn btn-file btn-sm" style="width:100%" />
                 </div>
-            </div>
+            </form>
         </div>
     </div><br />
     @foreach (var app in Model) {
-        <div class="block-area">
-            <div class="row">
-                <div class="col-med-8">
-                    <div class="tile">
-                        <div>@Html.ActionLink(app.source.applicationName, "Details", "Applications", new { appid = app.source.guid }, new { @class = "btn btn-sm", style = "width:100%; text-align:left" })</div>
-                        <div class="p-10">
-                            <div class="table-responsive">
-                                <h4>Latest Exceptions:</h4>
-                                <table class="table table-bordered table-hover tile">
-                                    <thead>
-                                        <tr>
-                                            <td style="width:100px"></td>
-                                            <td style="width:150px">Time Stamp</td>
-                                            <td>Exception Message</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var exc in app.latestExceptions) {
-                                            <tr>
-                                                <td style="text-align:center">@Html.ActionLink("View Details", "Details", "Exceptions", new { appid = app.source.guid, excid = exc.guid })</td>
-                                                <td>@exc.timeStamp</td>
-                                                <td>@exc.message</td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        @Html.Partial("_ApplicationCard", app);
+        <br />
     }
 </div>

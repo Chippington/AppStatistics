@@ -58,7 +58,7 @@ namespace AppStatistics.Core.Controllers {
 				newApp.guid = guid;
 
 			Config.store.AddApplication(newApp);
-			return RedirectToAction("Index");
+			return RedirectToAction("Details", "Applications", new { appid = newApp.guid });
 		}
 	}
 }

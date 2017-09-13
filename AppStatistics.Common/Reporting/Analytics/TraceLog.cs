@@ -137,8 +137,8 @@ namespace AppStatistics.Common.Reporting.Analytics {
 			}
 
 			private string getTempFileName() {
-				int i = 1;
-				while (File.Exists($"_temp{i}.dat")) i++;
+				var i = Guid.NewGuid().ToString();
+				//while (File.Exists($"_temp{i}.dat")) i++;
 				return $"_temp{i}.dat";
 			}
 		}

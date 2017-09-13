@@ -377,6 +377,14 @@ namespace AppStatistics.Core.Data {
 			return $"{applicationsFolderPath}\\{appid}";
 		}
 
+		internal static string GetSessionFolder(string appid) {
+			return GetApplicationFolder(appid) + "\\Sessions";
+		}
+
+		internal static string GetSessionFile(string appid, string sessionid) {
+			return GetSessionFolder(appid) + $"\\session-{sessionid}.dat";
+		}
+
 		internal static string GetExceptionFolder(string appid) {
 			var appPath = GetApplicationFolder(appid);
 			return $"{appPath}\\Exceptions";
@@ -436,43 +444,32 @@ namespace AppStatistics.Core.Data {
 			if (string.IsNullOrEmpty(app.analyticsEndpoint))
 				return null;
 
+			string fname = GetSessionFile(appid, sessionid);
+			if(File.Exists(fname)) {
+				TraceReportDataModel ret = new TraceReportDataModel();
+				var data = Newtonsoft.Json.JsonConvert.DeserializeObject(File.ReadAllText(fname));
+				ret.fromRaw(data);
+				return ret;
+			}
 
-			//string address = app.analyticsEndpoint + $"/GetSession?sessionID={sessionid}";
-			//using (WebClient client = new WebClient()) {
-			//	var result = client.DownloadString(address);
-			//}
+			string address = app.analyticsEndpoint + $"?op=getsession&sessionID={sessionid}";
+			using (WebClient client = new WebClient()) {
+				client.UseDefaultCredentials = true;
+				client.Credentials = CredentialCache.DefaultNetworkCredentials;
 
-			using (var httpClient = new HttpClient()) {
-				httpClient.BaseAddress = new Uri(app.analyticsEndpoint);
-				httpClient.DefaultRequestHeaders.Accept.Clear();
-				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-				HttpWebRequest req = (HttpWebRequest)WebRequest.Create(app.analyticsEndpoint + $"/GetSession");
-				req.Method = "POST";
-				req.ContentType = "application/json";
-
-				using (var sw = new StreamWriter(req.GetRequestStream())) {
-					string json = Newtonsoft.Json.JsonConvert.SerializeObject(new { sessionID = sessionid });
-					sw.Write(json);
-					sw.Flush();
-				}
-
-				req.UseDefaultCredentials = true;
-				req.PreAuthenticate = true;
-				req.Credentials = CredentialCache.DefaultNetworkCredentials;
-				var response = req.GetResponse();
-				var dataStream = response.GetResponseStream();
-				var reader = new StreamReader(dataStream);
-
-				StringBuilder sb = new StringBuilder();
-				while (reader.Peek() >= 0) {
-					sb.AppendLine(reader.ReadLine());
-				}
-
-				var dataStr = sb.ToString();
-				dynamic data = Newtonsoft.Json.JsonConvert.DeserializeObject(dataStr);
+				var result = client.DownloadString(address);
+				dynamic data = Newtonsoft.Json.JsonConvert.DeserializeObject(result);
 
 				TraceReportDataModel ret = new TraceReportDataModel();
-				ret.fromRaw(data.d);
+				ret.fromRaw(data);
+
+				if (Directory.Exists(GetSessionFolder(appid)) == false) 
+					Directory.CreateDirectory(GetSessionFolder(appid));
+
+				if (File.Exists(fname))
+					File.Delete(fname);
+
+				File.WriteAllText(fname, result);
 				return ret;
 			}
 		}

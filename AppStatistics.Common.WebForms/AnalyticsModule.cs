@@ -34,9 +34,9 @@ namespace AppStatistics.Common.WebForms {
 			context.AcquireRequestState += Context_AcquireRequestState;
 			var test = ConfigurationManager.AppSettings["customsetting1"];
 
-			if (File.Exists(root + "\\AnalyticsWebService.asmx") == false)
-				File.WriteAllText(root + "\\AnalyticsWebService.asmx",
-					"<%@ WebService Language=\"C#\" CodeBehind=\"AnalyticsWebService.asmx.cs\" Class=\"AnalyticsWebService\" %>");
+			if (File.Exists(root + "\\AnalyticsEndpoint.aspx") == false)
+				File.WriteAllText(root + "\\AnalyticsEndpoint.aspx",
+					"<%@ Page Language=\"C#\" AutoEventWireup=\"true\" CodeBehind=\"AnalyticsEndpoint.aspx.cs\" Inherits=\"AnalyticsEndpoint\" %>");
 		}
 
 		private void Context_AcquireRequestState(dynamic sender, EventArgs e) {
@@ -78,17 +78,17 @@ namespace AppStatistics.Common.WebForms {
 			if (exc == null)
 				return;
 
-			if (exc.GetType() == typeof(HttpException)) {
-				// The Complete Error Handling Example generates
-				// some errors using URLs with "NoCatch" in them;
-				// ignore these here to simulate what would happen
-				// if a global.asax handler were not implemented.
-				if (exc.Message.Contains("NoCatch") || exc.Message.Contains("maxUrlLength"))
-					return;
+			//if (exc.GetType() == typeof(HttpException)) {
+			//	// The Complete Error Handling Example generates
+			//	// some errors using URLs with "NoCatch" in them;
+			//	// ignore these here to simulate what would happen
+			//	// if a global.asax handler were not implemented.
+			//	if (exc.Message.Contains("NoCatch") || exc.Message.Contains("maxUrlLength"))
+			//		return;
 
-				//Redirect HTTP errors to HttpError page
-				sv.Transfer("HttpErrorPage.aspx");
-			}
+			//	//Redirect HTTP errors to HttpError page
+			//	sv.Transfer("HttpErrorPage.aspx");
+			//}
 
 			// Log the exception and notify system operators
 			var httpExc = exc as System.Web.HttpUnhandledException;

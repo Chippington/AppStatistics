@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,10 @@ namespace AppStatistics.Common.Models.Reporting.Analytics {
 
 		public TraceReportDataModel(IEnumerable<TraceDataModel> source) {
 			traceMap = new Dictionary<string, List<TraceDataModel>>();
+			build(source);
+		}
+
+		private void build(IEnumerable<TraceDataModel> source) {
 			foreach (var trace in source) {
 				if (traceMap.ContainsKey(trace.sessionid) == false)
 					traceMap.Add(trace.sessionid, new List<TraceDataModel>());
@@ -28,14 +33,26 @@ namespace AppStatistics.Common.Models.Reporting.Analytics {
 		}
 
 		public override dynamic toRaw() {
+			List<string> tmp = new List<string>();
+			foreach (var session in traceMap.Values)
+				foreach (var trace in session)
+					tmp.Add((string)trace.toRaw());
+
 			return new {
-				TraceMap = Newtonsoft.Json.JsonConvert.SerializeObject(traceMap),
+				TraceMap = tmp,
 			};
 		}
 
 		public override void fromRaw(dynamic data) {
-			traceMap = Newtonsoft.Json.JsonConvert.DeserializeObject
-				<Dictionary<string, List<TraceDataModel>>>((string)data.TraceMap);
+			var tmp = ((JArray)data.TraceMap).ToObject<List<string>>();
+			List<TraceDataModel> traces = new List<TraceDataModel>();
+			foreach(var str in tmp) {
+				var m = new TraceDataModel();
+				m.fromRaw(str);
+				traces.Add(m);
+			}
+
+			build(traces);
 		}
 	}
 }

@@ -41,14 +41,6 @@ namespace AppStatistics.Core.Controllers {
 			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"contentPath\" [span style='color:lightblue']value[/span]=\"[span id='_contentpath'][/span]\"/>");
 			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"endpointPath\" [span style='color:lightblue']value[/span]=\"[span id='_endpointPath'][/span]\"/>");
 			webconfig2.Add("<[span style='color:deepskyblue']/appSettings[/span]>");
-			webconfig2.Add("[br /]");
-			webconfig2.Add("<[span style='color:deepskyblue']system.web[/span]>");
-			webconfig2.Add("  <[span style='color:deepskyblue']webServers[/span]>");
-			webconfig2.Add("    <[span style='color:deepskyblue']protocols[/span]>");
-			webconfig2.Add("      <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']name[/span]=\"HttpGet\"/>");
-			webconfig2.Add("    <[span style='color:deepskyblue']/protocols[/span]>");
-			webconfig2.Add("  <[span style='color:deepskyblue']/webServers[/span]>");
-			webconfig2.Add("<[span style='color:deepskyblue']/system.web[/span]>");
 
 			output = "";
 			for (int i = 0; i < webconfig2.Count; i++) {
