@@ -14,6 +14,8 @@ using System.Linq;
 
 namespace AppStatistics.Common.Reporting.Exceptions {
 	public static class ExceptionLog {
+		private static string lastGuid;
+
 		/// <summary>
 		/// Logs an exception asynchronously to the API.
 		/// If logging to API fails, uses fallback (folder \\Fallback\\ is used)
@@ -84,9 +86,10 @@ namespace AppStatistics.Common.Reporting.Exceptions {
 
 			try {
 				var apiResult = logToApi(exception, metadata);
-				if (!apiResult)
+				if (apiResult == null)
 					logFallback(exception, metadata);
 
+				lastGuid = apiResult;
 				return true;
 			} catch (Exception exc) {
 				try {
@@ -103,6 +106,14 @@ namespace AppStatistics.Common.Reporting.Exceptions {
 		}
 
 		/// <summary>
+		/// Returns the GUID of the last exception logged
+		/// </summary>
+		/// <returns></returns>
+		public static string GetLastErrorCode() {
+			return lastGuid;
+		}
+
+		/// <summary>
 		/// Creates a data model from the given exception/metadata
 		/// </summary>
 		/// <param name="exception">Exception source</param>
@@ -111,6 +122,7 @@ namespace AppStatistics.Common.Reporting.Exceptions {
 		private static ExceptionDataModel createModel(Exception exception, Dictionary<string, string> metadata) {
 			var appid = ReportingConfig.applicationID;
 			var exc = new ExceptionDataModel(exception);
+			exc.applicationID = appid;
 			exc.timeStamp = DateTime.Now;
 			exc.metadata = metadata;
 			return exc;
@@ -122,7 +134,7 @@ namespace AppStatistics.Common.Reporting.Exceptions {
 		/// <param name="exception">Exception source</param>
 		/// <param name="metadata">Metadata to include with exception</param>
 		/// <returns>True if succeeded</returns>
-		private static bool logToApi(Exception exception, Dictionary<string, string> metadata) {
+		private static string logToApi(Exception exception, Dictionary<string, string> metadata) {
 			var exc = createModel(exception, metadata);
 
 			using (var httpClient = new HttpClient()) {
@@ -135,10 +147,10 @@ namespace AppStatistics.Common.Reporting.Exceptions {
 
 				HttpResponseMessage response = httpClient.PostAsync("api/Exceptions", stringContent).Result;
 				if (response.StatusCode == HttpStatusCode.OK)
-					return true;
+					return exc.guid;
 			}
 
-			return false;
+			return null;
 		}
 
 		/// <summary>

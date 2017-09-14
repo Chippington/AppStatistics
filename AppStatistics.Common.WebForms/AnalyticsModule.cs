@@ -34,9 +34,12 @@ namespace AppStatistics.Common.WebForms {
 				return;
 
 			var root = HttpRuntime.AppDomainAppPath.Substring(0, HttpRuntime.AppDomainAppPath.Length - 1);
-			var contentFolderPath = root + ConfigurationManager.AppSettings["contentPath"].Replace("/", "\\");
-			var applicationID = ConfigurationManager.AppSettings["applicationID"];
-			var baseURI = ConfigurationManager.AppSettings["baseUrl"];
+			var contentFolderPath = root + ConfigurationManager.AppSettings["reportingBaseContentPath"];
+			var applicationID = ConfigurationManager.AppSettings["reportingApplicationID"];
+			var baseURI = ConfigurationManager.AppSettings["reportingBaseUrl"];
+
+			if (contentFolderPath != null)
+				contentFolderPath = contentFolderPath.Replace("/", "\\");
 
 			//Scrub directory path so that it does not end in a '/' or '\' (for internal use)
 			while (contentFolderPath.Length > 0 && contentFolderPath[contentFolderPath.Length - 1] == '\\')
