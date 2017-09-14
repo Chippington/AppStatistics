@@ -1,5 +1,6 @@
 ﻿using AppStatistics.Common.Models.Reporting;
 using AppStatistics.Common.Models.Reporting.Analytics;
+using AppStatistics.Common.Models.Reporting.Events;
 using AppStatistics.Common.Models.Reporting.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,11 @@ namespace AppStatistics.Core.Data {
 
 		TraceReportDataModel GetTraceReport(string appid, DateTime startDate, DateTime endDate);
 		TraceReportDataModel GetSessionReport(string appid, string sessionid);
+
+		IEnumerable<EventDataModel> GetEventsByApplication(string applicationID);
+		EventDataModel GetEvent(string appid, string eventID);
+		bool AddEventData(string appid, EventDataModel eventData);
+		bool DeleteEventData(string appid, string eventID);
 
 		Exception GetLastException();
 

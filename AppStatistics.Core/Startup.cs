@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Server.IISIntegration;
 using AppStatistics.Common.Reporting.Exceptions;
 using AppStatistics.Common.Models.Reporting;
+using AppStatistics.Common.Models.Reporting.Events;
 
 namespace AppStatistics.Core {
 	public class Startup {
@@ -28,6 +29,12 @@ namespace AppStatistics.Core {
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
+			var str = "{\"metadata\":{},\"timestamp\":\"0001-01-01T00:00:00\",\"applicationID\":\"testwebforms\",\"message\":\"Y'all went to the ABOUT PAGE\",\"guid\":\"6d4f9bd8-2358-4f25-96ce-2126cc2d71fe\"}";
+			EventDataModel test = new EventDataModel();
+			EventDataModel test2 = new EventDataModel("This is a message");
+			test.fromRaw(test2.toRaw());
+			//test.fromRaw(Newtonsoft.Json.JsonConvert.DeserializeObject(str));
+
 			app.UseReportingServices((b) => {
 				b.UseAPI("/", "root");
 				b.UseContentFolderPath(Directory.GetCurrentDirectory() + "\\Content\\Analytics");

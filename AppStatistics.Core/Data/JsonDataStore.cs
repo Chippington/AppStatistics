@@ -11,6 +11,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net;
 using System.Text;
+using AppStatistics.Common.Models.Reporting.Events;
 
 namespace AppStatistics.Core.Data {
 	public class JsonDataStore : IDataStore {
@@ -22,7 +23,7 @@ namespace AppStatistics.Core.Data {
 				this.fileName = fileName;
 				source = new Dictionary<string, ApplicationDataModel>();
 
-				if(File.Exists(fileName)) {
+				if (File.Exists(fileName)) {
 					var data = File.ReadAllText(fileName);
 					source = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, ApplicationDataModel>>(data);
 				}
@@ -38,9 +39,9 @@ namespace AppStatistics.Core.Data {
 
 			public void set(string id, ApplicationDataModel data) {
 				var app = get(id);
-				if(app != null) {
+				if (app != null) {
 					app.fromRaw(data.toRaw());
-					if(app.guid != id) {
+					if (app.guid != id) {
 						delete(id);
 						set(app.guid, data);
 						return;
@@ -111,12 +112,12 @@ namespace AppStatistics.Core.Data {
 				List<ExceptionDataModel> ret = new List<ExceptionDataModel>();
 				List<string> files = new List<string>();
 				var temp = startTime;
-				while(temp <= endTime) {
+				while (temp <= endTime) {
 					files.Add(GetExceptionFile(appid, temp));
 					temp = temp.AddDays(1);
 				}
 
-				foreach(var file in files) {
+				foreach (var file in files) {
 					var list = getExceptionsFromFile(file);
 					foreach (var exc in list)
 						ret.Add(exc);
@@ -157,9 +158,9 @@ namespace AppStatistics.Core.Data {
 				string tmp = path + ".tmp";
 				StreamWriter writer;
 				StreamReader reader;
-				using(reader = new StreamReader(File.OpenRead(path))) {
+				using (reader = new StreamReader(File.OpenRead(path))) {
 					using (writer = new StreamWriter(File.OpenWrite(tmp))) {
-						while(reader.Peek() >= 0) {
+						while (reader.Peek() >= 0) {
 							string line = reader.ReadLine().Trim();
 							if (line.Length > excid.Length)
 								if (line.Substring(excid.Length) == excid)
@@ -177,15 +178,15 @@ namespace AppStatistics.Core.Data {
 					return null;
 
 				StreamReader reader;
-				using(reader = new StreamReader(File.OpenRead(path))) {
-					while(reader.Peek() >= 0) {
+				using (reader = new StreamReader(File.OpenRead(path))) {
+					while (reader.Peek() >= 0) {
 						string line = reader.ReadLine();
 						if (line.Length < excid.Length)
 							continue;
 
-						if(line.Trim().Substring(0, excid.Length) == excid) {
+						if (line.Trim().Substring(0, excid.Length) == excid) {
 							return JsonDataStore.contentFolderPath + line.Trim().Split('|')[1];
-						} 
+						}
 					}
 				}
 
@@ -246,7 +247,7 @@ namespace AppStatistics.Core.Data {
 			try {
 				applications.set(appData.guid, appData);
 				return true;
-			} catch(Exception exc) {
+			} catch (Exception exc) {
 				last = exc;
 				AddException("root", new ExceptionDataModel(exc));
 			}
@@ -353,7 +354,7 @@ namespace AppStatistics.Core.Data {
 		public bool UpdateApplication(string applicationID, ApplicationDataModel appData) {
 			try {
 				applications.set(applicationID, appData);
-				if(applicationID != appData.guid) {
+				if (applicationID != appData.guid) {
 					string oldFolder = GetApplicationFolder(applicationID);
 					string newFolder = GetApplicationFolder(appData.guid);
 
@@ -395,6 +396,11 @@ namespace AppStatistics.Core.Data {
 			date = date.Date;
 			var folderPath = GetExceptionFolder(appid);
 			return $"{folderPath}\\excset-{date.ToString("yyyyMMdd")}.dat";
+		}
+
+		internal static string GetEventFile(string appid) {
+			var appPath = GetApplicationFolder(appid);
+			return $"{appPath}\\eventlog.dat";
 		}
 
 		public Exception GetLastException() {
@@ -479,6 +485,61 @@ namespace AppStatistics.Core.Data {
 				File.WriteAllText(fname, result);
 				return ret;
 			}
+		}
+
+		public IEnumerable<EventDataModel> GetEventsByApplication(string applicationID) {
+			return getEvents(applicationID);
+		}
+
+		public EventDataModel GetEvent(string applicationID, string eventID) {
+			var list = getEvents(applicationID);
+			foreach (var item in list)
+				if (item.guid == eventID)
+					return item;
+
+			return null;
+		}
+
+		public bool AddEventData(string appid, EventDataModel eventData) {
+			var list = getEvents(appid);
+			if (list == null)
+				list = new List<EventDataModel>();
+
+			list.Add(eventData);
+			setEvents(appid, list);
+			return true;
+		}
+
+		public bool DeleteEventData(string appid, string eventID) {
+			var list = getEvents(appid);
+			list = (from ev in list
+					where ev.guid != eventID
+					select ev).ToList();
+
+			setEvents(appid, list);
+			return true;
+		}
+
+		private List<EventDataModel> getEvents(string applicationID) {
+			string file = GetEventFile(applicationID);
+			if (File.Exists(file) == false)
+				return null;
+
+			if (Directory.Exists(GetApplicationFolder(applicationID)))
+				Directory.CreateDirectory(GetApplicationFolder(applicationID));
+
+			var data = File.ReadAllText(file);
+			var list = Newtonsoft.Json.JsonConvert.DeserializeObject<List<EventDataModel>>(data);
+			return list;
+		}
+
+		private void setEvents(string applicationID, List<EventDataModel> list) {
+			string file = GetEventFile(applicationID);
+			var data = Newtonsoft.Json.JsonConvert.SerializeObject(list);
+			if (File.Exists(file))
+				File.Delete(file);
+
+			File.WriteAllText(file, data);
 		}
 	}
 }
