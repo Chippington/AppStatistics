@@ -14,46 +14,124 @@ using System.Linq;
 
 namespace AppStatistics.Common.Reporting.Exceptions {
 	public static class ExceptionLog {
-		public static async Task<HttpStatusCode> LogException(Exception exception) {
+		public static async Task<bool> LogExceptionAsync(Exception exception) {
 			return await LogExceptionAsync(exception, new Dictionary<string, string>());
 		}
 
-		public static async Task<HttpStatusCode> LogExceptionAsync(Exception exception, Dictionary<string, string> metadata) {
-			using (var httpClient = new HttpClient()) {
-				httpClient.BaseAddress = new Uri(ReportingConfig.baseURI);
-				httpClient.DefaultRequestHeaders.Accept.Clear();
-				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+		public static async Task<bool> LogExceptionAsync(Exception exception, Dictionary<string, string> metadata) {
+			if (exception == null)
+				return false;
 
-				var appid = ReportingConfig.applicationID;
-				var exc = new ExceptionDataModel(exception, appid);
-				exc.timeStamp = DateTime.Now;
-				exc.metadata = metadata;
+			if (metadata == null)
+				metadata = new Dictionary<string, string>();
 
-				var data = Newtonsoft.Json.JsonConvert.SerializeObject(exc.toRaw());
-				StringContent stringContent = new StringContent(data, Encoding.UTF8, "application/json");
+			try {
+				var apiResult = await logToApiAsync(exception, metadata);
+				if (!apiResult)
+					logFallback(exception, metadata);
 
-				HttpResponseMessage response = await httpClient.PostAsync("api/Exceptions", stringContent);
-				return response.StatusCode;
+				return true;
+			} catch (Exception exc) {
+				try {
+					logFallback(exc, new Dictionary<string, string>() {
+						{ "Base Exception Message", exception.Message },
+						{ "Base Exception Stack Trace", exception.StackTrace }
+					});
+				} catch {
+					throw exc;
+				}
 			}
+
+			return false;
 		}
 
-		public static HttpStatusCode LogException(Exception exception, Dictionary<string, string> metadata) {
+		public static bool LogException(Exception exception) {
+			return LogException(exception, new Dictionary<string, string>());
+		}
+
+		public static bool LogException(Exception exception, Dictionary<string, string> metadata) {
+			if (exception == null)
+				return false;
+
+			if (metadata == null)
+				metadata = new Dictionary<string, string>();
+
+			try {
+				var apiResult = logToApi(exception, metadata);
+				if (!apiResult)
+					logFallback(exception, metadata);
+
+				return true;
+			} catch (Exception exc) {
+				try {
+					logFallback(exc, new Dictionary<string, string>() {
+						{ "Base Exception Message", exception.Message },
+						{ "Base Exception Stack Trace", exception.StackTrace }
+					});
+				} catch {
+					throw exc;
+				}
+			}
+
+			return false;
+		}
+
+		private static ExceptionDataModel createModel(Exception exception, Dictionary<string, string> metadata) {
+			var appid = ReportingConfig.applicationID;
+			var exc = new ExceptionDataModel(exception, appid);
+			exc.timeStamp = DateTime.Now;
+			exc.metadata = metadata;
+			return exc;
+		}
+
+		private static bool logToApi(Exception exception, Dictionary<string, string> metadata) {
+			var exc = createModel(exception, metadata);
+
 			using (var httpClient = new HttpClient()) {
 				httpClient.BaseAddress = new Uri(ReportingConfig.baseURI);
 				httpClient.DefaultRequestHeaders.Accept.Clear();
 				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-				var appid = ReportingConfig.applicationID;
-				var exc = new ExceptionDataModel(exception, appid);
-				exc.timeStamp = DateTime.Now;
-				exc.metadata = metadata;
 
 				var data = Newtonsoft.Json.JsonConvert.SerializeObject(exc.toRaw());
 				StringContent stringContent = new StringContent(data, Encoding.UTF8, "application/json");
 
 				HttpResponseMessage response = httpClient.PostAsync("api/Exceptions", stringContent).Result;
-				return response.StatusCode;
+				if (response.StatusCode == HttpStatusCode.OK)
+					return true;
 			}
+
+			return false;
+		}
+
+		private static async Task<bool> logToApiAsync(Exception exception, Dictionary<string, string> metadata) {
+			var exc = createModel(exception, metadata);
+
+			using (var httpClient = new HttpClient()) {
+				httpClient.BaseAddress = new Uri(ReportingConfig.baseURI);
+				httpClient.DefaultRequestHeaders.Accept.Clear();
+				httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+				var data = Newtonsoft.Json.JsonConvert.SerializeObject(exc.toRaw());
+				StringContent stringContent = new StringContent(data, Encoding.UTF8, "application/json");
+
+				HttpResponseMessage response = await httpClient.PostAsync("api/Exceptions", stringContent);
+				if (response.StatusCode == HttpStatusCode.OK)
+					return true;
+			}
+
+			return false;
+		}
+
+		private static void logFallback(Exception exception, Dictionary<string, string> metadata) {
+			var exc = createModel(exception, metadata);
+			string fallbackFolder = ReportingConfig.contentFolderPath + "\\Fallback";
+
+			int ct = 0;
+			while (File.Exists(fallbackFolder + $"\\exc{ct}.dat"))
+				ct++;
+
+			var data = Newtonsoft.Json.JsonConvert.SerializeObject(exc.toRaw());
+			File.WriteAllText(fallbackFolder + $"\\exc{ct}.dat", data);
 		}
 
 		private static string getContentPath() {

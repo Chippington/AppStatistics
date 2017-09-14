@@ -10,25 +10,51 @@ using System.Web.Routing;
 
 namespace AppStatistics.Common.WebForms {
 	public class AnalyticsModule : IHttpModule {
-		/// <summary>
-		/// You will need to configure this module in the Web.config file of your
-		/// web and register it with IIS before being able to use it. For more information
-		/// see the following link: https://go.microsoft.com/?linkid=8101007
-		/// </summary>
-		#region IHttpModule Members
+		public static bool logAnalytics;
+		public static bool logExceptions;
+		public static bool redirectExceptions;
+		public static bool redirectHttpExceptions;
+		public static bool handleHttpExceptions;
+		public static string redirectExceptionPath;
+		public static string redirectHttpExceptionPath;
+
 
 		public void Dispose() {
 			//clean-up code here.
 		}
 
 		public void Init(HttpApplication context) {
-			// Below is an example of how you can handle LogRequest event and provide 
-			// custom logging implementation for it
+			logAnalytics = ConfigurationManager.AppSettings["reportingLogAnalytics"] == "true";
+			logExceptions = ConfigurationManager.AppSettings["reportingLogExceptions"] == "true";
+			if (logAnalytics == false && logExceptions == false)
+				return;
 
 			var root = HttpRuntime.AppDomainAppPath.Substring(0, HttpRuntime.AppDomainAppPath.Length - 1);
-			AppStatistics.Common.Reporting.ReportingConfig.contentFolderPath = root + ConfigurationManager.AppSettings["contentPath"];
-			AppStatistics.Common.Reporting.ReportingConfig.applicationID = ConfigurationManager.AppSettings["applicationID"];
-			AppStatistics.Common.Reporting.ReportingConfig.baseURI = ConfigurationManager.AppSettings["baseUrl"];
+			var contentFolderPath = root + ConfigurationManager.AppSettings["contentPath"].Replace("/", "\\");
+			var applicationID = ConfigurationManager.AppSettings["applicationID"];
+			var baseURI = ConfigurationManager.AppSettings["baseUrl"];
+
+			//Scrub directory path so that it does not end in a '/' or '\' (for internal use)
+			while (contentFolderPath.Length > 0 && contentFolderPath[contentFolderPath.Length - 1] == '\\')
+				contentFolderPath = contentFolderPath.Substring(0, contentFolderPath.Length - 1);
+
+			//Ensure reporting api path ends in forward slash
+			//example: http://hostname.com/reporting/
+			if (baseURI[baseURI.Length - 1] != '/')
+				baseURI = baseURI + '/';
+
+			Reporting.ReportingConfig.contentFolderPath = contentFolderPath;
+			Reporting.ReportingConfig.applicationID = applicationID;
+			Reporting.ReportingConfig.baseURI = baseURI;
+
+			//Redirect settings
+			redirectExceptions = ConfigurationManager.AppSettings["reportingRedirectExceptions"] == "true";
+			handleHttpExceptions = ConfigurationManager.AppSettings["reportingHandleHttpExceptions"] == "true";
+			redirectHttpExceptions = ConfigurationManager.AppSettings["reportingRedirectHttpExceptions"] == "true";
+
+			//Redirect paths
+			redirectExceptionPath = ConfigurationManager.AppSettings["reportingRedirectExceptionsPath"];
+			redirectHttpExceptionPath = ConfigurationManager.AppSettings["reportingRedirectHttpExceptionsPath"];
 
 			context.Error += Context_Error;
 			context.AcquireRequestState += Context_AcquireRequestState;
@@ -40,6 +66,9 @@ namespace AppStatistics.Common.WebForms {
 		}
 
 		private void Context_AcquireRequestState(dynamic sender, EventArgs e) {
+			if (logAnalytics == false)
+				return;
+
 			if (HttpContext.Current != null && HttpContext.Current.Session == null)
 				return;
 
@@ -67,43 +96,65 @@ namespace AppStatistics.Common.WebForms {
 					query = queryMap,
 				});
 			} catch (Exception exc) {
-				ExceptionLog.LogException(exc, getMetaData(HttpContext.Current));
+				try {
+					ExceptionLog.LogException(exc, getMetaData(HttpContext.Current));
+				} catch {
+					#if DEBUG
+					throw exc;
+					#endif
+				}
 			}
 		}
 
 		private void Context_Error(dynamic sender, EventArgs e) {
-			var sv = (HttpServerUtility)sender.Server;
-			var exc = sv.GetLastError();
-
-			if (exc == null)
+			if (logExceptions == false)
 				return;
 
-			//if (exc.GetType() == typeof(HttpException)) {
-			//	// The Complete Error Handling Example generates
-			//	// some errors using URLs with "NoCatch" in them;
-			//	// ignore these here to simulate what would happen
-			//	// if a global.asax handler were not implemented.
-			//	if (exc.Message.Contains("NoCatch") || exc.Message.Contains("maxUrlLength"))
-			//		return;
+			Exception exc = null;
 
-			//	//Redirect HTTP errors to HttpError page
-			//	sv.Transfer("HttpErrorPage.aspx");
-			//}
+			try {
+				var sv = (HttpServerUtility)sender.Server;
+				exc = sv.GetLastError();
 
-			// Log the exception and notify system operators
-			var httpExc = exc as System.Web.HttpUnhandledException;
-			if (exc != null)
-				exc = exc.InnerException;
+				if (exc == null)
+					return;
 
+				var httpExc = exc as System.Web.HttpUnhandledException;
+				if (exc != null)
+					exc = exc.InnerException;
 
-			if (exc != null)
-				ExceptionLog.LogException(exc, getMetaData(HttpContext.Current));
+				bool isHttpException = exc.GetType() == typeof(HttpException);
+				if (isHttpException) {
+					if (handleHttpExceptions == false) {
+						if (redirectHttpExceptions) {
+							sv.Transfer(redirectHttpExceptionPath);
+						} else {
+							sv.ClearError();
+							return;
+						}
+					}
+				}
 
-			// Clear the error from the server
-			sv.ClearError();
+				if (exc != null)
+					ExceptionLog.LogException(exc, getMetaData(HttpContext.Current));
+
+				if (isHttpException && redirectHttpExceptions)
+					sv.Transfer(redirectHttpExceptionPath);
+
+				if (redirectExceptions)
+					sv.Transfer(redirectExceptionPath);
+
+				sv.ClearError();
+			} catch (Exception exc2) {
+				try {
+					ExceptionLog.LogException(exc, new Dictionary<string, string>() {
+
+					});
+				} catch {
+					throw exc2;
+				}
+			}
 		}
-
-		#endregion
 
 		private Dictionary<string, string> getMetaData(HttpContext ctx) {
 			if (ctx == null)
