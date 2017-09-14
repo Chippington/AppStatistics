@@ -26,7 +26,7 @@ namespace AppStatistics.Core.Controllers {
 						model.sessionActionURI = Url.Action("Details", "Sessions", new { appid = appid, sessionid = sessionID });
 				}
 			} catch (Exception excc) {
-				Config.store.AddException("root", new Common.Models.Reporting.Exceptions.ExceptionDataModel(excc, "root"));
+				Config.store.AddException("root", new Common.Models.Reporting.Exceptions.ExceptionDataModel(excc));
 			}
 
 			return View(model);

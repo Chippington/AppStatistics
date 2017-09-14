@@ -34,70 +34,64 @@
         });
     </script>
     <input type="text" style="display:none" name="appid" value="@Model.source.guid" />
-    <div class="block-area">
-        <div class="row">
-            <div class="col-med-8">
-                <div class="tile">
-                    <div class="tile-title">
-                        <table style="width:100%">
-                            <tbody>
-                                <tr>
-                                    <td><h6><span style="color:orange; font-size:22px">@Model.source.applicationName</span>&nbsp;<span style="color:lightgray">Overview</span></h6></td>
-                                    <td align="right">Created: @Model.source.creationDate.ToString()</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="p-10">
-                        <div class="row" style="padding-left:10px; padding-right:10px">
-                            <div class="col-med-8">
-                                <br />
-                                <table style="width:100%">
-                                    <thead>
-                                        <tr><td style="width:100px"></td><td></td></tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td valign="top"><h5 style="padding-left:5px; padding-bottom:7px">App Name:</h5></td>
-                                            <td><input type="text" value="@Model.source.applicationName" class="form-control m-b-10" name="appname"></td>
-                                        </tr>
-                                        <tr>
-                                            <td valign="top"><h5 style="padding-left:5px; padding-bottom:7px">App GUID:</h5></td>
-                                            <td><input type="text" value="@Model.source.guid" class="form-control m-b-10" name="appguid"></td>
-                                        </tr>
-                                        <tr>
-                                            <td valign="top"><h5 style="padding-left:5px; padding-bottom:7px">Analytics Endpoint URI:</h5></td>
-                                            <td><input type="text" value="@Model.source.analyticsEndpoint" class="form-control m-b-10" name="analyticsendpoint"></td>
-                                        </tr>
-                                        <tr>
-                                            <td valign="top"><h5 style="padding-left:5px; padding-bottom:7px">Description:</h5></td>
-                                            <td style="padding-bottom:10px">
-                                                <input type="text" id="appdesc" name="appdesc" style="display:none"/>
-                                                <textarea id="txtDescription" type="text" class="form-control auto-size input-sm" style="overflow: hidden; word-wrap: break-word; resize: none; height: 50px;"></textarea>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="2">
-                                                <input type="submit" value="Apply Changes" class="btn btn-alt" style="width:100%"/>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <br /><br />
-                        @if (Model.latestExceptions.Count > 0) {
-                            <h3>Exceptions</h3>
-                        }
-                        
-                        <div class="row" style="padding-left:10px; padding-right:10px">
-                            @{  foreach (var exc in Model.latestExceptions) {
-                                    @Html.Partial("_ExceptionCard", new AppStatistics.Core.Models.ExceptionViewModel() { source = exc, application = Model.source })
-                                }
-                            }
-                        </div>
-                    </div>
+    <div class="tile">
+        <div class="tile-title">
+            <table style="width:100%">
+                <tbody>
+                    <tr>
+                        <td><h6><span style="color:orange; font-size:22px">@Model.source.applicationName</span>&nbsp;<span style="color:lightgray">Overview</span></h6></td>
+                        <td align="right">Created: @Model.source.creationDate.ToString()</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="p-10">
+            <div class="row" style="padding-left:10px; padding-right:10px">
+                <div class="col-med-8">
+                    <br />
+                    <table style="width:100%">
+                        <thead>
+                            <tr><td style="width:100px"></td><td></td></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td valign="top"><h5 style="padding-left:5px; padding-bottom:7px">App Name:</h5></td>
+                                <td><input type="text" value="@Model.source.applicationName" class="form-control m-b-10" name="appname"></td>
+                            </tr>
+                            <tr>
+                                <td valign="top"><h5 style="padding-left:5px; padding-bottom:7px">App GUID:</h5></td>
+                                <td><input type="text" value="@Model.source.guid" class="form-control m-b-10" name="appguid"></td>
+                            </tr>
+                            <tr>
+                                <td valign="top"><h5 style="padding-left:5px; padding-bottom:7px">Analytics Endpoint URI:</h5></td>
+                                <td><input type="text" value="@Model.source.analyticsEndpoint" class="form-control m-b-10" name="analyticsendpoint"></td>
+                            </tr>
+                            <tr>
+                                <td valign="top"><h5 style="padding-left:5px; padding-bottom:7px">Description:</h5></td>
+                                <td style="padding-bottom:10px">
+                                    <input type="text" id="appdesc" name="appdesc" style="display:none"/>
+                                    <textarea id="txtDescription" type="text" class="form-control auto-size input-sm" style="overflow: hidden; word-wrap: break-word; resize: none; height: 50px;"></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <input type="submit" value="Apply Changes" class="btn btn-alt" style="width:100%"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
+            </div>
+            <br /><br />
+            @if (Model.latestExceptions.Count > 0) {
+                <h3>Exceptions</h3>
+            }
+                        
+            <div class="row" style="padding-left:10px; padding-right:10px">
+                @{  foreach (var exc in Model.latestExceptions) {
+                        @Html.Partial("_ExceptionCard", new AppStatistics.Core.Models.ExceptionViewModel() { source = exc, application = Model.source })
+                    }
+                }
             </div>
         </div>
     </div>

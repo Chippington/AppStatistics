@@ -147,6 +147,7 @@ namespace AppStatistics.Core.Data {
 			}
 
 			private void addKey(string excid, string file) {
+				file = file.Replace(JsonDataStore.contentFolderPath, "");
 				string path = JsonDataStore.exceptionsKeyFilePath;
 				File.AppendAllText(path, $"{excid}|{file}" + Environment.NewLine);
 			}
@@ -183,7 +184,7 @@ namespace AppStatistics.Core.Data {
 							continue;
 
 						if(line.Trim().Substring(0, excid.Length) == excid) {
-							return line.Trim().Split('|')[1];
+							return JsonDataStore.contentFolderPath + line.Trim().Split('|')[1];
 						} 
 					}
 				}
@@ -247,7 +248,7 @@ namespace AppStatistics.Core.Data {
 				return true;
 			} catch(Exception exc) {
 				last = exc;
-				AddException("root", new ExceptionDataModel(exc, "root"));
+				AddException("root", new ExceptionDataModel(exc));
 			}
 
 			return false;
@@ -259,7 +260,7 @@ namespace AppStatistics.Core.Data {
 				return true;
 			} catch (Exception exc) {
 				last = exc;
-				AddException("root", new ExceptionDataModel(exc, "root"));
+				AddException("root", new ExceptionDataModel(exc));
 			}
 
 			return false;
@@ -283,7 +284,7 @@ namespace AppStatistics.Core.Data {
 				return true;
 			} catch (Exception exc) {
 				last = exc;
-				AddException("root", new ExceptionDataModel(exc, "root"));
+				AddException("root", new ExceptionDataModel(exc));
 			}
 
 			return false;
@@ -295,7 +296,7 @@ namespace AppStatistics.Core.Data {
 				return true;
 			} catch (Exception exc) {
 				last = exc;
-				AddException("root", new ExceptionDataModel(exc, "root"));
+				AddException("root", new ExceptionDataModel(exc));
 			}
 
 			return false;
@@ -307,7 +308,7 @@ namespace AppStatistics.Core.Data {
 				return true;
 			} catch (Exception exc) {
 				last = exc;
-				AddException("root", new ExceptionDataModel(exc, "root"));
+				AddException("root", new ExceptionDataModel(exc));
 			}
 
 			return false;
@@ -319,7 +320,7 @@ namespace AppStatistics.Core.Data {
 				return true;
 			} catch (Exception exc) {
 				last = exc;
-				AddException("root", new ExceptionDataModel(exc, "root"));
+				AddException("root", new ExceptionDataModel(exc));
 			}
 
 			return false;
@@ -432,8 +433,11 @@ namespace AppStatistics.Core.Data {
 				}
 
 				var data = sb.ToString();
-				return Newtonsoft.Json.JsonConvert.DeserializeObject<TraceReportDataModel>(data);
+				if(data.Trim().Length > 0)
+					return Newtonsoft.Json.JsonConvert.DeserializeObject<TraceReportDataModel>(data);
 			}
+
+			return null;
 		}
 
 		public TraceReportDataModel GetSessionReport(string appid, string sessionid) {
@@ -458,6 +462,9 @@ namespace AppStatistics.Core.Data {
 				client.UseDefaultCredentials = true;
 				client.Credentials = CredentialCache.DefaultNetworkCredentials;
 				var result = client.DownloadString(address);
+				if (result.Trim().Length == 0)
+					return null;
+
 				dynamic data = Newtonsoft.Json.JsonConvert.DeserializeObject(result);
 
 				TraceReportDataModel ret = new TraceReportDataModel();

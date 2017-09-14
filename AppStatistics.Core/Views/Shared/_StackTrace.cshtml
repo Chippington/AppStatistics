@@ -29,7 +29,7 @@
             continue;
         }
 
-        if (str[i] == '>') {
+        if (str[i] == '>' && inType) {
             inType = false;
             @Html.Raw("</span>")
         }
@@ -55,7 +55,7 @@
             }
         }
 
-        if (str[i] == ')') {
+        if (str[i] == ')' && inParams) {
             inParams = false;
             if (param) {
                 @Html.Raw("</span>")

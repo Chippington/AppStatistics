@@ -7,6 +7,10 @@ using System.Collections;
 using System.Threading.Tasks;
 
 namespace AppStatistics.Common.Reporting.Analytics {
+	/// <summary>
+	/// Enumerable set containing trace data for a given span of time.
+	/// </summary>
+	/// <typeparam name="T">Enforced type TraceDataModel for clarity</typeparam>
 	public class TraceSet<T> : IEnumerable<T> where T : TraceDataModel {
 		public class Enumerator : IEnumerator<TraceDataModel> {
 			internal TraceDataModel current;
@@ -19,6 +23,14 @@ namespace AppStatistics.Common.Reporting.Analytics {
 			internal string contentFolder;
 			internal int fileIndex;
 
+			/// <summary>
+			/// (Internal) Creates an enumerator from the given list of file paths, and start/end time.
+			/// Creates temporary files for reading, in case it is written to on another thread.
+			/// </summary>
+			/// <param name="contentFolder"></param>
+			/// <param name="filePaths"></param>
+			/// <param name="startTime"></param>
+			/// <param name="endTime"></param>
 			internal Enumerator(string contentFolder, List<string> filePaths, DateTime startTime, DateTime endTime) {
 				this.startTime = startTime;
 				this.endTime = endTime;
@@ -35,6 +47,7 @@ namespace AppStatistics.Common.Reporting.Analytics {
 				if (Directory.Exists(getTempFolder()) == false)
 					Directory.CreateDirectory(getTempFolder());
 
+				//Create a temp copy for each file to read through.
 				for(int i = 0; i < filePaths.Count; i++) {
 					string tempFileName = getTempFileName();
 					string tempFilePath = getTempFolder() + "\\" + tempFileName;
@@ -45,13 +58,24 @@ namespace AppStatistics.Common.Reporting.Analytics {
 
 				stream = File.OpenRead(filePaths[fileIndex]);
 				reader = new StreamReader(stream);
+				
+				//Move to the first instance
 				MoveNext();
 			}
 
+			/// <summary>
+			/// IEnumerator implementation
+			/// </summary>
 			public TraceDataModel Current => current;
 
+			/// <summary>
+			/// IEnumerator implementation
+			/// </summary>
 			object IEnumerator.Current => current;
 
+			/// <summary>
+			/// IEnumerator implementation
+			/// </summary>
 			public void Dispose() {
 				if (stream != null)
 					stream.Dispose();
@@ -71,41 +95,57 @@ namespace AppStatistics.Common.Reporting.Analytics {
 				reader = null;
 			}
 
+			/// <summary>
+			/// Moves to the next Trace element.
+			/// </summary>
+			/// <returns></returns>
 			public bool MoveNext() {
 				current = null;
+
+				//If we are on the last file, end
 				if (fileIndex >= filePaths.Count)
 					return false;
 
+				//If the content folder or the file doesn't exist, end
 				if (string.IsNullOrEmpty(contentFolder) ||
 					string.IsNullOrEmpty(filePaths[fileIndex]))
 					return false;
 
+				//If we reached the end of the file, move to the next
 				if (reader.Peek() < 0)
 					MoveNextFile();
 
+				//If the stream or reader don't exist, end
 				if (stream == null || reader == null)
 					return false;
 
+				//Read data, move to next file if empty.
 				var data = reader.ReadLine();
 				if (string.IsNullOrEmpty(data)) {
 					MoveNextFile();
 					return MoveNext();
 				}
 
+
+				//Parse the data and return it if it's valid.
 				current = new TraceDataModel();
 				current.fromRaw(data);
 
-				DateTime timeStamp = current.timestamp;
-
+				//If outside the datetime range, continue through the rest just in case
+				var timeStamp = current.timestamp;
 				if (timeStamp <= startTime)
 					return MoveNext();
 
 				if (timeStamp >= endTime)
 					return MoveNext();
 
+				//Return success
 				return true;
 			}
 
+			/// <summary>
+			/// Moves to the next file in the series.
+			/// </summary>
 			private void MoveNextFile() {
 				Dispose();
 				fileIndex++;
@@ -120,6 +160,9 @@ namespace AppStatistics.Common.Reporting.Analytics {
 				reader = new StreamReader(stream);
 			}
 
+			/// <summary>
+			/// Resets the enumerator.
+			/// </summary>
 			public void Reset() {
 				Dispose();
 				if (contentFolder == null)
@@ -128,17 +171,25 @@ namespace AppStatistics.Common.Reporting.Analytics {
 				if (filePaths == null || filePaths.Count == 0)
 					return;
 
+				fileIndex = 0;
 				stream = File.OpenRead(filePaths[fileIndex]);
 				reader = new StreamReader(stream);
 			}
 
+			/// <summary>
+			/// Returns the temp folder
+			/// </summary>
+			/// <returns></returns>
 			private string getTempFolder() {
 				return contentFolder + "\\Temp";
 			}
 
+			/// <summary>
+			/// Returns a random file name for use with temp data.
+			/// </summary>
+			/// <returns></returns>
 			private string getTempFileName() {
 				var i = Guid.NewGuid().ToString();
-				//while (File.Exists($"_temp{i}.dat")) i++;
 				return $"_temp{i}.dat";
 			}
 		}
@@ -149,6 +200,12 @@ namespace AppStatistics.Common.Reporting.Analytics {
 		public DateTime startTime;
 		public DateTime endTime;
 
+		/// <summary>
+		/// Creates a trace set based on the given content folder, files and date.
+		/// </summary>
+		/// <param name="contentFolder"></param>
+		/// <param name="dataFiles"></param>
+		/// <param name="dateTime"></param>
 		public TraceSet(string contentFolder, List<string> dataFiles, DateTime dateTime) {
 			this.startTime = dateTime.Date;
 			this.endTime = dateTime.Date.AddDays(1);
@@ -156,6 +213,13 @@ namespace AppStatistics.Common.Reporting.Analytics {
 			this.contentFolder = contentFolder;
 		}
 
+		/// <summary>
+		/// Creates a trace set based on the given content folder, files and date range.
+		/// </summary>
+		/// <param name="contentFolder"></param>
+		/// <param name="dataFiles"></param>
+		/// <param name="startTime"></param>
+		/// <param name="endTime"></param>
 		public TraceSet(string contentFolder, List<string> dataFiles, DateTime startTime, DateTime endTime) {
 			this.startTime = startTime;
 			this.endTime = endTime;
@@ -163,16 +227,27 @@ namespace AppStatistics.Common.Reporting.Analytics {
 			this.contentFolder = contentFolder;
 		}
 
+		/// <summary>
+		/// Returns an enumerator for the trace set.
+		/// </summary>
+		/// <returns></returns>
 		public IEnumerator<T> GetEnumerator() {
 			return (IEnumerator<T>)new Enumerator(contentFolder, filePaths, startTime, endTime);
 		}
-
+		/// <summary>
+		/// Returns an enumerator for the trace set.
+		/// </summary>
+		/// <returns></returns>
 		IEnumerator IEnumerable.GetEnumerator() {
 			return new Enumerator(contentFolder, filePaths, startTime, endTime);
 		}
 	}
 
 	public static class TraceLog {
+		/// <summary>
+		/// Logs a trace event using the given source model.
+		/// </summary>
+		/// <param name="traceData"></param>
 		public static void Trace(TraceDataModel traceData) {
 			var datetime = DateTime.Now;
 			traceData.timestamp = datetime;
@@ -198,6 +273,12 @@ namespace AppStatistics.Common.Reporting.Analytics {
 			});
 		}
 
+		/// <summary>
+		/// Returns a trace report from the given date time range.
+		/// </summary>
+		/// <param name="startTime"></param>
+		/// <param name="endTime"></param>
+		/// <returns></returns>
 		public static TraceReportDataModel GetReport(DateTime startTime, DateTime endTime) {
 			return new TraceReportDataModel(GetTraceLog(startTime, endTime)) {
 				startTime = startTime,
@@ -205,6 +286,11 @@ namespace AppStatistics.Common.Reporting.Analytics {
 			};
 		}
 
+		/// <summary>
+		/// Returns a trace set for the given date.
+		/// </summary>
+		/// <param name="date"></param>
+		/// <returns></returns>
 		public static TraceSet<TraceDataModel> GetTraceLog(DateTime date) {
 			date = date.Date;
 			string contentPath = ReportingConfig.contentFolderPath;
@@ -218,6 +304,12 @@ namespace AppStatistics.Common.Reporting.Analytics {
 			}, DateTime.Now);
 		}
 
+		/// <summary>
+		/// Returns a trace set for the given date range.
+		/// </summary>
+		/// <param name="startTime"></param>
+		/// <param name="endTime"></param>
+		/// <returns></returns>
 		public static TraceSet<TraceDataModel> GetTraceLog(DateTime startTime, DateTime endTime) {
 			List<string> files = new List<string>();
 			string contentPath = ReportingConfig.contentFolderPath;
@@ -238,6 +330,11 @@ namespace AppStatistics.Common.Reporting.Analytics {
 			return new TraceSet<TraceDataModel>(contentPath, files, startTime, endTime);
 		}
 
+		/// <summary>
+		/// Returns the generic log file name based on the given date.
+		/// </summary>
+		/// <param name="date"></param>
+		/// <returns></returns>
 		private static string getTraceLogFileName(DateTime date) {
 			return $"\\{date.ToString("yyyyMMdd")}.log";
 		}

@@ -7,6 +7,8 @@ using System.Collections;
 
 namespace AppStatistics.Common.Reporting.Analytics {
 	public static class TrafficLog {
+		//Under construction
+
 		public static TrafficReportDataModel GetReport(int segments, DateTime dateTime) {
 			var set = TraceLog.GetTraceLog(dateTime);
 			var ret = new TrafficReportDataModel(segments, set);

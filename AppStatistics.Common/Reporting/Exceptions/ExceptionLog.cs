@@ -14,10 +14,23 @@ using System.Linq;
 
 namespace AppStatistics.Common.Reporting.Exceptions {
 	public static class ExceptionLog {
+		/// <summary>
+		/// Logs an exception asynchronously to the API.
+		/// If logging to API fails, uses fallback (folder \\Fallback\\ is used)
+		/// </summary>
+		/// <param name="exception">Exception source</param>
+		/// <returns></returns>
 		public static async Task<bool> LogExceptionAsync(Exception exception) {
 			return await LogExceptionAsync(exception, new Dictionary<string, string>());
 		}
 
+		/// <summary>
+		/// Logs an exception asynchronously to the API.
+		/// If logging to API fails, uses fallback (folder \\Fallback\\ is used)
+		/// </summary>
+		/// <param name="exception">Exception source</param>
+		/// <param name="metadata">Metadata included with exception</param>
+		/// <returns></returns>
 		public static async Task<bool> LogExceptionAsync(Exception exception, Dictionary<string, string> metadata) {
 			if (exception == null)
 				return false;
@@ -45,10 +58,23 @@ namespace AppStatistics.Common.Reporting.Exceptions {
 			return false;
 		}
 
+		/// <summary>
+		/// Logs an exception to the API.
+		/// If logging to API fails, uses fallback (folder \\Fallback\\ is used)
+		/// </summary>
+		/// <param name="exception">Exception source</param>
+		/// <returns></returns>
 		public static bool LogException(Exception exception) {
 			return LogException(exception, new Dictionary<string, string>());
 		}
 
+		/// <summary>
+		/// Logs an exception to the API.
+		/// If logging to API fails, uses fallback (folder \\Fallback\\ is used)
+		/// </summary>
+		/// <param name="exception">Exception source</param>
+		/// <param name="metadata">Metadata included with exception</param>
+		/// <returns></returns>
 		public static bool LogException(Exception exception, Dictionary<string, string> metadata) {
 			if (exception == null)
 				return false;
@@ -76,14 +102,26 @@ namespace AppStatistics.Common.Reporting.Exceptions {
 			return false;
 		}
 
+		/// <summary>
+		/// Creates a data model from the given exception/metadata
+		/// </summary>
+		/// <param name="exception">Exception source</param>
+		/// <param name="metadata">Metadata to include with exception</param>
+		/// <returns></returns>
 		private static ExceptionDataModel createModel(Exception exception, Dictionary<string, string> metadata) {
 			var appid = ReportingConfig.applicationID;
-			var exc = new ExceptionDataModel(exception, appid);
+			var exc = new ExceptionDataModel(exception);
 			exc.timeStamp = DateTime.Now;
 			exc.metadata = metadata;
 			return exc;
 		}
 
+		/// <summary>
+		/// Logs an exception to the API.
+		/// </summary>
+		/// <param name="exception">Exception source</param>
+		/// <param name="metadata">Metadata to include with exception</param>
+		/// <returns>True if succeeded</returns>
 		private static bool logToApi(Exception exception, Dictionary<string, string> metadata) {
 			var exc = createModel(exception, metadata);
 
@@ -103,6 +141,12 @@ namespace AppStatistics.Common.Reporting.Exceptions {
 			return false;
 		}
 
+		/// <summary>
+		/// Logs an exception to the API asynchronously.
+		/// </summary>
+		/// <param name="exception">Exception source</param>
+		/// <param name="metadata">Metadata to include with exception</param>
+		/// <returns>True if succeeded</returns>
 		private static async Task<bool> logToApiAsync(Exception exception, Dictionary<string, string> metadata) {
 			var exc = createModel(exception, metadata);
 
@@ -122,6 +166,11 @@ namespace AppStatistics.Common.Reporting.Exceptions {
 			return false;
 		}
 
+		/// <summary>
+		/// Logs the exception to the fallback folder.
+		/// </summary>
+		/// <param name="exception">Exception source</param>
+		/// <param name="metadata">Metadata to include with exception</param>
 		private static void logFallback(Exception exception, Dictionary<string, string> metadata) {
 			var exc = createModel(exception, metadata);
 			string fallbackFolder = ReportingConfig.contentFolderPath + "\\Fallback";
@@ -132,23 +181,6 @@ namespace AppStatistics.Common.Reporting.Exceptions {
 
 			var data = Newtonsoft.Json.JsonConvert.SerializeObject(exc.toRaw());
 			File.WriteAllText(fallbackFolder + $"\\exc{ct}.dat", data);
-		}
-
-		private static string getContentPath() {
-			string rootDir = Directory.GetCurrentDirectory();
-			if (Directory.Exists(rootDir + "\\App_Data")) {
-				return rootDir + "\\App_Data";
-			}
-
-			return rootDir + "\\Content";
-		}
-
-		private static string getConfigFileName() {
-			return "\\reporting-config.dat";
-		}
-
-		private static string getTrafficFileName(DateTime date) {
-			return $"\\{date.ToString("traffic-yyyyMMdd.dat")}";
 		}
 	}
 }

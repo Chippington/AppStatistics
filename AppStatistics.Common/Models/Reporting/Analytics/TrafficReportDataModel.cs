@@ -5,20 +5,57 @@ using System.Text;
 
 namespace AppStatistics.Common.Models.Reporting.Analytics {
 	public class TrafficReportDataModel : ModelBase {
+		/// <summary>
+		/// A dictionary mapping paths to their respective hit count.
+		/// </summary>
 		public Dictionary<string, int> pageHits { get; set; }
+
+		/// <summary>
+		/// A dictionary mapping sessions to their respective hit count.
+		/// </summary>
 		public Dictionary<string, int> sessionHits { get; set; }
+
+		/// <summary>
+		/// A dictionary mapping times of the day to their respective hit count.
+		/// </summary>
 		public Dictionary<string, int> activity { get; set; }
+
+		/// <summary>
+		/// Application ID that this report represents.
+		/// </summary>
 		public string applicationID { get; set; }
 
-		public TrafficReportDataModel() { }
+		/// <summary>
+		/// Instantiates with default values.
+		/// </summary>
+		public TrafficReportDataModel() {
+			applicationID = "";
+			activity = new Dictionary<string, int>();
+			pageHits = new Dictionary<string, int>();
+			sessionHits = new Dictionary<string, int>();
+		}
 
+		/// <summary>
+		/// Builds a traffic report using the given TraceSet.
+		/// </summary>
+		/// <param name="segments">Number of "time segments" to create.</param>
+		/// <param name="traceLog">The trace set to use in creating the report.</param>
 		public TrafficReportDataModel(int segments, TraceSet<TraceDataModel> traceLog) {
+			applicationID = "";
+			activity = new Dictionary<string, int>();
+			pageHits = new Dictionary<string, int>();
+			sessionHits = new Dictionary<string, int>();
+
 			float sectionLength = (float)(traceLog.endTime - traceLog.startTime).TotalSeconds / segments;
 			foreach(var trace in traceLog) {
 				recordEntry(trace, sectionLength);
 			}
 		}
 
+		/// <summary>
+		/// Converts this instance to a raw object for use in JSON serialization.
+		/// </summary>
+		/// <returns></returns>
 		public override dynamic toRaw() {
 			return new {
 				PageHits = Newtonsoft.Json.JsonConvert.SerializeObject(pageHits),
@@ -28,6 +65,10 @@ namespace AppStatistics.Common.Models.Reporting.Analytics {
 			};
 		}
 
+		/// <summary>
+		/// Parses an anonymous object's data into this instance.
+		/// </summary>
+		/// <param name="data"></param>
 		public override void fromRaw(dynamic data) {
 			pageHits = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, int>>((string)data.PageHits);
 			sessionHits = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, int>>((string)data.PageHits);
@@ -35,6 +76,11 @@ namespace AppStatistics.Common.Models.Reporting.Analytics {
 			applicationID = (string)data.ApplicationID;
 		}
 
+		/// <summary>
+		/// Records an entry into the report.
+		/// </summary>
+		/// <param name="trace"></param>
+		/// <param name="sectionLength"></param>
 		private void recordEntry(TraceDataModel trace, float sectionLength) {
 			string dateStr = trace.timestamp.ToString();
 			string session = trace.sessionid;

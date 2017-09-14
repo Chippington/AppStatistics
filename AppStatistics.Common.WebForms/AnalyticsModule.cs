@@ -23,6 +23,10 @@ namespace AppStatistics.Common.WebForms {
 			//clean-up code here.
 		}
 
+		/// <summary>
+		/// Initializes the module
+		/// </summary>
+		/// <param name="context"></param>
 		public void Init(HttpApplication context) {
 			logAnalytics = ConfigurationManager.AppSettings["reportingLogAnalytics"] == "true";
 			logExceptions = ConfigurationManager.AppSettings["reportingLogExceptions"] == "true";
@@ -65,6 +69,11 @@ namespace AppStatistics.Common.WebForms {
 					"<%@ Page Language=\"C#\" AutoEventWireup=\"true\" CodeBehind=\"AnalyticsEndpoint.aspx.cs\" Inherits=\"AnalyticsEndpoint\" %>");
 		}
 
+		/// <summary>
+		/// Application lifetime event used to trace the user
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Context_AcquireRequestState(dynamic sender, EventArgs e) {
 			if (logAnalytics == false)
 				return;
@@ -77,23 +86,36 @@ namespace AppStatistics.Common.WebForms {
 				return;
 
 			try {
+				//Create a new session ID if none exists for this session
 				if (Session["analyticsid"] == null)
 					Session["analyticsid"] = Guid.NewGuid().ToString();
 
-				var sessionID = (string)Session["analyticsid"];// HttpContext.Current.Session.SessionID.ToString();
-				System.Web.HttpRequest req = sender.Request;
-				var query = req.QueryString;
-				var queryMap = new Dictionary<string, string>();
-				foreach (var key in query.Keys)
-					queryMap.Add((string)key, query[(string)key]);
+				var sessionID = (string)Session["analyticsid"];
 
+				HttpRequest req = sender.Request;
 				var agent = req.UserAgent;
+
+				//Convert request queries to string
+				var query = req.QueryString;
+				var queryStr = "?";
+				foreach (var key in query.Keys) {
+					queryStr += $"{key}={query[(string)key]}&";
+				}
+
+				//Trim off the last & in query string
+				if (query.Count == 0) {
+					queryStr = "";
+				} else {
+					queryStr = queryStr.Substring(0, queryStr.Length - 1);
+				}
+
+				//Trace this event
 				TraceLog.Trace(new Common.Models.Reporting.Analytics.TraceDataModel() {
 					sessionid = sessionID,
 					method = req.HttpMethod,
 					path = req.Path.ToString(),
 					ipaddress = req.UserHostAddress,
-					query = queryMap,
+					query = queryStr,
 				});
 			} catch (Exception exc) {
 				try {
@@ -106,6 +128,11 @@ namespace AppStatistics.Common.WebForms {
 			}
 		}
 
+		/// <summary>
+		/// Application lifetime event called when an unhandled exception occurs
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Context_Error(dynamic sender, EventArgs e) {
 			if (logExceptions == false)
 				return;
@@ -113,16 +140,19 @@ namespace AppStatistics.Common.WebForms {
 			Exception exc = null;
 
 			try {
+				//Retrieve the exception from the "Server"
 				var sv = (HttpServerUtility)sender.Server;
 				exc = sv.GetLastError();
 
 				if (exc == null)
 					return;
 
+				//We want the inner exception of unhandled exceptions
 				var httpExc = exc as System.Web.HttpUnhandledException;
 				if (exc != null)
 					exc = exc.InnerException;
 
+				//Handle http exceptions if we don't want to log them
 				bool isHttpException = exc.GetType() == typeof(HttpException);
 				if (isHttpException) {
 					if (handleHttpExceptions == false) {
@@ -135,27 +165,35 @@ namespace AppStatistics.Common.WebForms {
 					}
 				}
 
+				//Log exception
 				if (exc != null)
 					ExceptionLog.LogException(exc, getMetaData(HttpContext.Current));
 
+				//Transfer to http redirect if needed
 				if (isHttpException && redirectHttpExceptions)
 					sv.Transfer(redirectHttpExceptionPath);
 
+				//Transfer to redirect if needed
 				if (redirectExceptions)
 					sv.Transfer(redirectExceptionPath);
 
+				//Clear error if no redirect, as we have handled it.
 				sv.ClearError();
 			} catch (Exception exc2) {
 				try {
-					ExceptionLog.LogException(exc, new Dictionary<string, string>() {
-
-					});
+					//Attempt to log exception if something goes wrong
+					ExceptionLog.LogException(exc, new Dictionary<string, string>());
 				} catch {
 					throw exc2;
 				}
 			}
 		}
 
+		/// <summary>
+		/// Creates a metadata dictionary using the given HttpContext instance.
+		/// </summary>
+		/// <param name="ctx"></param>
+		/// <returns></returns>
 		private Dictionary<string, string> getMetaData(HttpContext ctx) {
 			if (ctx == null)
 				return new Dictionary<string, string>();

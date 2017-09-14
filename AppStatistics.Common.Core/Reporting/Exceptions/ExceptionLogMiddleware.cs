@@ -24,7 +24,7 @@ namespace AppStatistics.Common.Core.Reporting.Exceptions {
 				var handlerFeature = context.Features.Get<IExceptionHandlerFeature>();
 				if (handlerFeature != null && handlerFeature.Error != null) {
 					if(options.customHandlerAction != null) {
-						options.customHandlerAction.Invoke(new Models.Reporting.Exceptions.ExceptionDataModel(handlerFeature.Error, "") {
+						options.customHandlerAction.Invoke(new Models.Reporting.Exceptions.ExceptionDataModel(handlerFeature.Error) {
 							metadata = getMetaData(context),
 						});
 					} else {
@@ -38,7 +38,7 @@ namespace AppStatistics.Common.Core.Reporting.Exceptions {
 					await _next(context);
 				} catch (Exception exc) {
 					if (options.customHandlerAction != null) {
-						options.customHandlerAction.Invoke(new Models.Reporting.Exceptions.ExceptionDataModel(exc, "") {
+						options.customHandlerAction.Invoke(new Models.Reporting.Exceptions.ExceptionDataModel(exc) {
 							metadata = getMetaData(context),
 						});
 					} else {

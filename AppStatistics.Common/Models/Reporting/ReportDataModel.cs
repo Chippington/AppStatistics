@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace AppStatistics.Common.Models.Reporting {
 	public class ReportDataModel : ModelBase {
+		//Under construction
+
 		public ApplicationDataModel application;
 		public DateTime startTime;
 		public DateTime endTime;

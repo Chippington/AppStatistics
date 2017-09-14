@@ -32,7 +32,7 @@ namespace AppStatistics.Core.Controllers.API {
 
 				Config.store.AddException(exception.applicationID, exception);
 			} catch(Exception exc) {
-				Config.store.AddException("root", new ExceptionDataModel(exc, "root") {
+				Config.store.AddException("root", new ExceptionDataModel(exc) {
 					timeStamp = DateTime.Now,
 					metadata = new Dictionary<string, string>() {
 						{ "Raw JSON", Newtonsoft.Json.JsonConvert.SerializeObject(data) }
@@ -47,7 +47,7 @@ namespace AppStatistics.Core.Controllers.API {
 			try {
 				Config.store.DeleteException(exceptionid);
 			} catch (Exception exc) {
-				Config.store.AddException("root", new ExceptionDataModel(exc, "root") {
+				Config.store.AddException("root", new ExceptionDataModel(exc) {
 					timeStamp = DateTime.Now,
 					metadata = new Dictionary<string, string>() {
 						{ "Exception ID", exceptionid == null ? "Null" : exceptionid }

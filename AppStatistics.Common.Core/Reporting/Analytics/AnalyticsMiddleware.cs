@@ -30,14 +30,13 @@ namespace AppStatistics.Common.Core.Reporting.Analytics {
 
 				//TraceLog.Trace(path, method, sessionid, $"{ipaddress}:{port}");
 				var query = context.Request.QueryString;
-				var queryMap = new Dictionary<string, string>();
 
 				TraceLog.Trace(new Common.Models.Reporting.Analytics.TraceDataModel() {
 					sessionid = sessionid,
 					method = method,
 					path = path,
 					ipaddress = $"{ipaddress}:{port}",
-					query = queryMap,
+					query = "",
 				});
 			} catch (Exception ex) {
 				throw ex;

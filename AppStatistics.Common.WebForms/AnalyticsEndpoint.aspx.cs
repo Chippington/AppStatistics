@@ -10,6 +10,11 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 public partial class AnalyticsEndpoint : System.Web.UI.Page {
+	/// <summary>
+	/// Sorts to the appropriate function based on the operation in the query
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
 	protected void Page_Load(object sender, EventArgs e) {
 		var op = Request.QueryString["op"];
 		if(op.ToLower() == "getsession") {
@@ -23,6 +28,11 @@ public partial class AnalyticsEndpoint : System.Web.UI.Page {
 		}
 	}
 
+	/// <summary>
+	/// Returns a trace report containing the given session's trace data.
+	/// </summary>
+	/// <param name="sessionID"></param>
+	/// <returns></returns>
 	protected string GetSession(string sessionID) {
 		try {
 			var model = new TraceReportDataModel();
@@ -44,12 +54,18 @@ public partial class AnalyticsEndpoint : System.Web.UI.Page {
 			return Newtonsoft.Json.JsonConvert.SerializeObject(raw);
 		} catch (Exception exc) {
 			if (string.IsNullOrEmpty(ReportingConfig.baseURI) == false)
-				ExceptionLog.LogException(exc).Wait();
+				ExceptionLog.LogException(exc);
 
 			return "";
 		}
 	}
 
+	/// <summary>
+	/// Returns a trace report containing trace data for all sessions in the given timeframe.
+	/// </summary>
+	/// <param name="startDate"></param>
+	/// <param name="endDate"></param>
+	/// <returns></returns>
 	protected string GetActivity(string startDate, string endDate) {
 		try {
 			var model = new TraceReportDataModel();
@@ -63,7 +79,7 @@ public partial class AnalyticsEndpoint : System.Web.UI.Page {
 			return model.toRaw();
 		} catch (Exception exc) {
 			if (string.IsNullOrEmpty(ReportingConfig.baseURI) == false)
-				ExceptionLog.LogException(exc).Wait();
+				ExceptionLog.LogException(exc);
 
 			return "";
 		}

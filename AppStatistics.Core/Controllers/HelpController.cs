@@ -36,10 +36,18 @@ namespace AppStatistics.Core.Controllers {
 
 			List<string> webconfig2 = new List<string>();
 			webconfig2.Add("<[span style='color:deepskyblue']appSettings[/span]>");
-			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"baseUrl\" [span style='color:lightblue']value[/span]=\"[span id='_endpoint'][/span]\"/>");
-			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"applicationID\" [span style='color:lightblue']value[/span]=\"[span id='_appid'][/span]\"/>");
-			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"contentPath\" [span style='color:lightblue']value[/span]=\"[span id='_contentpath'][/span]\"/>");
-			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"endpointPath\" [span style='color:lightblue']value[/span]=\"[span id='_endpointPath'][/span]\"/>");
+			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"reportingBaseUrl\" [span style='color:lightblue']value[/span]=\"[span id='_endpoint'][/span]\"/>");
+			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"reportingApplicationID\" [span style='color:lightblue']value[/span]=\"[span id='_appid'][/span]\"/>");
+			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"reportingBaseContentPath\" [span style='color:lightblue']value[/span]=\"[span id='_contentpath'][/span]\"/>");
+			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"reportingAnalyticsEndpointPath\" [span style='color:lightblue']value[/span]=\"[span id='_endpointPath'][/span]\"/>");
+
+			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"reportingLogAnalytics\" [span style='color:lightblue']value[/span]=\"true[span id='_logAnalytics'][/span]\"/>");
+			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"reportingLogExceptions\" [span style='color:lightblue']value[/span]=\"true[span id='_logExceptions'][/span]\"/>");
+			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"reportingRedirectExceptions\" [span style='color:lightblue']value[/span]=\"false[span id='_redirectExceptions'][/span]\"/>");
+			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"reportingHandleHttpExceptions\" [span style='color:lightblue']value[/span]=\"false[span id='_handleHttpExceptions'][/span]\"/>");
+			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"reportingRedirectHttpExceptions\" [span style='color:lightblue']value[/span]=\"[span id='_redirectHttpExceptions'][/span]\"/>");
+			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"reportingRedirectExceptionsPath\" [span style='color:lightblue']value[/span]=\"[span id='_redirectExceptionsPath'][/span]\"/>");
+			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"reportingRedirectHttpExceptionsPath\" [span style='color:lightblue']value[/span]=\"[span id='_redirectHttpExceptionsPath'][/span]\"/>");
 			webconfig2.Add("<[span style='color:deepskyblue']/appSettings[/span]>");
 
 			output = "";
@@ -56,7 +64,6 @@ namespace AppStatistics.Core.Controllers {
 			}
 
 			ViewData["webconfig2"] = output;
-
 			return View();
 		}
 	}
