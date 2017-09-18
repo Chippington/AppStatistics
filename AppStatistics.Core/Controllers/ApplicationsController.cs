@@ -35,6 +35,10 @@ namespace AppStatistics.Core.Controllers {
 			if (model.source.description == null)
 				model.source.description = "";
 
+			var events = Config.store.GetEventsByApplication(appid);
+			if(events != null)
+				model.latestEvents = events.OrderBy(ev => ev.timestamp).Reverse().Take(10).ToList();
+
 			return View(model);
 		}
 

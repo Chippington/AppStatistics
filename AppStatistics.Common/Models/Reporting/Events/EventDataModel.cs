@@ -7,11 +7,13 @@ namespace AppStatistics.Common.Models.Reporting.Events {
 		public Dictionary<string, string> metadata;
 		public DateTime timestamp;
 		public string applicationID;
+		public string category;
 		public string message;
 
 		public EventDataModel() {
 			this.metadata = new Dictionary<string, string>();
 			this.message = "";
+			this.category = "";
 			this.timestamp = DateTime.Now;
 		}
 
@@ -41,6 +43,7 @@ namespace AppStatistics.Common.Models.Reporting.Events {
 				Message = message,
 				TimeStamp = timestamp,
 				MetaData = Newtonsoft.Json.JsonConvert.SerializeObject(metadata),
+				Category = category,
 			};
 		}
 
@@ -49,6 +52,7 @@ namespace AppStatistics.Common.Models.Reporting.Events {
 			timestamp = data.TimeStamp;
 			applicationID = data.ApplicationID;
 			metadata = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>((string)data.MetaData);
+			category = data.Category;
 		}
 	}
 }

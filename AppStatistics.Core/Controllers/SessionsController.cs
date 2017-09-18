@@ -5,14 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using AppStatistics.Common.Models.Reporting.Analytics;
 
-namespace AppStatistics.Core.Controllers
-{
-    public class SessionsController : Controller
-    {
-        public IActionResult Index()
-        {
-            return View();
-        }
+namespace AppStatistics.Core.Controllers {
+	public class SessionsController : Controller {
+		public IActionResult Index() {
+			return RedirectToAction("Index", "Home");
+		}
 
 		public IActionResult Details([FromQuery]string appid, [FromQuery]string sessionid) {
 			TraceReportDataModel m = new TraceReportDataModel();
@@ -25,5 +22,5 @@ namespace AppStatistics.Core.Controllers
 
 			return View(m);
 		}
-    }
+	}
 }

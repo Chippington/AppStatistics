@@ -5,11 +5,19 @@
 <div>
     <input type="text" style="display:none" name="appid" value="@Model.source.guid" />
     <div>
-        @*@Html.Partial("_ApplicationCard", new AppStatistics.Core.Models.ApplicationViewModel(Model.application, 5))*@ 
         <div class="tile">
-            <a href="@Url.Action("Details", "Applications", new { appid = Model.source.applicationID })" class="tile-title" style="width:100%">
-                @Html.Raw("<--") @Model.application.applicationName - @Model.application.guid
-            </a>
+            <div class="tile-title">
+                <a href="@Url.Action("Details", "Applications", new { appid = Model.source.applicationID })">
+                    <h6>
+                        <span style="color:orange; font-size:22px">
+                            @Model.application.applicationName
+                        </span>
+                        <span style="color:lightgray">
+                            Exception Details
+                        </span>
+                    </h6>
+                </a>
+            </div>
         </div>
     </div>
 

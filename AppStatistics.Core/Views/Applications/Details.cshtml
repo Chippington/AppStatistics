@@ -83,16 +83,47 @@
                 </div>
             </div>
             <br /><br />
+            @if (Model.latestEvents.Count > 0) {
+                <h3>Recent Events</h3>
+                <div class="tile">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover tile">
+                            <thead>
+                                <tr>
+                                    <td style="width:160px">Time stamp</td>
+                                    <td style="width:160px">Category</td>
+                                    <td>Message</td>
+                                    <td>Metadata</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach(var ev in Model.latestEvents) {
+                                    <tr>
+                                        <td>@ev.timestamp.ToString()</td>
+                                        <td>@ev.category</td>
+                                        <td>@ev.message</td>
+                                        <td>
+                                            @foreach(var key in ev.metadata.Keys) {
+                                                <span><span style="color:deepskyblue">@key</span>:&nbsp;@ev.metadata[key]</span><br />
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
             @if (Model.latestExceptions.Count > 0) {
                 <h3>Recent Exceptions</h3>
-            }
-                        
-            <div class="row" style="padding-left:10px; padding-right:10px">
-                @{  foreach (var exc in Model.latestExceptions) {
-                        @Html.Partial("_ExceptionCard", new AppStatistics.Core.Models.ExceptionViewModel() { source = exc, application = Model.source })
+                <div class="row" style="padding-left:10px; padding-right:10px">
+                    @{  foreach (var exc in Model.latestExceptions) {
+                            @Html.Partial("_ExceptionCard", new AppStatistics.Core.Models.ExceptionViewModel() { source = exc, application = Model.source })
+                        }
                     }
-                }
-            </div>
+                </div>
+            }
         </div>
     </div>
 </form>

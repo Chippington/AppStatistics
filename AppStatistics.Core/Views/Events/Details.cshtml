@@ -1,0 +1,53 @@
+﻿@model AppStatistics.Core.Models.EventLogViewModel
+@{
+    ViewData["Title"] = "Event Log";
+}
+
+<div>
+    <div>
+        <div class="tile">
+            <div class="tile-title">
+                <a href="@Url.Action("Details", "Applications", new { appid = Model.application.guid })">
+                    <h6>
+                        <span style="color:orange; font-size:22px">
+                            @Model.application.applicationName
+                        </span>
+                        <span style="color:lightgray">
+                            Event Log
+                        </span>
+                    </h6>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="tile">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover tile">
+                <thead>
+                    <tr>
+                        <td style="width:160px">Time stamp</td>
+                        <td style="width:160px">Category</td>
+                        <td>Message</td>
+                        <td>Metadata</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var ev in Model.events) {
+                        <tr>
+                            <td>@ev.timestamp.ToString()</td>
+                            <td>@ev.category</td>
+                            <td>@ev.message</td>
+                            <td>
+                                @foreach(var key in ev.metadata.Keys) {
+                                    <span><span style="color:deepskyblue">@key</span>:&nbsp;@ev.metadata[key]</span><br />
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
