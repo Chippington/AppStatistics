@@ -1,9 +1,12 @@
-﻿using AppStatistics.Common.Reporting.Analytics;
+﻿using AppStatistics.Common.Models.Reporting.Analytics;
+using AppStatistics.Common.Reporting;
+using AppStatistics.Common.Reporting.Analytics;
 using AppStatistics.Common.Reporting.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Routing;
@@ -17,6 +20,7 @@ namespace AppStatistics.Common.WebForms {
 		public static bool handleHttpExceptions;
 		public static string redirectExceptionPath;
 		public static string redirectHttpExceptionPath;
+		public static string analyticsEndpointPath;
 
 
 		public void Dispose() {
@@ -35,9 +39,9 @@ namespace AppStatistics.Common.WebForms {
 
 			var root = HttpRuntime.AppDomainAppPath.Substring(0, HttpRuntime.AppDomainAppPath.Length - 1);
 			var contentFolderPath = root + ConfigurationManager.AppSettings["reportingBaseContentPath"];
+			var endpoint = ConfigurationManager.AppSettings["reportingAnalyticsEndpointPath"];
 			var applicationID = ConfigurationManager.AppSettings["reportingApplicationID"];
 			var baseURI = ConfigurationManager.AppSettings["reportingBaseUrl"];
-
 			if (contentFolderPath != null)
 				contentFolderPath = contentFolderPath.Replace("/", "\\");
 
@@ -54,6 +58,17 @@ namespace AppStatistics.Common.WebForms {
 			Reporting.ReportingConfig.applicationID = applicationID;
 			Reporting.ReportingConfig.baseURI = baseURI;
 
+			//Custom analytics endpoint
+			if(endpoint.Length > 0) {
+				if (endpoint[0] != '/')
+					endpoint = "/" + endpoint;
+
+				if (endpoint[endpoint.Length - 1] == '/')
+					endpoint = endpoint.Substring(0, endpoint.Length - 1);
+			}
+
+			analyticsEndpointPath = endpoint;
+
 			//Redirect settings
 			redirectExceptions = ConfigurationManager.AppSettings["reportingRedirectExceptions"] == "true";
 			handleHttpExceptions = ConfigurationManager.AppSettings["reportingHandleHttpExceptions"] == "true";
@@ -65,11 +80,39 @@ namespace AppStatistics.Common.WebForms {
 
 			context.Error += Context_Error;
 			context.AcquireRequestState += Context_AcquireRequestState;
-			var test = ConfigurationManager.AppSettings["customsetting1"];
+			context.PreRequestHandlerExecute += Context_PreRequestHandlerExecute;
+		}
 
-			if (File.Exists(root + "\\AnalyticsEndpoint.aspx") == false)
-				File.WriteAllText(root + "\\AnalyticsEndpoint.aspx",
-					"<%@ Page Language=\"C#\" AutoEventWireup=\"true\" CodeBehind=\"AnalyticsEndpoint.aspx.cs\" Inherits=\"AnalyticsEndpoint\" %>");
+		private void Context_PreRequestHandlerExecute(dynamic sender, EventArgs e) {
+			if (logAnalytics == false)
+				return;
+
+			var context = sender.Context as HttpContext;
+			if (context == null || context.Request == null)
+				return;
+
+			var path = context.Request.Path;
+			if (path[path.Length - 1] == '/')
+				path = path.Substring(0, path.Length - 1);
+
+			if(path == analyticsEndpointPath) {
+				handleSessionDataRequest(context);
+			}
+		}
+
+		private void handleSessionDataRequest(HttpContext context) {
+			var op = context.Request.QueryString["op"];
+			if (op.ToLower() == "getsession") {
+				context.Response.Write(GetSession(context.Request.QueryString["sessionID"]));
+			}
+
+			if (op.ToLower() == "getactivity") {
+				context.Response.Write(GetActivity(
+					context.Request.QueryString["startDate"],
+					context.Request.QueryString["endDate"]));
+			}
+
+			context.Response.End();
 		}
 
 		/// <summary>
@@ -227,6 +270,63 @@ namespace AppStatistics.Common.WebForms {
 			}
 
 			return ret;
+		}
+
+		/// <summary>
+		/// Returns a trace report containing the given session's trace data.
+		/// </summary>
+		/// <param name="sessionID"></param>
+		/// <returns></returns>
+		protected string GetSession(string sessionID) {
+			try {
+				var model = new TraceReportDataModel();
+				DateTime startDateTime, endDateTime;
+				startDateTime = DateTime.Now.AddDays(-7);
+				endDateTime = DateTime.Now;
+
+				var set = TraceLog.GetTraceLog(startDateTime, endDateTime);
+				model.startTime = startDateTime;
+				model.endTime = endDateTime;
+				model.traceMap = new Dictionary<string, List<TraceDataModel>>();
+				model.traceMap.Add(sessionID, new List<TraceDataModel>());
+				foreach (var trace in set)
+					if (trace.sessionid == sessionID)
+						model.traceMap[sessionID].Add(trace);
+
+				model.traceMap[sessionID].OrderBy((t) => t.timestamp).ToList();
+				var raw = model.toRaw();
+				return Newtonsoft.Json.JsonConvert.SerializeObject(raw);
+			} catch (Exception exc) {
+				if (string.IsNullOrEmpty(ReportingConfig.baseURI) == false)
+					ExceptionLog.LogException(exc);
+
+				return "";
+			}
+		}
+
+		/// <summary>
+		/// Returns a trace report containing trace data for all sessions in the given timeframe.
+		/// </summary>
+		/// <param name="startDate"></param>
+		/// <param name="endDate"></param>
+		/// <returns></returns>
+		protected string GetActivity(string startDate, string endDate) {
+			try {
+				var model = new TraceReportDataModel();
+				DateTime startDateTime, endDateTime;
+				if (DateTime.TryParse(startDate, out startDateTime) && DateTime.TryParse(endDate, out endDateTime)) {
+					model = TraceLog.GetReport(startDateTime, endDateTime);
+					model.startTime = startDateTime;
+					model.endTime = endDateTime;
+				}
+
+				return model.toRaw();
+			} catch (Exception exc) {
+				if (string.IsNullOrEmpty(ReportingConfig.baseURI) == false)
+					ExceptionLog.LogException(exc);
+
+				return "";
+			}
 		}
 	}
 }

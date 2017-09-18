@@ -39,7 +39,7 @@ namespace AppStatistics.Core.Controllers {
 			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"reportingBaseUrl\" [span style='color:lightblue']value[/span]=\"[span id='_endpoint'][/span]\"/>");
 			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"reportingApplicationID\" [span style='color:lightblue']value[/span]=\"[span id='_appid'][/span]\"/>");
 			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"reportingBaseContentPath\" [span style='color:lightblue']value[/span]=\"[span id='_contentpath'][/span]\"/>");
-			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"reportingAnalyticsEndpointPath\" [span style='color:lightblue']value[/span]=\"[span id='_endpointPath'][/span]\"/>");
+			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"reportingAnalyticsEndpointPath\" [span style='color:lightblue']value[/span]=\"[span id='_endpointPath']/Analytics[/span]\"/>");
 
 			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"reportingLogAnalytics\" [span style='color:lightblue']value[/span]=\"true[span id='_logAnalytics'][/span]\"/>");
 			webconfig2.Add("  <[span style='color:deepskyblue']add[/span] [span style='color:lightblue']key[/span]=\"reportingLogExceptions\" [span style='color:lightblue']value[/span]=\"true[span id='_logExceptions'][/span]\"/>");
