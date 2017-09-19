@@ -1,10 +1,21 @@
 ﻿@model System.Collections.Generic.List<AppStatistics.Core.Models.ApplicationViewModel>
 
-<h2></h2>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+    });
+
+    var onClickLetterFilter = function (char) {
+        alert(char);
+    
+    }
+</script>
 
 <div>
     <div class="tile">
-        <div class="tile-title">Create New Application</div>
+        <div class="tile-title">
+            <h3 style="color:orange">Create New Application</h3>
+        </div>
         <div class="p-10">
             <form method="post" asp-controller="Applications" asp-action="CreateApplication">
                 <div class="form-group">
@@ -33,8 +44,53 @@
             </form>
         </div>
     </div><br />
-    @foreach (var app in Model) {
+    @*@foreach (var app in Model) {
         @Html.Partial("_ApplicationCard", app);
         <br />
-    }
+    }*@
+
+    <div class="tile">
+        <div class="tile-title">
+            <h3 style="color:orange">Application List</h3>
+        </div>
+        <div class="p-10">
+            <div class="btn-group" style="width:100%">
+                <a href="?" class="btn btn-sm btn-alt">All</a>
+                @for(int i = 'A'; i <= 'Z'; i++) {
+                    char c = (char)i;
+                    <a href="?f=@c" class="btn btn-sm btn-alt">@c</a>
+                }
+            </div>
+        </div>
+
+        <div class="table-responsive" style="margin-bottom:0px">
+            <table class="table table-bordered table-hover tile" style="margin-bottom:0px">
+                <thead>
+                    <tr>
+                        <td style="width:170px; color:lightgray">Creation Date</td>
+                        <td style="color:lightgray">Application Name</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var app in Model) {
+                        if(Context.Request.Query.ContainsKey("f")) {
+                            char filterChar = Context.Request.Query["f"].FirstOrDefault()[0];
+                            if(app.source.applicationName.Length > 0 && app.source.applicationName[0] != filterChar) {
+                                continue;
+                            }
+                        }
+
+                        <tr>
+                            <td>@app.source.creationDate.ToString()</td>
+                            <td>
+                                <a style="display:block; color:orange" href="@Url.Action("Details", "Applications", new { appid = app.source.guid })">
+                                    @app.source.applicationName
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>

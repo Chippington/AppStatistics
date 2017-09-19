@@ -19,6 +19,7 @@ namespace AppStatistics.Core.Controllers {
 				});
 			}
 
+			model = model.OrderBy((m) => m.source.applicationName).ToList();
 			return View(model);
 		}
 

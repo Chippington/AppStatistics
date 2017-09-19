@@ -464,27 +464,40 @@ namespace AppStatistics.Core.Data {
 
 			string address = app.analyticsEndpoint + $"?op=getsession&sessionID={sessionid}";
 
-			using (WebClient client = new WebClient()) {
-				client.UseDefaultCredentials = true;
-				client.Credentials = CredentialCache.DefaultNetworkCredentials;
-				var result = client.DownloadString(address);
-				if (result.Trim().Length == 0)
-					return null;
+			try {
+				using (WebClient client = new WebClient()) {
+					client.UseDefaultCredentials = true;
+					client.Credentials = CredentialCache.DefaultNetworkCredentials;
+					var result = client.DownloadString(address);
+					if (result.Trim().Length == 0)
+						return null;
 
-				dynamic data = Newtonsoft.Json.JsonConvert.DeserializeObject(result);
+					dynamic data = Newtonsoft.Json.JsonConvert.DeserializeObject(result);
 
-				TraceReportDataModel ret = new TraceReportDataModel();
-				ret.fromRaw(data);
+					TraceReportDataModel ret = new TraceReportDataModel();
+					ret.fromRaw(data);
 
-				if (Directory.Exists(GetSessionFolder(appid)) == false) 
-					Directory.CreateDirectory(GetSessionFolder(appid));
+					if (Directory.Exists(GetSessionFolder(appid)) == false)
+						Directory.CreateDirectory(GetSessionFolder(appid));
 
-				if (File.Exists(fname))
-					File.Delete(fname);
+					if (File.Exists(fname))
+						File.Delete(fname);
 
-				File.WriteAllText(fname, result);
-				return ret;
+					File.WriteAllText(fname, result);
+					return ret;
+				}
+			} catch (Exception exc) {
+				Config.store.AddException("root", new ExceptionDataModel(exc) {
+					metadata = new Dictionary<string, string>() {
+						{ "Application ID", appid },
+						{ "Session ID", sessionid },
+						{ "URI Address", address },
+						{ "Cache File Name", fname },
+					}
+				});
 			}
+
+			return null;
 		}
 
 		public IEnumerable<EventDataModel> GetEventsByApplication(string applicationID) {
@@ -524,9 +537,6 @@ namespace AppStatistics.Core.Data {
 			string file = GetEventFile(applicationID);
 			if (File.Exists(file) == false)
 				return null;
-
-			if (Directory.Exists(GetApplicationFolder(applicationID)))
-				Directory.CreateDirectory(GetApplicationFolder(applicationID));
 
 			var data = File.ReadAllText(file);
 			var list = Newtonsoft.Json.JsonConvert.DeserializeObject<List<EventDataModel>>(data);

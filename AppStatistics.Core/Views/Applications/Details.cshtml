@@ -84,7 +84,7 @@
             </div>
             <br /><br />
             @if (Model.latestEvents.Count > 0) {
-                <h3>Recent Events</h3>
+                <a href="@Url.Action("Details", "Events", new { appid = Model.source.guid })"><h3>Recent Events</h3></a>
                 <div class="tile">
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover tile">

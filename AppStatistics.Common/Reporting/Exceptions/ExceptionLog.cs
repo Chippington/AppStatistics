@@ -89,7 +89,6 @@ namespace AppStatistics.Common.Reporting.Exceptions {
 				if (apiResult == null)
 					logFallback(exception, metadata);
 
-				lastGuid = apiResult;
 				return true;
 			} catch (Exception exc) {
 				try {
@@ -136,6 +135,7 @@ namespace AppStatistics.Common.Reporting.Exceptions {
 		/// <returns>True if succeeded</returns>
 		private static string logToApi(Exception exception, Dictionary<string, string> metadata) {
 			var exc = createModel(exception, metadata);
+			var _lastGuid = exc.guid;
 
 			using (var httpClient = new HttpClient()) {
 				httpClient.BaseAddress = new Uri(ReportingConfig.baseURI);
@@ -146,8 +146,10 @@ namespace AppStatistics.Common.Reporting.Exceptions {
 				StringContent stringContent = new StringContent(data, Encoding.UTF8, "application/json");
 
 				HttpResponseMessage response = httpClient.PostAsync("api/Exceptions", stringContent).Result;
-				if (response.StatusCode == HttpStatusCode.OK)
+				if (response.StatusCode == HttpStatusCode.OK) {
+					lastGuid = _lastGuid;
 					return exc.guid;
+				}
 			}
 
 			return null;
@@ -161,6 +163,7 @@ namespace AppStatistics.Common.Reporting.Exceptions {
 		/// <returns>True if succeeded</returns>
 		private static async Task<bool> logToApiAsync(Exception exception, Dictionary<string, string> metadata) {
 			var exc = createModel(exception, metadata);
+			var _lastGuid = exc.guid;
 
 			using (var httpClient = new HttpClient()) {
 				httpClient.BaseAddress = new Uri(ReportingConfig.baseURI);
@@ -171,8 +174,10 @@ namespace AppStatistics.Common.Reporting.Exceptions {
 				StringContent stringContent = new StringContent(data, Encoding.UTF8, "application/json");
 
 				HttpResponseMessage response = await httpClient.PostAsync("api/Exceptions", stringContent);
-				if (response.StatusCode == HttpStatusCode.OK)
+				if (response.StatusCode == HttpStatusCode.OK) {
+					lastGuid = _lastGuid;
 					return true;
+				}
 			}
 
 			return false;

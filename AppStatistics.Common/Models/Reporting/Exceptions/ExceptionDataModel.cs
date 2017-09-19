@@ -85,6 +85,7 @@ namespace AppStatistics.Common.Models.Reporting.Exceptions {
 		/// <returns></returns>
 		public override object toRaw() {
 			return new {
+				GUID = guid,
 				Message = message,
 				HResult = hresult,
 				Severity = severity,
@@ -101,6 +102,7 @@ namespace AppStatistics.Common.Models.Reporting.Exceptions {
 		/// </summary>
 		/// <param name="data"></param>
 		public override void fromRaw(dynamic data) {
+			guid = data.GUID;
 			message = data.Message;
 			hresult = data.HResult;
 			severity = data.Severity;

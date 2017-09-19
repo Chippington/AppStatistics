@@ -29,7 +29,6 @@ namespace AppStatistics.Core {
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
-			var str = "{\"metadata\":{},\"timestamp\":\"0001-01-01T00:00:00\",\"applicationID\":\"testwebforms\",\"message\":\"Y'all went to the ABOUT PAGE\",\"guid\":\"6d4f9bd8-2358-4f25-96ce-2126cc2d71fe\"}";
 			EventDataModel test = new EventDataModel();
 			EventDataModel test2 = new EventDataModel("This is a message");
 			test.fromRaw(test2.toRaw());
