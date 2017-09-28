@@ -64,7 +64,7 @@ namespace AppStatistics.Common.Models.Reporting.Exceptions {
 		public ExceptionDataModel(Exception src) {
 			metadata = new Dictionary<string, string>();
 			innerExceptions = new List<ExceptionDataModel>();
-			message = src.Message;
+			message = string.Format("{0}: {1}", src.GetType().Name, src.Message);
 			stackTrace = src.StackTrace;
 			hresult = src.HResult;
 			timeStamp = DateTime.Now;

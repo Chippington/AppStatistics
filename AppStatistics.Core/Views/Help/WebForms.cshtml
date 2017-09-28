@@ -7,6 +7,42 @@
             $("#section" + vars['section']).goTo();
         }
 
+        $("#lblRedirectExceptions").click(function () {
+            if ($("#redirectExceptions").is(':checked')) {
+                $(".exceptionRedirect").show();
+                $("#_redirectExceptions").html("true");
+            } else {
+                $(".exceptionRedirect").hide();
+                $("#_redirectExceptions").html("false");
+            }
+        });
+
+        $("#lblRedirectHttpExceptions").click(function () {
+            if ($("#redirectHttpExceptions").is(':checked')) {
+                $(".httpExceptionRedirect").show();
+                $("#_redirectHttpExceptions").html("true");
+            } else {
+                $(".httpExceptionRedirect").hide();
+                $("#_redirectHttpExceptions").html("false");
+            }
+        });
+
+        $("#lblHandleHttpExceptions").click(function () {
+            if ($("#handleHttpExceptions").is(':checked')) {
+                //$(".httpExceptionRedirect").show();
+                $("#_handleHttpExceptions").html("true");
+            } else {
+                //$(".httpExceptionRedirect").hide();
+                $("#_handleHttpExceptions").html("false");
+            }
+        });
+
+        $(".exceptionRedirect").hide();
+        $(".httpExceptionRedirect").hide();
+
+        $("#_redirectExceptions").html("false");
+        $("#_redirectHttpExceptions").html("false");
+
         cb_onchange();
     });
 
@@ -34,15 +70,46 @@
         //Why did I put so much effort into this
         $("#_appid").html($("#appid").val());
         if ($("#appid").val() == "")
-            $("#_appid").html("00000000-0000-0000-0000-000000000000");
+            $("#_appid").html("application_id");
 
         $("#_endpoint").html($("#endpoint").val());
         if ($("#endpoint").val() == "")
             $("#_endpoint").html("http://cyndev01/Reporting/");
 
-        var path = $("#contentpath").val().replace(new RegExp(" ", 'g'), "_");
+        var path = formatContentPath($("#contentpath").val());
+
+        $("#_contentpath").html(path);
+        $("#_contentpathexample").html(path);
+        if ($("#contentpath").val() == "") {
+            $("#_contentpath").html("\\\\App_Data\\\\Content");
+            $("#_contentpathexample").html("\\\\App_Data\\\\Content");
+        }
+
+        //_redirectExceptionsPath
+        path = formatSitePath($("#redirectExceptionsPath").val());
+        $("#_redirectExceptionsPathExample").html(path);
+        $("#_redirectExceptionsPath").html(path);
+
+        path = formatSitePath($("#redirectHttpExceptionsPath").val());
+        $("#_redirectHttpExceptionsPathExample").html(path);
+        $("#_redirectHttpExceptionsPath").html(path);
+    }
+
+    var formatSitePath = function (path) {
+        if (path.length == 0)
+            return path;
+
+        if (path[0] != '/')
+            path = '/' + path;
+
+        return path;
+    }
+
+    var formatContentPath = function (path) {
+        path = $("#contentpath").val().replace(new RegExp(" ", 'g'), "_");
+
         while (path[path.length - 1] == '\\')
-            path = path.substring(o, path.length - 1);
+            path = path.substring(0, path.length - 1);
 
         if (path.length < 3 || path.substring(0, 2) != "\\\\") {
             if (path.substring(0, 1) == "\\") {
@@ -52,16 +119,11 @@
             }
         }
 
-        $("#_contentpath").html(path);
-        $("#_contentpathexample").html(path);
-        if ($("#contentpath").val() == "") {
-            $("#_contentpath").html("\\\\App_Data\\\\Content");
-            $("#_contentpathexample").html("\\\\App_Data\\\\Content");
-        }
+        return path;
     }
 </script>
 
-<div>
+<form onformchange="cb_onchange()">
     @*<div class="tile">
         <div class="tile-title">Table of Contents</div>
         
@@ -184,14 +246,61 @@
                                 </tr>
                                 <tr>
                                     <td style="width:250px">Application ID:</td>
-                                    <td><input type="text" class="form-control m-b-10" id="appid" placeholder="00000000-0000-0000-0000-000000000000" oninput="cb_onchange()" /></td>
+                                    <td><input type="text" class="form-control m-b-10" id="appid" placeholder="application_id" oninput="cb_onchange()" /></td>
                                 </tr>
                                 <tr>
                                     <td style="width:250px">Content Folder Path:</td>
                                     <td><input type="text" class="form-control m-b-10" id="contentpath" placeholder="\\App_Data\\Content" oninput="cb_onchange()" /></td>
                                 </tr>
                                 <tr>
-                                    <td></td><td><span style="color:lightgray">C:\\inetpub\\wwwrooot\\application</span><strong id="_contentpathexample"></strong></td>
+                                    <td></td><td><span style="color:lightgray">C:\\inetpub\\wwwrooot\\application</span><strong id="_contentpathexample"></strong><br />&nbsp;<br />&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td style="width:250px">Exception Redirect</td>
+                                    <td>
+                                        <div class="checkbox m-b-5">
+                                            <label id="lblRedirectExceptions">
+                                                <input type="checkbox" id="redirectExceptions">
+                                                Redirect on Exception
+                                            </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="exceptionRedirect">
+                                    <td style="width:250px"></td>
+                                    <td><input type="text" class="form-control m-b-10" id="redirectExceptionsPath" placeholder="\\App_Data\\Content" oninput="cb_onchange()" /></td>
+                                </tr>
+                                <tr class="exceptionRedirect">
+                                    <td></td><td><span style="color:lightgray">http://hostname.com/</span><strong id="_redirectExceptionsPathExample"></strong><br />&nbsp;<br />&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td style="width:250px">Http Exception Handling</td>
+                                    <td>
+                                        <div class="checkbox m-b-5">
+                                            <label id="lblHandleHttpExceptions">
+                                                <input type="checkbox" id="handleHttpExceptions">
+                                                Handle HTTP Exceptions
+                                            </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:250px"></td>
+                                    <td>
+                                        <div class="checkbox m-b-5">
+                                            <label id="lblRedirectHttpExceptions">
+                                                <input type="checkbox" id="redirectHttpExceptions">
+                                                Redirect on HTTP Exception
+                                            </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="httpExceptionRedirect">
+                                    <td style="width:250px"></td>
+                                    <td><input type="text" class="form-control m-b-10" id="redirectHttpExceptionsPath" placeholder="\\App_Data\\Content" oninput="cb_onchange()" /></td>
+                                </tr>
+                                <tr class="httpExceptionRedirect">
+                                    <td></td><td><span style="color:lightgray">http://hostname.com/</span><strong id="_redirectHttpExceptionsPathExample"></strong></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -210,4 +319,4 @@
             </div>
         </div>
     </div>
-</div>
+</form>

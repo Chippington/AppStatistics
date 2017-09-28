@@ -11,17 +11,23 @@ using System.Threading.Tasks;
 namespace AppStatistics.Common.Reporting.Events {
 	public static class EventLog {
 		public static void LogEvent(string message) {
-			EventLog.LogEvent(message, new Dictionary<string, string>());
+			EventLog.LogEvent(message, "", new Dictionary<string, string>());
 		}
 
-		public static void LogEvent(string message, Dictionary<string, string> metadata) {
+		public static void LogEvent(string message, string category, Dictionary<string, string> metadata) {
 			EventDataModel ev = new EventDataModel(message, metadata);
+			ev.category = category;
 			logToApi(ev);
 		}
 
-		public async static void LogEventAsync(string message, Dictionary<string, string> metadata) {
+		public async static void LogEventAsync(string message) {
 			await Task.Run(() => {
-				LogEvent(message, metadata);
+				LogEvent(message);
+			});
+		}
+		public async static void LogEventAsync(string message, string category, Dictionary<string, string> metadata) {
+			await Task.Run(() => {
+				LogEvent(message, category, metadata);
 			});
 		}
 

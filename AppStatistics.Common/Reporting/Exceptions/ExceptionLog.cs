@@ -34,30 +34,7 @@ namespace AppStatistics.Common.Reporting.Exceptions {
 		/// <param name="metadata">Metadata included with exception</param>
 		/// <returns></returns>
 		public static async Task<bool> LogExceptionAsync(Exception exception, Dictionary<string, string> metadata) {
-			if (exception == null)
-				return false;
-
-			if (metadata == null)
-				metadata = new Dictionary<string, string>();
-
-			try {
-				var apiResult = await logToApiAsync(exception, metadata);
-				if (!apiResult)
-					logFallback(exception, metadata);
-
-				return true;
-			} catch (Exception exc) {
-				try {
-					logFallback(exc, new Dictionary<string, string>() {
-						{ "Base Exception Message", exception.Message },
-						{ "Base Exception Stack Trace", exception.StackTrace }
-					});
-				} catch {
-					throw exc;
-				}
-			}
-
-			return false;
+			return await Task.Run<bool>(() => LogException(exception, metadata));
 		}
 
 		/// <summary>

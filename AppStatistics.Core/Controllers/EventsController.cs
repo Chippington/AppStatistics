@@ -19,7 +19,7 @@ namespace AppStatistics.Core.Controllers {
 
 				var list = Config.store.GetEventsByApplication(appid);
 				if (list != null)
-					model.events = list.ToList();
+					model.events = list.OrderBy((ev) => ev.timestamp).Reverse().ToList();
 			}
 
 			return View(model);

@@ -8,6 +8,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Routing;
 
@@ -212,11 +213,17 @@ namespace AppStatistics.Common.WebForms {
 				}
 
 				//Log exception
-				if (exc != null)
-					ExceptionLog.LogException(exc, getMetaData(HttpContext.Current));
+				if (exc != null) {
+					if(redirectExceptions == false && redirectHttpExceptions == false) {
+						//Fire and forget if we don't need to handle the error on the clientside
+						Task.Run(async () => await ExceptionLog.LogExceptionAsync(exc, getMetaData(HttpContext.Current)));
+					} else {
+						ExceptionLog.LogException(exc, getMetaData(HttpContext.Current));
+					}
+				}
 
 				//Transfer to http redirect if needed
-				if (isHttpException && redirectHttpExceptions)
+				if (isHttpException && redirectHttpExceptions && handleHttpExceptions)
 					sv.Transfer(redirectHttpExceptionPath);
 
 				//Transfer to redirect if needed
@@ -228,7 +235,7 @@ namespace AppStatistics.Common.WebForms {
 			} catch (Exception exc2) {
 				try {
 					//Attempt to log exception if something goes wrong
-					ExceptionLog.LogException(exc, new Dictionary<string, string>());
+					ExceptionLog.LogException(exc2, new Dictionary<string, string>());
 				} catch {
 					throw exc2;
 				}
