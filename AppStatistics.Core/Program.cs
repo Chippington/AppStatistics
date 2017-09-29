@@ -7,6 +7,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using AppStatistics.Core.Data.Sqlite;
 
 namespace AppStatistics.Core {
 	public class Program {

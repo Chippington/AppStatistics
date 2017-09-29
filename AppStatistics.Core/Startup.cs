@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Server.IISIntegration;
 using AppStatistics.Common.Reporting.Exceptions;
 using AppStatistics.Common.Models.Reporting;
 using AppStatistics.Common.Models.Reporting.Events;
+using AppStatistics.Core.Data.Sqlite;
 
 namespace AppStatistics.Core {
 	public class Startup {
