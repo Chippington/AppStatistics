@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AppStatistics.Core {
 	public static class Config {
-		//public static IDataStore store = new JsonDataStore(Directory.GetCurrentDirectory() + "\\Content\\Data");
-		public static IDataStore store = new SqliteDataStore();
+		public static IDataStore store = new JsonDataStore(Directory.GetCurrentDirectory() + "\\Content\\Data");
+		//public static IDataStore store = new SqliteDataStore();
 	}
 }

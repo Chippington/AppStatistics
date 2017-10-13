@@ -31,7 +31,7 @@ namespace AppStatistics.Core.Controllers {
 			var model = new ApplicationViewModel();
 			model.source = app;
 			model.latestExceptions = Config.store.GetExceptionsByApplication(
-						app.guid, DateTime.Now.AddDays(-7), DateTime.Now).OrderBy(e => e.timeStamp).Reverse().Take(25).ToList();
+						app.guid, DateTime.Now.AddDays(-14), DateTime.Now).OrderBy(e => e.timeStamp).Reverse().Take(25).ToList();
 
 			if (model.source.description == null)
 				model.source.description = "";
